@@ -1,6 +1,6 @@
 import z from "zod";
 
-const registrationZodSchema = z.object({
+export const registrationZodSchema = z.object({
   name: z
     .string("Name must be a string.")
     .min(3, "Name must be of at least 3 characters")
@@ -21,14 +21,14 @@ const registrationZodSchema = z.object({
     })
     .optional(),
 });
-const emailVerificationZodSchema = z.object({
+export const emailVerificationZodSchema = z.object({
   email: z.email(
     "The Provided email is not an Email. Example-'someone@something.com'",
   ),
   otp: z.string().length(6),
 });
 
-const LoginZodSchema = z.object({
+export const LoginZodSchema = z.object({
   email: z.email(
     "The Provided email is not an Email. Example-'someone@something.com'",
   ),
@@ -41,7 +41,7 @@ const LoginZodSchema = z.object({
     .regex(/[^A-Za-z0-9]/, "Password must include one special character"),
 });
 
-const resetPasswordZodSchema = z.object({
+export const resetPasswordZodSchema = z.object({
   email: z.email(
     "The Provided email is not an Email. Example-'someone@something.com'",
   ),
@@ -54,16 +54,8 @@ const resetPasswordZodSchema = z.object({
     .regex(/[^A-Za-z0-9]/, "Password must include one special character"),
   otp: z.string().length(6),
 });
-const forgotPasswordZodSchema = z.object({
+export const forgotPasswordZodSchema = z.object({
   email: z.email(
     "The Provided email is not an Email. Example-'someone@something.com'",
   ),
 });
-
-export const AuthValidation = {
-  registrationZodSchema,
-  emailVerificationZodSchema,
-  LoginZodSchema,
-  resetPasswordZodSchema,
-  forgotPasswordZodSchema,
-};
