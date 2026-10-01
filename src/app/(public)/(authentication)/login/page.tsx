@@ -17,9 +17,10 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img
+        {/** biome-ignore lint/performance/noImgElement: <explanation> */}
+<img
           src="/login.jpg"
-          alt="Image"
+          alt=""
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
