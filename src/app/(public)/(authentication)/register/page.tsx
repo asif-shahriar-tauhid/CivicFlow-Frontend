@@ -1,5 +1,6 @@
 import AuthLayout from "@/components/layouts/public/AuthLayout";
 import RegisterForm from "@/components/form/register-form";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 
 export const metadata = {
   title: "Create Citizen Account — CivicFlow",
@@ -14,7 +15,7 @@ export default function RegisterPage() {
       subtitle="Join the transparent municipal network to report issues, track repairs, and verify completion."
       mode="register"
     >
-      <RegisterForm />
+      <RegisterForm googleLogin={<GoogleLoginComponent />} />
     </AuthLayout>
   );
 }

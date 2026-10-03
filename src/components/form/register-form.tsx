@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 import { useRegister } from "@/hooks/auth.hooks";
 import { registrationZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
@@ -25,7 +26,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { z } from "zod";
 
 const clientRegisterSchema = z
@@ -52,7 +53,11 @@ const clientRegisterSchema = z
     path: ["confirmPassword"],
   });
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  googleLogin?: ReactNode;
+}
+
+export default function RegisterForm({ googleLogin }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { mutate: register, isPending: registerPending } = useRegister();
@@ -80,22 +85,20 @@ export default function RegisterForm() {
 
       register(payload, {
         onSuccess: () => {
-          toast.add({
-            title: "Verification Code Sent",
+          gooeyToast.success("Verification Code Sent", {
             description: `We sent a 6-digit OTP code to ${value.email}.`,
-            type: "Success",
           });
-          router.push(
-            `/account-verify?email=${encodeURIComponent(value.email.trim())}`,
-          );
+          setTimeout(() => {
+            router.push(
+              `/account-verify?email=${encodeURIComponent(value.email.trim())}`,
+            );
+          }, 600);
         },
         onError: (err: any) => {
-          toast.add({
-            title: "Registration Failed",
+          gooeyToast.error("Registration Failed", {
             description:
               err.message ||
               "Could not complete registration. Email may already be registered.",
-            type: "Error",
           });
         },
       });
@@ -345,6 +348,22 @@ export default function RegisterForm() {
           </Button>
         </FieldGroup>
       </form>
+
+      {/* Divider & Google OAuth */}
+      <div className="flex flex-col gap-3">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            Or continue with
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          {googleLogin ?? <GoogleLoginComponent />}
+        </div>
+      </div>
 
       {/* Switch to Sign In */}
       <div className="text-center pt-2 border-t border-border">

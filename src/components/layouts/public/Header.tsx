@@ -2,18 +2,32 @@
 
 import Logo from "@/asset/svg/Logo";
 import { Button } from "@/components/ui/button";
-import { useGetME } from "@/hooks";
-import { ArrowRight, LayoutDashboard, Menu, Shield, X } from "lucide-react";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import { useGetME, useLogout } from "@/hooks";
+import { hasAuthTokens } from "@/lib/cookieUtils";
+import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [hasCookieTokens, setHasCookieTokens] = useState(false);
+  const router = useRouter();
+
   const { data: userData, isLoading } = useGetME();
+  const { mutate: logout, isPending: logoutPending } = useLogout();
   const user = userData?.data;
 
+  useEffect(() => {
+    // Check if tokens exist in browser cookies
+    setHasCookieTokens(hasAuthTokens());
+  }, [userData]);
+
+  const isLoggedIn = Boolean(user) || hasCookieTokens;
+
   const getDashboardUrl = () => {
-    if (!user) return "/login";
+    if (!user) return "/citizen";
     switch (user.role) {
       case "ADMIN":
         return "/admin";
@@ -22,6 +36,25 @@ const Header = () => {
       default:
         return "/citizen";
     }
+  };
+
+  const handleLogout = () => {
+    logout(undefined, {
+      onSuccess: () => {
+        setHasCookieTokens(false);
+        gooeyToast.success("Logged Out", {
+          description: "You have been signed out of CivicFlow.",
+        });
+        router.push("/");
+      },
+      onError: () => {
+        setHasCookieTokens(false);
+        gooeyToast.info("Session Ended", {
+          description: "Your session has ended.",
+        });
+        router.push("/");
+      },
+    });
   };
 
   const navLinks = [
@@ -77,20 +110,37 @@ const Header = () => {
         </nav>
 
         {/* Action Buttons */}
-        <div className="hidden sm:flex items-center gap-3">
-          {isLoading ? (
+        <div className="hidden sm:flex items-center gap-2.5">
+          {isLoading && !hasCookieTokens ? (
             <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
-          ) : user ? (
-            <Button
-              variant="default"
-              size="sm"
-              render={<Link href={getDashboardUrl()} />}
-              nativeButton={false}
-              className="gap-2"
-            >
-              <LayoutDashboard className="size-4" />
-              <span>{user.name.split(" ")[0]} Portal</span>
-            </Button>
+          ) : isLoggedIn ? (
+            <>
+              <Button
+                variant="default"
+                size="sm"
+                render={<Link href={getDashboardUrl()} />}
+                nativeButton={false}
+                className="gap-2"
+              >
+                <LayoutDashboard className="size-4" />
+                <span>
+                  {user?.name
+                    ? `${user.name.split(" ")[0]} Portal`
+                    : "Dashboard"}
+                </span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                disabled={logoutPending}
+                className="gap-1.5 text-muted-foreground hover:text-destructive hover:border-destructive/40 transition-colors"
+              >
+                <LogOut className="size-3.5" />
+                <span>{logoutPending ? "Signing out..." : "Logout"}</span>
+              </Button>
+            </>
           ) : (
             <>
               <Button
@@ -145,15 +195,32 @@ const Header = () => {
               </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2.5 pt-3 border-t border-border">
-              {user ? (
-                <Button
-                  variant="default"
-                  render={<Link href={getDashboardUrl()} />}
-                  nativeButton={false}
-                  className="w-full justify-center"
-                >
-                  Go to {user.role} Dashboard
-                </Button>
+              {isLoggedIn ? (
+                <>
+                  <Button
+                    variant="default"
+                    render={<Link href={getDashboardUrl()} />}
+                    nativeButton={false}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="w-full justify-center gap-2"
+                  >
+                    <LayoutDashboard className="size-4" />
+                    <span>Go to {user?.role || "Citizen"} Dashboard</span>
+                  </Button>
+
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogout();
+                    }}
+                    disabled={logoutPending}
+                    className="w-full justify-center gap-2 text-destructive border-destructive/20 hover:bg-destructive/10"
+                  >
+                    <LogOut className="size-4" />
+                    <span>{logoutPending ? "Signing out..." : "Logout"}</span>
+                  </Button>
+                </>
               ) : (
                 <>
                   <Button

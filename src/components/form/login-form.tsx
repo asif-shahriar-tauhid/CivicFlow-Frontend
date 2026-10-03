@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 import { useLogin } from "@/hooks/auth.hooks";
 import { LoginZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
@@ -24,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { type ReactNode, Suspense, useState } from "react";
 
 const DEMO_ACCOUNTS = [
   {
@@ -53,7 +54,11 @@ const DEMO_ACCOUNTS = [
   },
 ];
 
-function LoginFormInner() {
+interface LoginFormProps {
+  googleLogin?: ReactNode;
+}
+
+function LoginFormInner({ googleLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,40 +82,37 @@ function LoginFormInner() {
         },
         {
           onSuccess: (res: any) => {
-            toast.add({
-              title: "Authentication Successful",
-              description: "Welcome to CivicFlow.",
-              type: "Success",
+            gooeyToast.success("Login Successful", {
+              description: "Welcome back to CivicFlow Municipal Portal.",
             });
 
             // Decode role or use redirect param
-            if (redirectUrl) {
-              router.push(redirectUrl);
-              return;
-            }
+            const targetUrl = (() => {
+              if (redirectUrl) return redirectUrl;
+              const userEmail = value.email.toLowerCase();
+              if (
+                userEmail.includes("superadmin") ||
+                userEmail.includes("admin")
+              ) {
+                return "/admin";
+              }
+              if (
+                userEmail.includes("staff") ||
+                userEmail.includes("drainage")
+              ) {
+                return "/staff";
+              }
+              return "/citizen";
+            })();
 
-            // Determine route based on email/role heuristic or fallback to citizen
-            const userEmail = value.email.toLowerCase();
-            if (
-              userEmail.includes("superadmin") ||
-              userEmail.includes("admin")
-            ) {
-              router.push("/admin");
-            } else if (
-              userEmail.includes("staff") ||
-              userEmail.includes("drainage")
-            ) {
-              router.push("/staff");
-            } else {
-              router.push("/citizen");
-            }
+            setTimeout(() => {
+              router.push(targetUrl);
+            }, 600);
           },
           onError: (err: any) => {
-            toast.add({
-              title: "Authentication Failed",
+            gooeyToast.error("Authentication Failed", {
               description:
                 err.message || "Invalid email or password. Please verify.",
-              type: "Error",
             });
           },
         },
@@ -261,6 +263,22 @@ function LoginFormInner() {
         </FieldGroup>
       </form>
 
+      {/* Divider & Google OAuth */}
+      <div className="flex flex-col gap-3">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            Or continue with
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          {googleLogin ?? <GoogleLoginComponent />}
+        </div>
+      </div>
+
       {/* Switch to Register */}
       <div className="text-center pt-2 border-t border-border">
         <p className="text-xs text-muted-foreground">
@@ -278,7 +296,7 @@ function LoginFormInner() {
   );
 }
 
-export default function LoginForm() {
+export default function LoginForm({ googleLogin }: LoginFormProps) {
   return (
     <Suspense
       fallback={
@@ -287,7 +305,7 @@ export default function LoginForm() {
         </div>
       }
     >
-      <LoginFormInner />
+      <LoginFormInner googleLogin={googleLogin} />
     </Suspense>
   );
 }

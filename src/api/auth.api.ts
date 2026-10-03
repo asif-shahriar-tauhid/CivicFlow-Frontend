@@ -29,6 +29,14 @@ export interface ResetPasswordPayload {
   otp: string;
 }
 
+export interface GoogleOAuthPayload {
+  idToken: string;
+}
+
+export const googleOAuth = (payload: GoogleOAuthPayload) => {
+  return apiClient("/auth/google", { method: "POST", body: payload });
+};
+
 export const userLogin = (payload: LoginPayload) => {
   return apiClient("/auth/login", { method: "POST", body: payload });
 };
