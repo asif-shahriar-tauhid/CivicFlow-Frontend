@@ -4,27 +4,18 @@ import Logo from "@/asset/svg/Logo";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useGetME, useLogout } from "@/hooks";
-import { hasAuthTokens } from "@/lib/cookieUtils";
 import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hasCookieTokens, setHasCookieTokens] = useState(false);
   const router = useRouter();
 
   const { data: userData, isLoading } = useGetME();
   const { mutate: logout, isPending: logoutPending } = useLogout();
   const user = userData?.data;
-
-  useEffect(() => {
-    // Check if tokens exist in browser cookies
-    setHasCookieTokens(hasAuthTokens());
-  }, [userData]);
-
-  const isLoggedIn = Boolean(user) || hasCookieTokens;
 
   const getDashboardUrl = () => {
     if (!user) return "/citizen";
@@ -41,14 +32,12 @@ const Header = () => {
   const handleLogout = () => {
     logout(undefined, {
       onSuccess: () => {
-        setHasCookieTokens(false);
         gooeyToast.success("Logged Out", {
           description: "You have been signed out of CivicFlow.",
         });
         router.push("/");
       },
       onError: () => {
-        setHasCookieTokens(false);
         gooeyToast.info("Session Ended", {
           description: "Your session has ended.",
         });
@@ -58,15 +47,15 @@ const Header = () => {
   };
 
   const navLinks = [
-    { name: "Explore Services", href: "#services" },
+    { name: "Services", href: "#services" },
     { name: "How It Works", href: "#how-it-works" },
-    { name: "Live Telemetry", href: "#telemetry" },
+    { name: "Telemetry", href: "#telemetry" },
     { name: "About Us", href: "/about-us" },
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md transition-all">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand */}
         <div className="flex items-center gap-6">
           <Link
@@ -83,21 +72,10 @@ const Header = () => {
               </span>
             </div>
           </Link>
-
-          {/* Status pill (desktop) */}
-          <div className="hidden lg:flex items-center gap-2 rounded-full border border-border bg-muted/40 px-2.5 py-0.5 text-xs text-muted-foreground">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-            </span>
-            <span className="font-medium text-foreground">Grid Active</span>
-            <span className="text-muted-foreground/60">•</span>
-            <span>24/7 Operations</span>
-          </div>
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-7">
+        {/* Desktop Nav - Absolutely centered to align with hero section */}
+        <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 lg:gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -111,9 +89,9 @@ const Header = () => {
 
         {/* Action Buttons */}
         <div className="hidden sm:flex items-center gap-2.5">
-          {isLoading && !hasCookieTokens ? (
+          {isLoading ? (
             <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
-          ) : isLoggedIn ? (
+          ) : user ? (
             <>
               <Button
                 variant="default"
@@ -195,7 +173,7 @@ const Header = () => {
               </Link>
             ))}
             <div className="mt-3 flex flex-col gap-2.5 pt-3 border-t border-border">
-              {isLoggedIn ? (
+              {user ? (
                 <>
                   <Button
                     variant="default"

@@ -135,27 +135,31 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
           </span>
           <span className="font-mono text-xs text-primary">Pre-seeded</span>
         </div>
-        <div className="grid grid-cols-3 gap-2">
-          {DEMO_ACCOUNTS.map((demo) => {
-            const Icon = demo.icon;
-            const isSelected = form.state.values.email === demo.email;
-            return (
-              <button
-                key={demo.role}
-                type="button"
-                onClick={() => handleSelectDemo(demo.email, demo.password)}
-                className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all ${
-                  isSelected
-                    ? "border-primary bg-primary/10 text-primary font-semibold"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                <Icon className="size-3.5 mb-1" />
-                <span className="text-xs leading-none">{demo.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        <form.Subscribe selector={(state) => state.values.email}>
+          {(currentEmail) => (
+            <div className="grid grid-cols-3 gap-2">
+              {DEMO_ACCOUNTS.map((demo) => {
+                const Icon = demo.icon;
+                const isSelected = currentEmail === demo.email;
+                return (
+                  <button
+                    key={demo.role}
+                    type="button"
+                    onClick={() => handleSelectDemo(demo.email, demo.password)}
+                    className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all ${
+                      isSelected
+                        ? "border-primary bg-primary/10 text-primary font-semibold"
+                        : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Icon className="size-3.5 mb-1" />
+                    <span className="text-xs leading-none">{demo.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </form.Subscribe>
       </div>
 
       {/* Main Login Form */}
