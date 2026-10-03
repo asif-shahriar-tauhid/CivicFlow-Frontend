@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useVerifyEmail } from "@/hooks/auth.hooks";
 import { emailVerificationZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
@@ -41,20 +41,18 @@ function VerifyEmailFormInner() {
         },
         {
           onSuccess: () => {
-            toast.add({
-              title: "Account Activated!",
+            gooeyToast.success("Account Activated!", {
               description:
                 "Welcome to CivicFlow. Your citizen profile is active.",
-              type: "Success",
             });
-            router.push("/citizen");
+            setTimeout(() => {
+              router.push("/citizen");
+            }, 600);
           },
           onError: (err: any) => {
-            toast.add({
-              title: "Verification Failed",
+            gooeyToast.error("Verification Failed", {
               description:
                 err.message || "Invalid or expired OTP code. Please retry.",
-              type: "Error",
             });
           },
         },

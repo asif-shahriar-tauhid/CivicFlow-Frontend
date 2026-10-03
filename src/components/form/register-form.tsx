@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 import { useRegister } from "@/hooks/auth.hooks";
 import { registrationZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
@@ -25,11 +26,26 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { z } from "zod";
 
-const clientRegisterSchema = registrationZodSchema
-  .extend({
+const clientRegisterSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "Name must be of at least 3 characters")
+      .max(50, "Name at most can have 50 characters"),
+    email: z.email(
+      "The Provided email is not an Email. Example-'someone@something.com'",
+    ),
+    contactNumber: z.string(),
+    password: z
+      .string()
+      .min(8, "Password must be 8 characters long.")
+      .regex(/[A-Z]/, "Password must contain at least one Uppercase letter.")
+      .regex(/[a-z]/, "Password must contain at least one Lowercase letter.")
+      .regex(/[0-9]/, "Password must include a number.")
+      .regex(/[^A-Za-z0-9]/, "Password must include one special character"),
     confirmPassword: z.string().min(1, "Please confirm your password."),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -37,7 +53,11 @@ const clientRegisterSchema = registrationZodSchema
     path: ["confirmPassword"],
   });
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  googleLogin?: ReactNode;
+}
+
+export default function RegisterForm({ googleLogin }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { mutate: register, isPending: registerPending } = useRegister();
@@ -65,22 +85,20 @@ export default function RegisterForm() {
 
       register(payload, {
         onSuccess: () => {
-          toast.add({
-            title: "Verification Code Sent",
+          gooeyToast.success("Verification Code Sent", {
             description: `We sent a 6-digit OTP code to ${value.email}.`,
-            type: "Success",
           });
-          router.push(
-            `/account-verify?email=${encodeURIComponent(value.email.trim())}`,
-          );
+          setTimeout(() => {
+            router.push(
+              `/account-verify?email=${encodeURIComponent(value.email.trim())}`,
+            );
+          }, 600);
         },
         onError: (err: any) => {
-          toast.add({
-            title: "Registration Failed",
+          gooeyToast.error("Registration Failed", {
             description:
               err.message ||
               "Could not complete registration. Email may already be registered.",
-            type: "Error",
           });
         },
       });
@@ -330,6 +348,22 @@ export default function RegisterForm() {
           </Button>
         </FieldGroup>
       </form>
+
+      {/* Divider & Google OAuth */}
+      <div className="flex flex-col gap-3">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            Or continue with
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          {googleLogin ?? <GoogleLoginComponent />}
+        </div>
+      </div>
 
       {/* Switch to Sign In */}
       <div className="text-center pt-2 border-t border-border">

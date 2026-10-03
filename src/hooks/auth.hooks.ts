@@ -1,6 +1,7 @@
 import {
   forgotPassword,
   getMe,
+  googleOAuth,
   resetPassword,
   userLogin,
   userLogout,
@@ -8,6 +9,16 @@ import {
   verifyEmail,
 } from "@/api/auth.api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+export const useGoogleOAuth = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: googleOAuth,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+    },
+  });
+};
 
 export const useLogin = () => {
   const queryClient = useQueryClient();

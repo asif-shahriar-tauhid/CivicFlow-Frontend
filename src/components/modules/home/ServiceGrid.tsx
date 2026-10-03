@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   Trash2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const services = [
@@ -13,6 +14,7 @@ const services = [
     id: "waste",
     name: "Waste & Sanitation",
     icon: Trash2,
+    image: "/images/service-waste.webp",
     sla: "24 Hours SLA",
     slaUrgent: false,
     description:
@@ -23,6 +25,7 @@ const services = [
     id: "lighting",
     name: "Public Streetlighting",
     icon: Lightbulb,
+    image: "/images/service-lighting.webp",
     sla: "12 Hours SLA",
     slaUrgent: true,
     description:
@@ -33,6 +36,7 @@ const services = [
     id: "roads",
     name: "Road & Hazard Repair",
     icon: AlertTriangle,
+    image: "/images/service-roads.webp",
     sla: "48 Hours SLA",
     slaUrgent: false,
     description:
@@ -43,6 +47,7 @@ const services = [
     id: "drainage",
     name: "Water & Drainage Network",
     icon: Droplets,
+    image: "/images/service-drainage.webp",
     sla: "24 Hours SLA",
     slaUrgent: false,
     description:
@@ -91,16 +96,28 @@ export default function ServiceGrid() {
                 className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-all hover:border-border hover:shadow-md"
               >
                 <div>
-                  {/* Icon & SLA Badge */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                      <Icon className="size-5" />
+                  {/* Service Image Banner with Floating Icon and SLA */}
+                  <div className="relative mb-4 h-36 w-full overflow-hidden rounded-lg bg-muted">
+                    <Image
+                      src={service.image}
+                      alt={service.name}
+                      fill
+                      className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+
+                    {/* Floating Icon Badge */}
+                    <div className="absolute bottom-2.5 left-2.5 flex size-9 items-center justify-center rounded-lg bg-background/90 text-primary shadow-xs backdrop-blur-md">
+                      <Icon className="size-4" />
                     </div>
+
+                    {/* Floating SLA Badge */}
                     <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      className={`absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold backdrop-blur-md shadow-xs ${
                         service.slaUrgent
-                          ? "bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-amber-500/90 text-white"
+                          : "bg-background/90 text-foreground"
                       }`}
                     >
                       <ShieldCheck className="size-3" />

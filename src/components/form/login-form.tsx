@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "@/components/ui/toast";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 import { useLogin } from "@/hooks/auth.hooks";
 import { LoginZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
@@ -24,7 +25,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { type ReactNode, Suspense, useState } from "react";
 
 const DEMO_ACCOUNTS = [
   {
@@ -53,7 +54,11 @@ const DEMO_ACCOUNTS = [
   },
 ];
 
-export default function LoginForm() {
+interface LoginFormProps {
+  googleLogin?: ReactNode;
+}
+
+function LoginFormInner({ googleLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -77,40 +82,37 @@ export default function LoginForm() {
         },
         {
           onSuccess: (res: any) => {
-            toast.add({
-              title: "Authentication Successful",
-              description: "Welcome to CivicFlow.",
-              type: "Success",
+            gooeyToast.success("Login Successful", {
+              description: "Welcome back to CivicFlow Municipal Portal.",
             });
 
             // Decode role or use redirect param
-            if (redirectUrl) {
-              router.push(redirectUrl);
-              return;
-            }
+            const targetUrl = (() => {
+              if (redirectUrl) return redirectUrl;
+              const userEmail = value.email.toLowerCase();
+              if (
+                userEmail.includes("superadmin") ||
+                userEmail.includes("admin")
+              ) {
+                return "/admin";
+              }
+              if (
+                userEmail.includes("staff") ||
+                userEmail.includes("drainage")
+              ) {
+                return "/staff";
+              }
+              return "/citizen";
+            })();
 
-            // Determine route based on email/role heuristic or fallback to citizen
-            const userEmail = value.email.toLowerCase();
-            if (
-              userEmail.includes("superadmin") ||
-              userEmail.includes("admin")
-            ) {
-              router.push("/admin");
-            } else if (
-              userEmail.includes("staff") ||
-              userEmail.includes("drainage")
-            ) {
-              router.push("/staff");
-            } else {
-              router.push("/citizen");
-            }
+            setTimeout(() => {
+              router.push(targetUrl);
+            }, 600);
           },
           onError: (err: any) => {
-            toast.add({
-              title: "Authentication Failed",
+            gooeyToast.error("Authentication Failed", {
               description:
                 err.message || "Invalid email or password. Please verify.",
-              type: "Error",
             });
           },
         },
@@ -133,27 +135,31 @@ export default function LoginForm() {
           </span>
           <span className="font-mono text-xs text-primary">Pre-seeded</span>
         </div>
-        <div className="grid grid-cols-3 gap-2">
-          {DEMO_ACCOUNTS.map((demo) => {
-            const Icon = demo.icon;
-            const isSelected = form.state.values.email === demo.email;
-            return (
-              <button
-                key={demo.role}
-                type="button"
-                onClick={() => handleSelectDemo(demo.email, demo.password)}
-                className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all ${
-                  isSelected
-                    ? "border-primary bg-primary/10 text-primary font-semibold"
-                    : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
-                }`}
-              >
-                <Icon className="size-3.5 mb-1" />
-                <span className="text-xs leading-none">{demo.label}</span>
-              </button>
-            );
-          })}
-        </div>
+        <form.Subscribe selector={(state) => state.values.email}>
+          {(currentEmail) => (
+            <div className="grid grid-cols-3 gap-2">
+              {DEMO_ACCOUNTS.map((demo) => {
+                const Icon = demo.icon;
+                const isSelected = currentEmail === demo.email;
+                return (
+                  <button
+                    key={demo.role}
+                    type="button"
+                    onClick={() => handleSelectDemo(demo.email, demo.password)}
+                    className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all ${
+                      isSelected
+                        ? "border-primary bg-primary/10 text-primary font-semibold"
+                        : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                  >
+                    <Icon className="size-3.5 mb-1" />
+                    <span className="text-xs leading-none">{demo.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </form.Subscribe>
       </div>
 
       {/* Main Login Form */}
@@ -261,6 +267,22 @@ export default function LoginForm() {
         </FieldGroup>
       </form>
 
+      {/* Divider & Google OAuth */}
+      <div className="flex flex-col gap-3">
+        <div className="relative flex items-center justify-center">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <span className="relative bg-background px-3 text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            Or continue with
+          </span>
+        </div>
+
+        <div className="flex justify-center w-full">
+          {googleLogin ?? <GoogleLoginComponent />}
+        </div>
+      </div>
+
       {/* Switch to Register */}
       <div className="text-center pt-2 border-t border-border">
         <p className="text-xs text-muted-foreground">
@@ -275,5 +297,19 @@ export default function LoginForm() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginForm({ googleLogin }: LoginFormProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-48 flex items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <LoginFormInner googleLogin={googleLogin} />
+    </Suspense>
   );
 }

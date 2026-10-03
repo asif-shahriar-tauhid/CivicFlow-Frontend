@@ -1,5 +1,6 @@
 import AuthLayout from "@/components/layouts/public/AuthLayout";
 import LoginForm from "@/components/form/login-form";
+import GoogleLoginComponent from "@/components/GoogleLogin";
 
 export const metadata = {
   title: "Sign In — CivicFlow",
@@ -13,7 +14,7 @@ export default function LoginPage() {
       subtitle="Sign in with your email or select a pre-seeded role to access your civic portal."
       mode="login"
     >
-      <LoginForm />
+      <LoginForm googleLogin={<GoogleLoginComponent />} />
     </AuthLayout>
   );
 }
