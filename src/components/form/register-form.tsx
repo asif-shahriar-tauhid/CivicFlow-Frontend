@@ -28,8 +28,23 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 
-const clientRegisterSchema = registrationZodSchema
-  .extend({
+const clientRegisterSchema = z
+  .object({
+    name: z
+      .string()
+      .min(3, "Name must be of at least 3 characters")
+      .max(50, "Name at most can have 50 characters"),
+    email: z.email(
+      "The Provided email is not an Email. Example-'someone@something.com'",
+    ),
+    contactNumber: z.string(),
+    password: z
+      .string()
+      .min(8, "Password must be 8 characters long.")
+      .regex(/[A-Z]/, "Password must contain at least one Uppercase letter.")
+      .regex(/[a-z]/, "Password must contain at least one Lowercase letter.")
+      .regex(/[0-9]/, "Password must include a number.")
+      .regex(/[^A-Za-z0-9]/, "Password must include one special character"),
     confirmPassword: z.string().min(1, "Please confirm your password."),
   })
   .refine((data) => data.password === data.confirmPassword, {

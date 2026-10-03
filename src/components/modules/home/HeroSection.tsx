@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import {
+  Activity,
   ArrowRight,
   CheckCircle2,
   FileSearch,
@@ -9,6 +10,7 @@ import {
   Send,
   Ticket,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -119,6 +121,46 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
               <FileSearch className="size-3.5 text-primary" />
               Public transparency records
             </span>
+          </div>
+
+          {/* Real-time Municipal Operations Showcase */}
+          <div className="mt-12 relative w-full max-w-4xl overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+            <div className="relative aspect-16/9 sm:aspect-21/9 w-full overflow-hidden">
+              <Image
+                src="/images/hero-civic.webp"
+                alt="Civic municipal operations and smart infrastructure in action"
+                fill
+                priority
+                className="object-cover object-center"
+                sizes="(max-width: 1024px) 100vw, 896px"
+              />
+              {/* Gradient Scrim for contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+
+              {/* Floating Live Telemetry Badge */}
+              <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 bg-card/85 p-3.5 backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Activity className="size-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs font-semibold text-foreground">
+                      Active Ward Deployment Grid
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      Solar grid sensors, automated dispatch, and field
+                      resolution crews
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                    <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    94.6% On-Time SLA
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

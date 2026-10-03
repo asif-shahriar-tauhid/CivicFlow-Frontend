@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const DEMO_ACCOUNTS = [
   {
@@ -53,7 +53,7 @@ const DEMO_ACCOUNTS = [
   },
 ];
 
-export default function LoginForm() {
+function LoginFormInner() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -275,5 +275,19 @@ export default function LoginForm() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginForm() {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-48 flex items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <LoginFormInner />
+    </Suspense>
   );
 }

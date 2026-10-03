@@ -10,6 +10,7 @@ import {
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -82,6 +83,19 @@ export default function AuthLayout({
 
       {/* Right: Architectural Civic Showcase Panel */}
       <div className="relative hidden lg:flex flex-col justify-between overflow-hidden border-l border-border bg-muted/20 p-12 lg:col-span-6 xl:col-span-7">
+        {/* Real Civic Skyline WebP Image Backdrop */}
+        <div className="absolute inset-0 pointer-events-none">
+          <Image
+            src="/images/auth-skyline.webp"
+            alt="Civic panoramic municipal skyline"
+            fill
+            priority
+            className="object-cover object-center opacity-25 dark:opacity-20"
+            sizes="(max-width: 1200px) 50vw, 60vw"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/40" />
+        </div>
+
         {/* Subtle geometric background grid */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
