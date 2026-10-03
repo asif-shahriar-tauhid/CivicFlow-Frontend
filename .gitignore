@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.gemini
+backend_overview.md
+DESIGN.md
+PRODUCT.md
+.impeccable
