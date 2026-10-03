@@ -1,47 +1,107 @@
-export default function Logo() {
+import type React from "react";
+
+interface LogoProps extends React.SVGProps<SVGSVGElement> {
+  size?: number;
+}
+
+export default function Logo({
+  size = 40,
+  className = "",
+  width,
+  height,
+  ...props
+}: LogoProps) {
+  const actualWidth = width ?? size;
+  const actualHeight = height ?? size;
+
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="40"
-      height="40"
       viewBox="0 0 40 40"
+      width={actualWidth}
+      height={actualHeight}
       fill="none"
-      id="Logo"
+      className={className}
+      aria-label="CivicFlow Logo"
+      {...props}
     >
-      <g id="logomark">
-        <path
-          d="M24 0H16V12.0632C15.9663 14.2434 14.1885 16 12.0005 16H0V24H8.68629C10.808 24 12.8429 23.1571 14.3431 21.6569L21.6569 14.3431C23.1571 12.8429 24 10.808 24 8.68629V0Z"
-          fill="url(#paint0_linear_12062_9373)"
-        />
-        <path
-          d="M16 40H24V27.9368C24.0337 25.7566 25.8115 24 27.9995 24H40V16H31.3137C29.192 16 27.1571 16.8429 25.6569 18.3431L18.3431 25.6569C16.8429 27.1571 16 29.192 16 31.3137V40Z"
-          fill="url(#paint1_linear_12062_9373)"
-        />
-      </g>
       <defs>
+        {/* Primary Civic Anchor Gradient: Deep Cobalt through Marine Teal to Emerald */}
         <linearGradient
-          id="paint0_linear_12062_9373"
-          x1="20"
-          y1="-0.997096"
-          x2="20"
-          y2="33.7931"
+          id="cf-civic-anchor"
+          x1="6"
+          y1="4"
+          x2="34"
+          y2="36"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#75D8FC" />
-          <stop offset="1" stopColor="#0072E5" />
+          <stop offset="0%" stopColor="#0072E5" />
+          <stop offset="52%" stopColor="#0D9488" />
+          <stop offset="100%" stopColor="#10B981" />
         </linearGradient>
+
+        {/* Dynamic Telemetry Pulse Gradient: Sky Blue to Luminous Electric Cyan */}
         <linearGradient
-          id="paint1_linear_12062_9373"
-          x1="20"
-          y1="-0.997096"
-          x2="20"
-          y2="33.7931"
+          id="cf-flow-stream"
+          x1="12"
+          y1="28"
+          x2="36"
+          y2="12"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#75D8FC" />
-          <stop offset="1" stopColor="#0072E5" />
+          <stop offset="0%" stopColor="#0284C7" />
+          <stop offset="55%" stopColor="#38BDF8" />
+          <stop offset="100%" stopColor="#75D8FC" />
         </linearGradient>
+
+        {/* Ambient Telemetry Glow filter */}
+        <filter
+          id="cf-telemetry-glow"
+          x="-20%"
+          y="-20%"
+          width="140%"
+          height="140%"
+        >
+          <feGaussianBlur stdDeviation="1.2" result="blur" />
+          <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
       </defs>
+
+      {/* Subtle background ambient pulse orb */}
+      <circle
+        cx="20"
+        cy="20"
+        r="17"
+        fill="#0072E5"
+        fillOpacity="0.04"
+        stroke="#38BDF8"
+        strokeOpacity="0.12"
+        strokeWidth="1"
+      />
+
+      {/* Outer Civic Governance Arc ('C' shape) */}
+      <path
+        d="M 28 6.5 C 16.5 6.5 7.5 14.5 7.5 24 C 7.5 31 12.5 35 18 35 C 23.5 35 27.5 32 29.5 28"
+        stroke="url(#cf-civic-anchor)"
+        strokeWidth="4.2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* Inner Responsive Telemetry Wave (Municipal Flow & Dispatch) */}
+      <path
+        d="M 13.5 22.5 C 13.5 17 18 13.5 23.5 13.5 C 29 13.5 33 16.8 33 21 C 33 25.2 29 28 23.5 28 C 17.5 28 14.5 23.5 19 18.5 L 30 18.5"
+        stroke="url(#cf-flow-stream)"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+
+      {/* Active Civic Telemetry Beacon Node */}
+      <g filter="url(#cf-telemetry-glow)">
+        <circle cx="33.5" cy="18.5" r="3.2" fill="#0072E5" />
+        <circle cx="33.5" cy="18.5" r="1.8" fill="#75D8FC" />
+      </g>
     </svg>
   );
 }

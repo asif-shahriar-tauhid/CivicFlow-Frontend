@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="32" height="32" fill="none">
+  <defs>
+    <linearGradient id="cf-civic-anchor-fav" x1="6" y1="4" x2="34" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0072E5" />
+      <stop offset="52%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="cf-flow-stream-fav" x1="12" y1="28" x2="36" y2="12" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="55%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#75D8FC" />
+    </linearGradient>
+  </defs>
+
+  <rect width="40" height="40" rx="9" fill="#0B132B" />
+
+  <path
+    d="M 28 7 C 16.5 7 7.5 15 7.5 24 C 7.5 31 12.5 35 18 35 C 23.5 35 27.5 32 29.5 28"
+    stroke="url(#cf-civic-anchor-fav)"
+    stroke-width="4.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <path
+    d="M 13.5 22.5 C 13.5 17 18 13.5 23.5 13.5 C 29 13.5 33 16.8 33 21 C 33 25.2 29 28 23.5 28 C 17.5 28 14.5 23.5 19 18.5 L 30 18.5"
+    stroke="url(#cf-flow-stream-fav)"
+    stroke-width="3.8"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <circle cx="33.5" cy="18.5" r="3.2" fill="#38BDF8" />
+  <circle cx="33.5" cy="18.5" r="1.6" fill="#FFFFFF" />
+</svg>
