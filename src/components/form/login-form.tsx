@@ -1,18 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { gooeyToast } from "@/components/ui/goey-toaster";
-import GoogleLoginComponent from "@/components/GoogleLogin";
-import { useLogin } from "@/hooks/auth.hooks";
-import { LoginZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
 import {
   ArrowRight,
@@ -26,6 +13,19 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type ReactNode, Suspense, useState } from "react";
+import GoogleLoginComponent from "@/components/GoogleLogin";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { useLogin } from "@/hooks/auth.hooks";
+import { LoginZodSchema } from "@/validation";
 
 const DEMO_ACCOUNTS = [
   {

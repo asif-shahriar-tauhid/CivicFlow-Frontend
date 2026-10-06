@@ -1,6 +1,6 @@
-import Logo from "@/asset/svg/Logo";
 import { ArrowUpRight, CheckCircle2, ShieldAlert } from "lucide-react";
 import Link from "next/link";
+import Logo from "@/asset/svg/Logo";
 
 const Footer = () => {
   return (

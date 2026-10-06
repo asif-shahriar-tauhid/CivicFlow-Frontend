@@ -1,6 +1,5 @@
 "use client";
 
-import Logo from "@/asset/svg/Logo";
 import {
   Activity,
   ArrowLeft,
@@ -13,6 +12,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import Logo from "@/asset/svg/Logo";
 
 interface AuthLayoutProps {
   children: ReactNode;

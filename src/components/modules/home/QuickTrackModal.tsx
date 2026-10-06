@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   AlertCircle,
   ArrowRight,
@@ -12,6 +11,7 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface QuickTrackModalProps {
   ticketId: string | null;

@@ -1,5 +1,10 @@
 "use client";
 
+import { useForm } from "@tanstack/react-form";
+import { CheckCircle2, KeyRound, Mail, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -7,16 +12,11 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
+import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useVerifyEmail } from "@/hooks/auth.hooks";
 import { emailVerificationZodSchema } from "@/validation";
-import { useForm } from "@tanstack/react-form";
-import { CheckCircle2, KeyRound, Mail, RotateCcw } from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
 
 function VerifyEmailFormInner() {
   const router = useRouter();

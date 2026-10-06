@@ -1,5 +1,5 @@
-import AuthLayout from "@/components/layouts/public/AuthLayout";
 import VerifyEmailForm from "@/components/form/verify-email-form";
+import AuthLayout from "@/components/layouts/public/AuthLayout";
 
 export const metadata = {
   title: "Verify Citizen Account — CivicFlow",

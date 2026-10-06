@@ -1,3 +1,4 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   forgotPassword,
   getMe,
@@ -8,7 +9,6 @@ import {
   userRegister,
   verifyEmail,
 } from "@/api/auth.api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGoogleOAuth = () => {
   const queryClient = useQueryClient();

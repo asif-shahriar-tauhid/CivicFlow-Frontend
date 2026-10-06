@@ -1,5 +1,5 @@
-import { getPublicStats } from "@/api/dashboard.api";
 import { useQuery } from "@tanstack/react-query";
+import { getPublicStats } from "@/api/dashboard.api";
 
 export const useGetPublicStats = () => {
   return useQuery({
