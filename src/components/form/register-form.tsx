@@ -1,18 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
-import { gooeyToast } from "@/components/ui/goey-toaster";
-import GoogleLoginComponent from "@/components/GoogleLogin";
-import { useRegister } from "@/hooks/auth.hooks";
-import { registrationZodSchema } from "@/validation";
 import { useForm } from "@tanstack/react-form";
 import {
   ArrowRight,
@@ -28,6 +15,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useState } from "react";
 import { z } from "zod";
+import GoogleLoginComponent from "@/components/GoogleLogin";
+import { Button } from "@/components/ui/button";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { gooeyToast } from "@/components/ui/goey-toaster";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { useRegister } from "@/hooks/auth.hooks";
+import { registrationZodSchema } from "@/validation";
 
 const clientRegisterSchema = z
   .object({

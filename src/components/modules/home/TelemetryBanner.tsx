@@ -1,7 +1,7 @@
 "use client";
 
-import { useGetPublicStats } from "@/hooks";
 import { Activity, Clock, FileCheck2, ShieldCheck } from "lucide-react";
+import { useGetPublicStats } from "@/hooks";
 
 export default function TelemetryBanner() {
   const { data: statsResponse, isLoading } = useGetPublicStats();

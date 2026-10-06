@@ -1,6 +1,6 @@
-import AuthLayout from "@/components/layouts/public/AuthLayout";
 import LoginForm from "@/components/form/login-form";
 import GoogleLoginComponent from "@/components/GoogleLogin";
+import AuthLayout from "@/components/layouts/public/AuthLayout";
 
 export const metadata = {
   title: "Sign In — CivicFlow",

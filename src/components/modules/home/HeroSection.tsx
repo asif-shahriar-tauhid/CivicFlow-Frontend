@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Activity,
   ArrowRight,
@@ -14,6 +13,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface HeroSectionProps {
   onSearchTicket: (ticketId: string) => void;
