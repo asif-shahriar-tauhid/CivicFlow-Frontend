@@ -516,12 +516,15 @@ function ReportIssueFormInner() {
                   key={url}
                   className="group relative aspect-square rounded-lg overflow-hidden border border-border bg-muted"
                 >
-                  <Image
-                    src={url}
-                    alt={`Evidence ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  {url ? (
+                    <Image
+                      src={url}
+                      alt={`Evidence ${idx + 1}`}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => handleRemoveFile(idx)}

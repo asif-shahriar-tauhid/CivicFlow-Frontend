@@ -574,19 +574,49 @@ export default function RequestDossierPage() {
                 Attached Evidence Photos ({ticket.attachments.length})
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {ticket.attachments.map((file, i) => (
-                  <div
-                    key={file.id}
-                    className="relative aspect-square rounded-lg overflow-hidden border border-border bg-muted"
-                  >
-                    <Image
-                      src={file.fileUrl}
-                      alt={file.fileName || `Evidence ${i + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
+                {ticket.attachments.map((file, i) => {
+                  const resolvedUrl =
+                    (typeof file?.url === "string" && file.url.trim()) ||
+                    (typeof file?.fileUrl === "string" &&
+                      file.fileUrl.trim()) ||
+                    (typeof file === "string" ? file.trim() : "");
+                  const hasValidUrl = resolvedUrl.length > 0;
+
+                  return (
+                    <div
+                      key={file?.id || `att-${i}`}
+                      className="relative aspect-square rounded-lg overflow-hidden border border-border bg-muted flex items-center justify-center"
+                    >
+                      {hasValidUrl ? (
+                        <a
+                          href={resolvedUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group relative block size-full"
+                          title={file?.fileName || `Evidence ${i + 1}`}
+                        >
+                          <Image
+                            src={resolvedUrl}
+                            alt={file?.fileName || `Evidence ${i + 1}`}
+                            fill
+                            unoptimized
+                            className="object-cover transition-transform duration-200 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <ExternalLink className="size-4 text-white drop-shadow-md" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div className="flex h-full w-full flex-col items-center justify-center p-3 text-center text-muted-foreground">
+                          <FileText className="size-6 mb-1 text-muted-foreground/60" />
+                          <span className="text-[11px] truncate max-w-full px-1 text-muted-foreground font-mono">
+                            {file?.fileName || `Attachment ${i + 1}`}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}

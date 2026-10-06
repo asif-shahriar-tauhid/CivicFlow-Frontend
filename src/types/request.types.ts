@@ -41,10 +41,14 @@ export interface Department {
 
 export interface RequestAttachment {
   id: string;
-  fileUrl: string;
-  fileType: string;
+  url?: string;
+  fileUrl?: string;
   fileName: string;
+  mimeType?: string;
+  fileType?: string;
   fileSize?: number;
+  resourceType?: string;
+  format?: string | null;
   caption?: string | null;
   createdAt: string;
 }
