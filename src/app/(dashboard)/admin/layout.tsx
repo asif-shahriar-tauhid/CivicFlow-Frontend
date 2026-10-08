@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LogOut,
   Shield,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -74,6 +75,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   <span>Overview</span>
                 </Link>
                 <Link
+                  href="/admin/users"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-4xl text-xs font-medium transition-colors ${
+                    pathname?.startsWith("/admin/users")
+                      ? "bg-primary/10 text-primary font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                  }`}
+                >
+                  <Users className="size-3.5" />
+                  <span>Users</span>
+                </Link>
+                <Link
                   href="/admin/payments"
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-4xl text-xs font-medium transition-colors ${
                     pathname?.startsWith("/admin/payments")
@@ -86,6 +98,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 </Link>
               </nav>
             </div>
+
 
             <div className="flex items-center gap-3">
               {/* Role Clearance & Profile Trigger */}

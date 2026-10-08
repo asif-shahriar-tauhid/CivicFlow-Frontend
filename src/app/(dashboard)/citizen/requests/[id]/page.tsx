@@ -17,32 +17,40 @@ import {
   MapPin,
   MessageSquare,
   RotateCcw,
+  Route,
   Shield,
   ShieldAlert,
   ShieldCheck,
   Star,
+  Trash2,
   User,
   X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { RequestFeePanel } from "@/components/modules/payments";
-import { EditTicketModal } from "@/components/modules/requests";
+import {
+  DeleteTicketModal,
+  EditTicketModal,
+} from "@/components/modules/requests";
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { useCurrentUser } from "@/hooks/auth.hooks";
 import {
   useConfirmServiceRequest,
   useGetServiceRequestById,
   useReopenServiceRequest,
+  useRouteServiceRequest,
   useSubmitFeedback,
 } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
+
 
 // Fallback mock detail for preview when API is idle
 const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
@@ -130,6 +138,7 @@ const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
 };
 
 export default function RequestDossierPage() {
+  const router = useRouter();
   const params = useParams();
   const requestId = (params?.id as string) || "";
 
@@ -142,11 +151,15 @@ export default function RequestDossierPage() {
 
   // Verification & Action States
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
   const [reopenReason, setReopenReason] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // User Role & Permissions
+  const { role } = useCurrentUser();
 
   // Mutations
   const { mutate: confirmResolution, isPending: isConfirming } =
@@ -155,8 +168,36 @@ export default function RequestDossierPage() {
     useReopenServiceRequest();
   const { mutate: submitFeedback, isPending: isSubmittingFeedback } =
     useSubmitFeedback();
+  const { mutateAsync: routeRequest, isPending: isRerouting } =
+    useRouteServiceRequest();
 
   // Handlers
+  const handleReroute = async () => {
+    if (!ticket?.id) return;
+    try {
+      const res = await routeRequest(ticket.id);
+      const updated = res?.data;
+      const deptName = updated?.department?.name;
+      const isAssigned =
+        updated?.routingStatus === "ASSIGNED" && Boolean(deptName);
+
+      if (isAssigned) {
+        gooeyToast.success("Request Routed", {
+          description: `Ticket ${ticket.requestNumber} successfully assigned to ${deptName}.`,
+        });
+      } else {
+        gooeyToast.info("Manual Review Flagged", {
+          description: `Ticket ${ticket.requestNumber} could not be auto-routed and remains in Manual Review.`,
+        });
+      }
+      refetch();
+    } catch (err: any) {
+      gooeyToast.error("Re-route Failed", {
+        description: err?.message || "Failed to re-evaluate routing rules.",
+      });
+    }
+  };
+
   const handleConfirmResolution = () => {
     confirmResolution(ticket.id, {
       onSuccess: () => {
@@ -284,19 +325,56 @@ export default function RequestDossierPage() {
                 )}
               </div>
 
-              {ticket.status === "SUBMITTED" && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-                >
-                  <Edit3 className="size-3.5" />
-                  <span>Edit Ticket</span>
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {role === "ADMIN" && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReroute}
+                    disabled={isRerouting}
+                    className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    title="Re-evaluate automated routing rules for this ticket"
+                  >
+                    {isRerouting ? (
+                      <>
+                        <Spinner className="size-3.5" />
+                        <span>Routing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Route className="size-3.5" />
+                        <span>Re-route Ticket</span>
+                      </>
+                    )}
+                  </Button>
+                )}
+
+                {ticket.status === "SUBMITTED" && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    >
+                      <Edit3 className="size-3.5" />
+                      <span>Edit</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="gap-1.5 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    >
+                      <Trash2 className="size-3.5" />
+                      <span>Cancel Ticket</span>
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
+
 
           {/* Department & Meta pill tags */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -336,15 +414,26 @@ export default function RequestDossierPage() {
               </p>
             </div>
           </div>
-          <Button
-            variant="default"
-            size="sm"
-            onClick={() => setIsEditModalOpen(true)}
-            className="w-full sm:w-auto gap-2 rounded-4xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 shadow-xs"
-          >
-            <Edit3 className="size-4" />
-            <span>Edit Grievance</span>
-          </Button>
+          <div className="flex items-center gap-2 w-full sm:w-auto shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsDeleteModalOpen(true)}
+              className="w-full sm:w-auto gap-1.5 rounded-4xl border-destructive/30 text-destructive hover:bg-destructive/10 text-xs"
+            >
+              <Trash2 className="size-3.5" />
+              <span>Cancel Request</span>
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setIsEditModalOpen(true)}
+              className="w-full sm:w-auto gap-2 rounded-4xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 shadow-xs text-xs"
+            >
+              <Edit3 className="size-4" />
+              <span>Edit Grievance</span>
+            </Button>
+          </div>
         </div>
       )}
 
@@ -764,6 +853,16 @@ export default function RequestDossierPage() {
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onSuccess={() => refetch()}
+      />
+
+      {/* DELETE / CANCEL TICKET MODAL */}
+      <DeleteTicketModal
+        ticket={ticket}
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onSuccess={() => {
+          router.push("/citizen");
+        }}
       />
     </div>
   );

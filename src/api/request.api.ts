@@ -77,4 +77,13 @@ export const submitRequestFeedback = async (
   });
 };
 
+export const routeServiceRequest = async (
+  requestId: string,
+): Promise<ApiResponse<ServiceRequest>> => {
+  return apiClient(`/requests/${requestId}/route`, {
+    method: "POST",
+  });
+};
+
 export { initiateRequestPayment } from "./payment.api";
+

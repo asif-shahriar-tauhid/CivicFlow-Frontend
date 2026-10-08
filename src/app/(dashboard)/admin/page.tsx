@@ -9,18 +9,31 @@ import {
   Clock,
   Layers,
   RefreshCw,
+  Route,
   Shield,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { AdminAnalyticsBreakdown } from "@/components/modules/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetPublicStats } from "@/hooks/dashboard.hooks";
-import { useGetServiceRequests } from "@/hooks/request.hooks";
+import {
+  useGetServiceRequests,
+  useRouteServiceRequest,
+} from "@/hooks/request.hooks";
 
 export default function AdminDashboardPage() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [selectedDeptId, setSelectedDeptId] = useState<string | undefined>(
+    undefined,
+  );
+  const [reroutingId, setReroutingId] = useState<string | null>(null);
+  const [isBatchRouting, setIsBatchRouting] = useState(false);
+
   const {
     data: statsData,
     isLoading: statsLoading,
@@ -32,18 +45,105 @@ export default function AdminDashboardPage() {
     refetch: refetchRequests,
   } = useGetServiceRequests();
 
+  const { mutateAsync: routeRequest } = useRouteServiceRequest();
+
   const stats = statsData?.data;
   const requests = requestsData?.data || [];
 
-  const filteredRequests =
-    filterStatus === "ALL"
-      ? requests
-      : requests.filter((r) => r.status === filterStatus);
+  const unroutedCount = requests.filter(
+    (r) => !r.departmentId || r.routingStatus === "MANUAL_REVIEW",
+  ).length;
+
+  const filteredRequests = requests.filter((r) => {
+    if (filterStatus === "UNROUTED") {
+      if (r.departmentId && r.routingStatus !== "MANUAL_REVIEW") return false;
+    } else if (filterStatus !== "ALL" && r.status !== filterStatus) {
+      return false;
+    }
+    if (selectedDeptId !== undefined) {
+      if (selectedDeptId === "" && r.departmentId) return false;
+      if (selectedDeptId !== "" && r.departmentId !== selectedDeptId)
+        return false;
+    }
+    return true;
+  });
 
   const handleRefresh = () => {
     refetchStats();
     refetchRequests();
   };
+
+  const handleReroute = async (requestId: string, requestNumber: string) => {
+    try {
+      setReroutingId(requestId);
+      const res = await routeRequest(requestId);
+      const updated = res?.data;
+      const deptName = updated?.department?.name;
+      const isAssigned =
+        updated?.routingStatus === "ASSIGNED" && Boolean(deptName);
+
+      if (isAssigned) {
+        gooeyToast.success("Request Routed", {
+          description: `Ticket ${requestNumber} successfully assigned to ${deptName}.`,
+        });
+      } else {
+        gooeyToast.info("Manual Review Flagged", {
+          description: `Ticket ${requestNumber} could not be auto-routed by current rules and remains in Manual Review.`,
+        });
+      }
+    } catch (error: any) {
+      gooeyToast.error("Re-route Failed", {
+        description:
+          error?.data?.message ||
+          error?.message ||
+          `Unable to re-evaluate routing rules for ${requestNumber}.`,
+      });
+    } finally {
+      setReroutingId(null);
+    }
+  };
+
+  const handleRerouteAllUnrouted = async () => {
+    const unrouted = requests.filter(
+      (r) => !r.departmentId || r.routingStatus === "MANUAL_REVIEW",
+    );
+    if (unrouted.length === 0) {
+      gooeyToast.info("Queue Up To Date", {
+        description: "All tickets are already routed to departments.",
+      });
+      return;
+    }
+
+    try {
+      setIsBatchRouting(true);
+      let successCount = 0;
+      let newlyAssignedCount = 0;
+
+      for (const req of unrouted) {
+        try {
+          const res = await routeRequest(req.id);
+          successCount++;
+          if (res?.data?.department?.name) {
+            newlyAssignedCount++;
+          }
+        } catch {
+          // Continue processing remaining requests
+        }
+      }
+
+      gooeyToast.success("Batch Routing Complete", {
+        description: `Re-evaluated ${successCount} requests. ${newlyAssignedCount} tickets matched and routed to departments.`,
+      });
+    } catch (error: any) {
+      gooeyToast.error("Batch Routing Issue", {
+        description:
+          error?.message || "Encountered an issue running batch routing.",
+      });
+    } finally {
+      setIsBatchRouting(false);
+    }
+  };
+
 
   return (
     <div className="space-y-8">
@@ -68,6 +168,17 @@ export default function AdminDashboardPage() {
           <Button
             variant="outline"
             size="sm"
+            render={<Link href="/admin/users" />}
+            nativeButton={false}
+            className="gap-1.5 rounded-4xl"
+          >
+            <Users className="size-3.5" />
+            <span>Personnel Directory</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
             render={<Link href="/admin/payments" />}
             nativeButton={false}
             className="gap-1.5 rounded-4xl"
@@ -75,6 +186,7 @@ export default function AdminDashboardPage() {
             <CircleDollarSign className="size-3.5" />
             <span>Revenue Ledger</span>
           </Button>
+
 
           <Button
             variant="outline"
@@ -179,6 +291,12 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
+      {/* Full Admin Analytics & SLA Breakdown Section */}
+      <AdminAnalyticsBreakdown
+        selectedDepartmentId={selectedDeptId}
+        onDepartmentFilterChange={(deptId) => setSelectedDeptId(deptId)}
+      />
+
       {/* Admin Modules Quick Grid */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5">
@@ -243,9 +361,21 @@ export default function AdminDashboardPage() {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-lg font-bold text-foreground">
-              Municipal Service Influx
-            </h2>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-foreground">
+                Municipal Service Influx
+              </h2>
+              {selectedDeptId !== undefined && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedDeptId(undefined)}
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold hover:bg-primary/20 transition-colors"
+                >
+                  <span>Dept Filter Active</span>
+                  <span className="font-bold">×</span>
+                </button>
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
               Complete cross-departmental incident queue with role-scoped
               privileges.
@@ -253,21 +383,42 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-1.5">
-            {["ALL", "SUBMITTED", "IN_PROGRESS", "RESOLVED", "CLOSED"].map(
-              (status) => (
-                <button
-                  type="button"
-                  key={status}
-                  onClick={() => setFilterStatus(status)}
-                  className={`px-3 py-1 rounded-4xl text-xs font-medium transition-colors ${
-                    filterStatus === status
-                      ? "bg-primary text-primary-foreground font-semibold"
-                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                  }`}
-                >
-                  {status}
-                </button>
-              ),
+            {[
+              "ALL",
+              "UNROUTED",
+              "SUBMITTED",
+              "IN_PROGRESS",
+              "RESOLVED",
+              "CLOSED",
+            ].map((status) => (
+              <button
+                type="button"
+                key={status}
+                onClick={() => setFilterStatus(status)}
+                className={`px-3 py-1 rounded-4xl text-xs font-medium transition-colors ${
+                  filterStatus === status
+                    ? "bg-primary text-primary-foreground font-semibold"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {status === "UNROUTED" ? `UNROUTED (${unroutedCount})` : status}
+              </button>
+            ))}
+            {unroutedCount > 0 && (
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={handleRerouteAllUnrouted}
+                disabled={isBatchRouting}
+                className="gap-1.5 rounded-4xl border-primary/30 text-primary hover:bg-primary/10 text-xs font-medium h-7 px-3 ml-1"
+              >
+                {isBatchRouting ? (
+                  <Spinner className="size-3" />
+                ) : (
+                  <Route className="size-3" />
+                )}
+                <span>Auto-Route All ({unroutedCount})</span>
+              </Button>
             )}
           </div>
         </div>
@@ -296,10 +447,11 @@ export default function AdminDashboardPage() {
                   <tr>
                     <th className="px-4 py-3 font-medium">Tracking ID</th>
                     <th className="px-4 py-3 font-medium">Title & Location</th>
+                    <th className="px-4 py-3 font-medium">Department & Routing</th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Priority</th>
                     <th className="px-4 py-3 font-medium">Created</th>
-                    <th className="px-4 py-3 font-medium text-right">Action</th>
+                    <th className="px-4 py-3 font-medium text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -320,6 +472,35 @@ export default function AdminDashboardPage() {
                             request.location ||
                             "Location logged"}
                         </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {request.department?.name ? (
+                          <div className="space-y-1">
+                            <div
+                              className="flex items-center gap-1.5 font-medium text-foreground max-w-[170px] truncate"
+                              title={request.department.name}
+                            >
+                              <Building2 className="size-3 text-primary shrink-0" />
+                              <span className="truncate">
+                                {request.department.name}
+                              </span>
+                            </div>
+                            <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-mono uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-semibold">
+                              Assigned
+                            </span>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <span className="text-[11px] text-muted-foreground italic">
+                              Unassigned
+                            </span>
+                            <div>
+                              <span className="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-mono uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-semibold">
+                                Manual Review
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <Badge
@@ -356,18 +537,45 @@ export default function AdminDashboardPage() {
                         )}
                       </td>
                       <td className="px-4 py-3 text-right">
-                        <Button
-                          variant="ghost"
-                          size="xs"
-                          render={
-                            <Link href={`/citizen/requests/${request.id}`} />
-                          }
-                          nativeButton={false}
-                          className="gap-1 text-primary hover:text-primary"
-                        >
-                          <span>Review</span>
-                          <ArrowRight className="size-3" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <Button
+                            variant="outline"
+                            size="xs"
+                            onClick={() =>
+                              handleReroute(request.id, request.requestNumber)
+                            }
+                            disabled={
+                              reroutingId === request.id || isBatchRouting
+                            }
+                            className="gap-1 rounded-4xl border-primary/25 text-primary hover:bg-primary/10 hover:text-primary font-medium text-[11px] h-7 px-2.5 shadow-2xs transition-all"
+                            title="Re-evaluate automated routing rules for this ticket"
+                          >
+                            {reroutingId === request.id ? (
+                              <>
+                                <Spinner className="size-3" />
+                                <span>Routing...</span>
+                              </>
+                            ) : (
+                              <>
+                                <Route className="size-3" />
+                                <span>Re-route</span>
+                              </>
+                            )}
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            render={
+                              <Link href={`/citizen/requests/${request.id}`} />
+                            }
+                            nativeButton={false}
+                            className="gap-1 text-muted-foreground hover:text-foreground h-7 px-2"
+                          >
+                            <span>Review</span>
+                            <ArrowRight className="size-3" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   ))}
