@@ -185,3 +185,18 @@ export interface CreateServiceRequestInput {
   categoryId?: string;
   files?: File[];
 }
+
+export interface UpdateServiceRequestInput {
+  title?: string;
+  description?: string;
+  caseType?: CaseType;
+  priority?: RequestPriority;
+  location?: string | null;
+  address?: string | null;
+  ward?: string | null;
+  zone?: string | null;
+  landmark?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  categoryId?: string | null;
+}

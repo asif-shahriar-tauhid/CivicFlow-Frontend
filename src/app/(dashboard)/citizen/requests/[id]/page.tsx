@@ -7,6 +7,7 @@ import {
   Calendar,
   CheckCircle2,
   Clock,
+  Edit3,
   ExternalLink,
   FileCheck2,
   FileText,
@@ -27,6 +28,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { RequestFeePanel } from "@/components/modules/payments";
+import { EditTicketModal } from "@/components/modules/requests";
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
@@ -39,7 +42,6 @@ import {
   useReopenServiceRequest,
   useSubmitFeedback,
 } from "@/hooks/request.hooks";
-import { RequestFeePanel } from "@/components/modules/payments";
 import type { ServiceRequest } from "@/types/request.types";
 
 // Fallback mock detail for preview when API is idle
@@ -139,6 +141,7 @@ export default function RequestDossierPage() {
   const ticket = response?.data || MOCK_FALLBACK_DOSSIER;
 
   // Verification & Action States
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
   const [reopenReason, setReopenReason] = useState("");
   const [rating, setRating] = useState(5);
@@ -268,15 +271,29 @@ export default function RequestDossierPage() {
               </h1>
             </div>
 
-            <div className="flex flex-col sm:items-end gap-1 text-xs text-muted-foreground">
-              <span className="font-mono text-[11px]">
-                Filed: {new Date(ticket.createdAt).toLocaleString()}
-              </span>
-              {ticket.slaDueAt && (
-                <span className="font-mono text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <Clock className="size-3" />
-                  SLA Due: {new Date(ticket.slaDueAt).toLocaleString()}
+            <div className="flex flex-col sm:items-end gap-2 text-xs text-muted-foreground">
+              <div className="flex flex-col sm:items-end gap-1">
+                <span className="font-mono text-[11px]">
+                  Filed: {new Date(ticket.createdAt).toLocaleString()}
                 </span>
+                {ticket.slaDueAt && (
+                  <span className="font-mono text-[11px] font-semibold text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                    <Clock className="size-3" />
+                    SLA Due: {new Date(ticket.slaDueAt).toLocaleString()}
+                  </span>
+                )}
+              </div>
+
+              {ticket.status === "SUBMITTED" && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                >
+                  <Edit3 className="size-3.5" />
+                  <span>Edit Ticket</span>
+                </Button>
               )}
             </div>
           </div>
@@ -300,6 +317,36 @@ export default function RequestDossierPage() {
           </div>
         </div>
       </div>
+
+      {/* CITIZEN SUBMITTED TRIAGE BANNER */}
+      {ticket.status === "SUBMITTED" && (
+        <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3.5">
+            <div className="flex size-9 items-center justify-center rounded-full bg-sky-600 text-white shrink-0 mt-0.5">
+              <Info className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-foreground">
+                Ticket In Triage Queue — Editable Mode Active
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                Your grievance is currently queued for department triage. You
+                can refine the title, description, category, priority, street
+                address, and GPS coordinates before dispatch.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={() => setIsEditModalOpen(true)}
+            className="w-full sm:w-auto gap-2 rounded-4xl bg-primary hover:bg-primary/90 text-primary-foreground shrink-0 shadow-xs"
+          >
+            <Edit3 className="size-4" />
+            <span>Edit Grievance</span>
+          </Button>
+        </div>
+      )}
 
       {/* THE CITIZEN VERIFICATION LOOP BANNER */}
       {isResolved && (
@@ -710,6 +757,14 @@ export default function RequestDossierPage() {
           </div>
         </div>
       )}
+
+      {/* EDIT TICKET MODAL */}
+      <EditTicketModal
+        ticket={ticket}
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={() => refetch()}
+      />
     </div>
   );
 }
