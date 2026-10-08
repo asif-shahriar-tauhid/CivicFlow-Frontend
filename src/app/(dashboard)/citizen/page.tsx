@@ -7,6 +7,7 @@ import {
   CheckCircle2,
   Clock,
   Compass,
+  Edit3,
   FilePlus2,
   Filter,
   MapPin,
@@ -19,6 +20,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { EditTicketModal } from "@/components/modules/requests";
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -116,6 +118,9 @@ const DEMO_CITIZEN_TICKETS: Partial<ServiceRequest>[] = [
 export default function CitizenPortalPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  const [editingTicket, setEditingTicket] = useState<ServiceRequest | null>(
+    null,
+  );
 
   const { data: response, isLoading, refetch } = useGetServiceRequests();
 
@@ -462,6 +467,18 @@ export default function CitizenPortalPage() {
 
                 {/* Right Action Button Column */}
                 <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t border-border/60 pt-3 md:border-0 md:pt-0">
+                  {ticket.status === "SUBMITTED" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingTicket(ticket)}
+                      className="gap-1.5 rounded-4xl border-primary/30 text-primary hover:bg-primary/10 text-xs"
+                    >
+                      <Edit3 className="size-3.5" />
+                      <span>Edit</span>
+                    </Button>
+                  )}
+
                   {isResolved ? (
                     <Button
                       variant="default"
@@ -491,6 +508,14 @@ export default function CitizenPortalPage() {
           })}
         </div>
       )}
+
+      {/* Edit Ticket Modal */}
+      <EditTicketModal
+        ticket={editingTicket}
+        isOpen={Boolean(editingTicket)}
+        onClose={() => setEditingTicket(null)}
+        onSuccess={() => refetch()}
+      />
     </div>
   );
 }

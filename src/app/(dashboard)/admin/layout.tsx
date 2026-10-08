@@ -8,9 +8,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import Logo from "@/asset/svg/Logo";
 import { RoleGuard } from "@/components/common/RoleGuard";
+import { UserAvatar } from "@/components/common/UserAvatar";
+import { ProfileSettingsModal } from "@/components/modules/profile/ProfileSettingsModal";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useLogout } from "@/hooks/auth.hooks";
@@ -19,8 +21,10 @@ import { useAuth } from "@/providers/authProvider";
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user } = useAuth();
   const { mutate: logout, isPending: logoutPending } = useLogout();
+
 
   const handleLogout = () => {
     logout(undefined, {
@@ -84,16 +88,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Role Clearance Pill */}
-              <div className="flex items-center gap-2 rounded-4xl border border-primary/20 bg-primary/5 px-3 py-1 text-xs">
-                <Shield className="size-3.5 text-primary" />
+              {/* Role Clearance & Profile Trigger */}
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(true)}
+                title="Profile & Avatar Settings"
+                className="flex items-center gap-2 rounded-4xl border border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 px-2.5 py-1 text-xs transition-all cursor-pointer group"
+              >
+                <UserAvatar user={user} size="xs" />
                 <span className="font-semibold text-primary uppercase text-[11px] tracking-wide">
                   Super Admin
                 </span>
-                <span className="text-muted-foreground text-[11px] hidden sm:inline">
+                <span className="text-muted-foreground text-[11px] hidden sm:inline group-hover:text-foreground transition-colors truncate max-w-[140px]">
                   • {user?.email || "Administrator"}
                 </span>
-              </div>
+              </button>
 
               {/* Sign out */}
               <Button
@@ -125,7 +134,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </span>
           </div>
         </footer>
+
+        {/* Profile & Avatar Settings Modal */}
+        <ProfileSettingsModal
+          user={user}
+          isOpen={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+        />
       </div>
     </RoleGuard>
   );
 }
+
