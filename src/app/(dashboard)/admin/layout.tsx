@@ -3,6 +3,7 @@
 import {
   Building2,
   CircleDollarSign,
+  ClockAlert,
   GitBranch,
   LayoutDashboard,
   Users,
@@ -50,6 +51,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               icon: Users,
               isActive: (path) => path.startsWith("/admin/users"),
               description: "RBAC governance and personnel roster",
+            },
+            {
+              label: "SLA Overdue Desk",
+              href: "/admin/sla",
+              icon: ClockAlert,
+              isActive: (path) => path.startsWith("/admin/sla"),
+              description: "Overdue breaches & supervisory escalation",
             },
             {
               label: "Municipal Revenue",
