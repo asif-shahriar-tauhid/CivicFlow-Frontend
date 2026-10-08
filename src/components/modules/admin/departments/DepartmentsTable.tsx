@@ -9,6 +9,7 @@ import {
   GitBranch,
   Inbox,
   RotateCcw,
+  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ interface DepartmentsTableProps {
   onEdit: (dept: Department) => void;
   onArchive: (dept: Department) => void;
   onRestore: (dept: Department) => void;
+  onManageRoster: (dept: Department) => void;
 }
 
 export function DepartmentsTable({
@@ -26,6 +28,7 @@ export function DepartmentsTable({
   onEdit,
   onArchive,
   onRestore,
+  onManageRoster,
 }: DepartmentsTableProps) {
   return (
     <div className="overflow-hidden rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md shadow-sm">
@@ -142,6 +145,18 @@ export function DepartmentsTable({
                   {/* Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onManageRoster(dept)}
+                        className="h-7 px-2 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+                        title="Manage staff roster"
+                      >
+                        <Users className="h-3 w-3" />
+                        <span>Roster</span>
+                      </Button>
+
                       <Button
                         type="button"
                         variant="outline"

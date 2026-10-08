@@ -1,6 +1,7 @@
 export interface DepartmentCount {
   routingRules?: number;
   serviceRequests?: number;
+  staff?: number;
 }
 
 export interface Department {

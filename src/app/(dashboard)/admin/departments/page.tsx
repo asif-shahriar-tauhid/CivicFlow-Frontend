@@ -20,6 +20,7 @@ import {
   DepartmentCreateModal,
   DepartmentEditModal,
   DepartmentRestoreModal,
+  DepartmentStaffRosterModal,
   DepartmentsTable,
   DepartmentTelemetryHeader,
 } from "@/components/modules/admin/departments";
@@ -47,6 +48,9 @@ export default function AdminDepartmentsPage() {
     useState<Department | null>(null);
   const [restoringDepartment, setRestoringDepartment] =
     useState<Department | null>(null);
+  const [rosterDepartment, setRosterDepartment] = useState<Department | null>(
+    null,
+  );
 
   // Fetch departments (requesting all including archived so admin can view/manage both)
   const {
@@ -352,6 +356,7 @@ export default function AdminDepartmentsPage() {
               onEdit={(d) => setEditingDepartment(d)}
               onArchive={(d) => setArchivingDepartment(d)}
               onRestore={(d) => setRestoringDepartment(d)}
+              onManageRoster={(d) => setRosterDepartment(d)}
             />
           ))}
         </div>
@@ -361,10 +366,18 @@ export default function AdminDepartmentsPage() {
           onEdit={(d) => setEditingDepartment(d)}
           onArchive={(d) => setArchivingDepartment(d)}
           onRestore={(d) => setRestoringDepartment(d)}
+          onManageRoster={(d) => setRosterDepartment(d)}
         />
       )}
 
       {/* 5. Modals */}
+      <DepartmentStaffRosterModal
+        department={rosterDepartment}
+        isOpen={Boolean(rosterDepartment)}
+        onClose={() => setRosterDepartment(null)}
+        onSuccess={() => refetch()}
+      />
+
       <DepartmentCreateModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}

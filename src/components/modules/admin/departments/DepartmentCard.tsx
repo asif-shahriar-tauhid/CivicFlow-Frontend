@@ -12,6 +12,7 @@ import {
   Inbox,
   RotateCcw,
   Sparkles,
+  Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ interface DepartmentCardProps {
   onEdit: (dept: Department) => void;
   onArchive: (dept: Department) => void;
   onRestore: (dept: Department) => void;
+  onManageRoster: (dept: Department) => void;
 }
 
 export function DepartmentCard({
@@ -29,6 +31,7 @@ export function DepartmentCard({
   onEdit,
   onArchive,
   onRestore,
+  onManageRoster,
 }: DepartmentCardProps) {
   const isArchived = Boolean(department.isArchived || !department.isActive);
   const rulesCount = department._count?.routingRules ?? 0;
@@ -151,6 +154,18 @@ export function DepartmentCard({
           </div>
 
           <div className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => onManageRoster(department)}
+              className="h-8 px-2.5 text-xs gap-1 border-primary/30 text-primary hover:bg-primary/10"
+              title="Manage department staff roster"
+            >
+              <Users className="h-3.5 w-3.5" />
+              <span>Roster</span>
+            </Button>
+
             <Button
               type="button"
               variant="outline"

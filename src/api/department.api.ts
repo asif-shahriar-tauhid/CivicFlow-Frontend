@@ -1,4 +1,5 @@
 import apiClient from "@/lib/apiClient";
+import type { User } from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 import type {
   CreateDepartmentPayload,
@@ -62,5 +63,18 @@ export const unarchiveDepartment = async (
 ): Promise<ApiResponse<Department>> => {
   return apiClient(`/departments/${departmentId}/unarchive`, {
     method: "PATCH",
+  });
+};
+
+/**
+ * Assign or reassign a staff user to a department (or null to unassign)
+ */
+export const assignStaffDepartment = async (
+  userId: string,
+  departmentId: string | null,
+): Promise<ApiResponse<User>> => {
+  return apiClient(`/staff/${userId}/department`, {
+    method: "PATCH",
+    body: { departmentId },
   });
 };

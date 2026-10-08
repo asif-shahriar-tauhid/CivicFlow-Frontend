@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   archiveDepartment,
+  assignStaffDepartment,
   createDepartment,
   getDepartments,
   unarchiveDepartment,
@@ -129,6 +130,47 @@ export const useUnarchiveDepartment = () => {
           error?.data?.message ||
           error?.message ||
           "An unexpected error occurred while restoring department.",
+      });
+    },
+  });
+};
+
+/**
+ * Hook to assign or reassign a staff user to a department (or null to unassign)
+ */
+export const useAssignStaffDepartment = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      userId,
+      departmentId,
+    }: {
+      userId: string;
+      departmentId: string | null;
+    }) => assignStaffDepartment(userId, departmentId),
+    onSuccess: (response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["departments"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+
+      const deptName = response.data?.department?.name;
+      if (variables.departmentId && deptName) {
+        gooeyToast.success("Staff Roster Updated", {
+          description: `Assigned ${response.data.name} to ${deptName}.`,
+        });
+      } else {
+        gooeyToast.info("Staff Unassigned", {
+          description: `Removed ${response.data.name} from department roster.`,
+        });
+      }
+    },
+    onError: (error: any) => {
+      gooeyToast.error("Roster Assignment Failed", {
+        description:
+          error?.data?.message ||
+          error?.message ||
+          "Could not update staff department assignment.",
       });
     },
   });
