@@ -7,9 +7,9 @@ import {
   getServiceRequests,
   reopenServiceRequest,
   routeServiceRequest,
-  submitRequestFeedback,
   updateServiceRequest,
 } from "@/api/request.api";
+import { submitRequestFeedback } from "@/api/feedback.api";
 import type { RequestFilterParams } from "@/types/request.types";
 
 export const useCreateServiceRequest = () => {
@@ -138,4 +138,3 @@ export const useRouteServiceRequest = () => {
 };
 
 export { useInitiatePayment } from "./payment.hooks";
-

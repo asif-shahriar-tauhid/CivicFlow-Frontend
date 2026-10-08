@@ -4,7 +4,9 @@ import {
   Building2,
   CircleDollarSign,
   ClockAlert,
+  Database,
   GitBranch,
+  HeartHandshake,
   LayoutDashboard,
   Users,
 } from "lucide-react";
@@ -65,6 +67,25 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               icon: CircleDollarSign,
               isActive: (path) => path.startsWith("/admin/payments"),
               description: "bKash payments ledger and financial velocity",
+            },
+          ],
+        },
+        {
+          title: "Governance & Quality",
+          items: [
+            {
+              label: "System Audit Ledger",
+              href: "/admin/audit-logs",
+              icon: Database,
+              isActive: (path) => path.startsWith("/admin/audit-logs"),
+              description: "Immutable ledger of all mutations & clearances",
+            },
+            {
+              label: "Satisfaction Reports",
+              href: "/admin/feedback-reports",
+              icon: HeartHandshake,
+              isActive: (path) => path.startsWith("/admin/feedback-reports"),
+              description: "Citizen feedback, ratings & quality telemetry",
             },
           ],
         },
