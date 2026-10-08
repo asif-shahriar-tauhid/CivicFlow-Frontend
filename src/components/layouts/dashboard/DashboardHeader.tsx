@@ -52,8 +52,10 @@ export function DashboardHeader({
   // Determine current section title based on pathname
   const getContextTitle = () => {
     if (pathname === "/admin") return "Overview & Triage";
-    if (pathname?.startsWith("/admin/users")) return "Personnel & Citizen Directory";
-    if (pathname?.startsWith("/admin/payments")) return "Municipal Revenue & Payments";
+    if (pathname?.startsWith("/admin/users"))
+      return "Personnel & Citizen Directory";
+    if (pathname?.startsWith("/admin/payments"))
+      return "Municipal Revenue & Payments";
     if (pathname === "/citizen") return "My Grievances";
     if (pathname?.startsWith("/citizen/requests")) return "Grievance Dossier";
     if (pathname?.startsWith("/citizen/payments")) return "Invoices & Billing";

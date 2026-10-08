@@ -68,4 +68,3 @@ export const softDeleteUser = async (
     method: "DELETE",
   });
 };
-

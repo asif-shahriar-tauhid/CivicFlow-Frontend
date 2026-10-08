@@ -94,7 +94,10 @@ export function UserDeactivateModal({
             <div className="flex items-center justify-between">
               <span className="font-semibold text-foreground">{user.name}</span>
               <div className="flex items-center gap-1.5">
-                <Badge variant="outline" className="text-[10px] uppercase font-mono">
+                <Badge
+                  variant="outline"
+                  className="text-[10px] uppercase font-mono"
+                >
                   {user.role}
                 </Badge>
                 <Badge

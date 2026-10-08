@@ -144,7 +144,6 @@ export default function AdminDashboardPage() {
     }
   };
 
-
   return (
     <div className="space-y-8">
       {/* Executive Header */}
@@ -186,7 +185,6 @@ export default function AdminDashboardPage() {
             <CircleDollarSign className="size-3.5" />
             <span>Revenue Ledger</span>
           </Button>
-
 
           <Button
             variant="outline"
@@ -447,11 +445,15 @@ export default function AdminDashboardPage() {
                   <tr>
                     <th className="px-4 py-3 font-medium">Tracking ID</th>
                     <th className="px-4 py-3 font-medium">Title & Location</th>
-                    <th className="px-4 py-3 font-medium">Department & Routing</th>
+                    <th className="px-4 py-3 font-medium">
+                      Department & Routing
+                    </th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Priority</th>
                     <th className="px-4 py-3 font-medium">Created</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    <th className="px-4 py-3 font-medium text-right">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">

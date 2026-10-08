@@ -120,7 +120,8 @@ export function RequestFeePanel({
                   Cleared:{" "}
                   <span className="font-mono text-muted-foreground">
                     {formatDateTime(
-                      effectivePayment.completedAt || effectivePayment.createdAt,
+                      effectivePayment.completedAt ||
+                        effectivePayment.createdAt,
                     )}
                   </span>
                 </span>
@@ -152,7 +153,9 @@ export function RequestFeePanel({
             <Button
               variant="default"
               size="sm"
-              render={<Link href={`/citizen/payments/${effectivePayment.id}`} />}
+              render={
+                <Link href={`/citizen/payments/${effectivePayment.id}`} />
+              }
               nativeButton={false}
               className="gap-1.5 rounded-4xl text-xs shadow-xs"
             >

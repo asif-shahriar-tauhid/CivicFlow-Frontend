@@ -51,7 +51,6 @@ import {
 } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
-
 // Fallback mock detail for preview when API is idle
 const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
   id: "demo-1",
@@ -374,7 +373,6 @@ export default function RequestDossierPage() {
               </div>
             </div>
           </div>
-
 
           {/* Department & Meta pill tags */}
           <div className="flex flex-wrap items-center gap-2 text-xs">

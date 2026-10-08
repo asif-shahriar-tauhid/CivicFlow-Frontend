@@ -38,7 +38,9 @@ export default function AdminUsersPage() {
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<UserRole | "ALL">("ALL");
-  const [selectedStatus, setSelectedStatus] = useState<UserStatus | "ALL">("ALL");
+  const [selectedStatus, setSelectedStatus] = useState<UserStatus | "ALL">(
+    "ALL",
+  );
   const [selectedDeptId, setSelectedDeptId] = useState<string>("");
 
   // Modals
@@ -340,8 +342,8 @@ export default function AdminUsersPage() {
               No users found matching your filters
             </p>
             <p className="text-xs text-muted-foreground mt-1 max-w-sm">
-              Try adjusting your search criteria, clearing the department filter,
-              or resetting role permissions.
+              Try adjusting your search criteria, clearing the department
+              filter, or resetting role permissions.
             </p>
             <Button
               variant="outline"
@@ -363,7 +365,9 @@ export default function AdminUsersPage() {
                     <th className="px-4 py-3 font-medium">Department</th>
                     <th className="px-4 py-3 font-medium">Account Status</th>
                     <th className="px-4 py-3 font-medium">Registered</th>
-                    <th className="px-4 py-3 font-medium text-right">Actions</th>
+                    <th className="px-4 py-3 font-medium text-right">
+                      Actions
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -486,7 +490,9 @@ export default function AdminUsersPage() {
                             title="Suspend or Soft-Delete User"
                           >
                             <UserX className="size-3" />
-                            <span className="sr-only sm:not-sr-only">Suspend</span>
+                            <span className="sr-only sm:not-sr-only">
+                              Suspend
+                            </span>
                           </Button>
                         </div>
                       </td>

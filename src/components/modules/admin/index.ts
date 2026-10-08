@@ -5,5 +5,3 @@ export * from "./departments";
 export { FinancialVelocityWidget } from "./FinancialVelocityWidget";
 export * from "./routingRules";
 export { SlaGovernanceWidget } from "./SlaGovernanceWidget";
-
-
