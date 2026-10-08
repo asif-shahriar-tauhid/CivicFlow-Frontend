@@ -110,6 +110,11 @@ export interface RequestPayment {
   checkoutUrl?: string | null;
   bkashTrxId?: string | null;
   invoiceUrl?: string | null;
+  invoicePublicId?: string | null;
+  completedAt?: string | null;
+  failedAt?: string | null;
+  cancelledAt?: string | null;
+  createdAt: string;
 }
 
 export interface ServiceRequest {

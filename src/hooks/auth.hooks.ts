@@ -3,6 +3,7 @@ import {
   forgotPassword,
   getMe,
   googleOAuth,
+  resendOtp,
   resetPassword,
   userLogin,
   userLogout,
@@ -14,7 +15,13 @@ export const useGoogleOAuth = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: googleOAuth,
-    onSuccess: () => {
+    onSuccess: async () => {
+      try {
+        const me = await getMe();
+        queryClient.setQueryData(["user"], me);
+      } catch {
+        // ignore
+      }
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
@@ -24,7 +31,13 @@ export const useLogin = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: userLogin,
-    onSuccess: () => {
+    onSuccess: async () => {
+      try {
+        const me = await getMe();
+        queryClient.setQueryData(["user"], me);
+      } catch {
+        // ignore
+      }
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
@@ -40,9 +53,29 @@ export const useVerifyEmail = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: verifyEmail,
-    onSuccess: () => {
+    onSuccess: async (res) => {
+      if (res?.data?.user) {
+        queryClient.setQueryData(["user"], {
+          success: true,
+          statusCode: 200,
+          message: "User profile",
+          data: res.data.user,
+        });
+      }
+      try {
+        const me = await getMe();
+        queryClient.setQueryData(["user"], me);
+      } catch {
+        // ignore
+      }
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
+  });
+};
+
+export const useResendOtp = () => {
+  return useMutation({
+    mutationFn: resendOtp,
   });
 };
 
@@ -64,6 +97,19 @@ export const useGetME = () => {
     retry: false,
     staleTime: 5 * 60 * 1000,
   });
+};
+
+export const useCurrentUser = () => {
+  const { data, isLoading, isError, refetch } = useGetME();
+  const user = data?.data;
+  return {
+    user,
+    role: user?.role,
+    isAuthenticated: Boolean(user),
+    isLoading,
+    isError,
+    refetch,
+  };
 };
 
 export const useForgotPassword = () => {

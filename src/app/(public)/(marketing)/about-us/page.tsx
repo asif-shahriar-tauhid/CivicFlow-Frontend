@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Activity,
   AlertTriangle,
@@ -25,6 +24,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const metadata = {
   title: "About Us — CivicFlow Municipal Governance & Telemetry",

@@ -5,7 +5,6 @@ import {
   deleteServiceRequest,
   getServiceRequestById,
   getServiceRequests,
-  initiateRequestPayment,
   reopenServiceRequest,
   submitRequestFeedback,
   updateServiceRequest,
@@ -92,12 +91,6 @@ export const useSubmitFeedback = () => {
   });
 };
 
-export const useInitiatePayment = () => {
-  return useMutation({
-    mutationFn: (requestId: string) => initiateRequestPayment(requestId),
-  });
-};
-
 export const useUpdateServiceRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -126,3 +119,5 @@ export const useDeleteServiceRequest = () => {
     },
   });
 };
+
+export { useInitiatePayment } from "./payment.hooks";

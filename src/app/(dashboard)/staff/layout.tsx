@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  CircleDollarSign,
-  LayoutDashboard,
-  LogOut,
-  Shield,
-} from "lucide-react";
+import { ClipboardList, HardHat, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { ReactNode } from "react";
@@ -16,7 +11,7 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useLogout } from "@/hooks/auth.hooks";
 import { useAuth } from "@/providers/authProvider";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function StaffLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user } = useAuth();
@@ -26,7 +21,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     logout(undefined, {
       onSuccess: () => {
         gooeyToast.success("Signed Out", {
-          description: "Admin session closed.",
+          description: "Staff session ended.",
         });
         router.push("/login");
       },
@@ -34,14 +29,14 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   return (
-    <RoleGuard allowedRoles={["ADMIN"]}>
+    <RoleGuard allowedRoles={["STAFF"]}>
       <div className="min-h-screen bg-background flex flex-col">
-        {/* Admin Navigation Bar */}
+        {/* Staff App Navigation Bar */}
         <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
           <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-4 sm:gap-6">
               <Link
-                href="/admin"
+                href="/staff"
                 className="flex items-center gap-2.5 transition-opacity hover:opacity-90"
               >
                 <Logo size={36} />
@@ -49,8 +44,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                   <span className="text-base font-bold leading-none tracking-tight text-foreground">
                     CivicFlow
                   </span>
-                  <span className="text-[10px] font-semibold tracking-wider text-primary uppercase">
-                    Admin Desk
+                  <span className="text-[10px] font-semibold tracking-wider text-amber-600 dark:text-amber-400 uppercase">
+                    Field Staff Desk
                   </span>
                 </div>
               </Link>
@@ -59,39 +54,28 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
               <nav className="hidden sm:flex items-center gap-1.5">
                 <Link
-                  href="/admin"
+                  href="/staff"
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-4xl text-xs font-medium transition-colors ${
-                    pathname === "/admin"
+                    pathname === "/staff"
                       ? "bg-primary/10 text-primary font-semibold"
                       : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
                   }`}
                 >
-                  <LayoutDashboard className="size-3.5" />
-                  <span>Overview</span>
-                </Link>
-                <Link
-                  href="/admin/payments"
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-4xl text-xs font-medium transition-colors ${
-                    pathname?.startsWith("/admin/payments")
-                      ? "bg-primary/10 text-primary font-semibold"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                  }`}
-                >
-                  <CircleDollarSign className="size-3.5" />
-                  <span>Municipal Revenue</span>
+                  <ClipboardList className="size-3.5" />
+                  <span>Work Queue</span>
                 </Link>
               </nav>
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Role Clearance Pill */}
-              <div className="flex items-center gap-2 rounded-4xl border border-primary/20 bg-primary/5 px-3 py-1 text-xs">
-                <Shield className="size-3.5 text-primary" />
-                <span className="font-semibold text-primary uppercase text-[11px] tracking-wide">
-                  Super Admin
+              {/* Staff Pill Display */}
+              <div className="flex items-center gap-2 rounded-4xl border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-xs">
+                <HardHat className="size-3.5 text-amber-600 dark:text-amber-400" />
+                <span className="font-semibold text-amber-600 dark:text-amber-400 uppercase text-[11px] tracking-wide">
+                  Department Staff
                 </span>
                 <span className="text-muted-foreground text-[11px] hidden sm:inline">
-                  • {user?.email || "Administrator"}
+                  • {user?.email || "Field Staff"}
                 </span>
               </div>
 
@@ -111,17 +95,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        {/* Admin Content Area */}
+        {/* Main Content Area */}
         <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
           {children}
         </main>
 
-        {/* Municipal Admin Footer */}
+        {/* Staff Footer */}
         <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
           <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <span>CivicFlow Municipal Governance & Routing Administration</span>
+            <span>CivicFlow Municipal Department Field Operations</span>
             <span className="font-mono text-[11px]">
-              Security Level 4 • Audit Logged Operations
+              SLA Tracked • Investigation Notes Logged
             </span>
           </div>
         </footer>

@@ -1,8 +1,5 @@
 "use client";
 
-import Logo from "@/asset/svg/Logo";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,6 +14,9 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Logo from "@/asset/svg/Logo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function NotFound() {
   const [ticketSearch, setTicketSearch] = useState("");

@@ -1,10 +1,12 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { CheckCircle2, KeyRound, Mail, RotateCcw } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, Mail, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { getMe } from "@/api/auth.api";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -15,15 +17,30 @@ import {
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { useVerifyEmail } from "@/hooks/auth.hooks";
+import { useResendOtp, useVerifyEmail } from "@/hooks/auth.hooks";
+import { decodeJwtPayload, resolvePostAuthUrl } from "@/lib/authUtils";
+import type { AuthSuccessResponse } from "@/types/auth.types";
+import type { ApiResponse } from "@/types/dashboard.types";
 import { emailVerificationZodSchema } from "@/validation";
 
 function VerifyEmailFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialEmail = searchParams.get("email") || "";
+  const redirectUrl = searchParams.get("redirect");
 
+  const queryClient = useQueryClient();
   const { mutate: verify, isPending: verifyPending } = useVerifyEmail();
+  const { mutate: resendOtp, isPending: resendPending } = useResendOtp();
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const form = useForm({
     defaultValues: {
@@ -40,25 +57,98 @@ function VerifyEmailFormInner() {
           otp: value.otp.trim(),
         },
         {
-          onSuccess: () => {
+          onSuccess: async (res: ApiResponse<AuthSuccessResponse>) => {
             gooeyToast.success("Account Activated!", {
               description:
                 "Welcome to CivicFlow. Your citizen profile is active.",
             });
-            setTimeout(() => {
-              router.push("/citizen");
-            }, 600);
+
+            const token = res?.data?.accessToken;
+            let role =
+              res?.data?.user?.role ||
+              decodeJwtPayload(token)?.role ||
+              "CITIZEN";
+
+            if (res?.data?.user) {
+              queryClient.setQueryData(["user"], {
+                success: true,
+                statusCode: 200,
+                message: "User profile",
+                data: res.data.user,
+              });
+            }
+
+            try {
+              const meRes = await getMe();
+              queryClient.setQueryData(["user"], meRes);
+              if (meRes?.data?.role) {
+                role = meRes.data.role;
+              }
+            } catch {
+              // Proceed with decoded role
+            }
+            queryClient.invalidateQueries({ queryKey: ["user"] });
+
+            const targetUrl = resolvePostAuthUrl({
+              accessToken: token,
+              userRole: role,
+              redirectUrl,
+            });
+
+            router.push(targetUrl);
+            router.refresh();
           },
-          onError: (err: any) => {
+          onError: (err: unknown) => {
+            const apiErr = err as {
+              message?: string;
+              data?: { message?: string };
+            };
             gooeyToast.error("Verification Failed", {
               description:
-                err.message || "Invalid or expired OTP code. Please retry.",
+                apiErr?.data?.message ||
+                apiErr?.message ||
+                "Invalid or expired OTP code. Please retry.",
             });
           },
         },
       );
     },
   });
+
+  const handleResendOtp = () => {
+    const emailValue = form.getFieldValue("email")?.trim();
+    if (!emailValue || !emailValue.includes("@")) {
+      gooeyToast.error("Email Required", {
+        description:
+          "Please specify a valid registered email address to receive a fresh verification code.",
+      });
+      return;
+    }
+
+    resendOtp(
+      { email: emailValue },
+      {
+        onSuccess: () => {
+          setResendCooldown(60);
+          gooeyToast.success("Verification Code Resent", {
+            description: `A fresh 6-digit confirmation code was dispatched to ${emailValue}.`,
+          });
+        },
+        onError: (err: unknown) => {
+          const apiErr = err as {
+            message?: string;
+            data?: { message?: string };
+          };
+          gooeyToast.error("Could Not Resend Code", {
+            description:
+              apiErr?.data?.message ||
+              apiErr?.message ||
+              "Unable to resend code. If your registration session expired, please re-register.",
+          });
+        },
+      },
+    );
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -105,7 +195,7 @@ function VerifyEmailFormInner() {
             }}
           </form.Field>
 
-          {/* 6-Digit OTP field */}
+          {/* 6-Digit OTP field with Inline Resend Action */}
           <form.Field name="otp">
             {(field) => {
               const isInvalid =
@@ -113,9 +203,31 @@ function VerifyEmailFormInner() {
 
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>
-                    6-Digit Verification Code (OTP)
-                  </FieldLabel>
+                  <div className="flex items-center justify-between">
+                    <FieldLabel htmlFor={field.name}>
+                      6-Digit Verification Code (OTP)
+                    </FieldLabel>
+                    <button
+                      type="button"
+                      onClick={handleResendOtp}
+                      disabled={resendCooldown > 0 || resendPending}
+                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed cursor-pointer transition-opacity"
+                    >
+                      {resendPending ? (
+                        <>
+                          <Spinner className="size-3 text-primary" />
+                          <span>Resending...</span>
+                        </>
+                      ) : resendCooldown > 0 ? (
+                        <span>Resend in {resendCooldown}s</span>
+                      ) : (
+                        <>
+                          <RefreshCw className="size-3" />
+                          <span>Resend Code</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -151,15 +263,41 @@ function VerifyEmailFormInner() {
               </>
             )}
           </Button>
+
+          {/* Secondary Resend Helper */}
+          <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
+            <span>Didn't receive the email code?</span>
+            <button
+              type="button"
+              onClick={handleResendOtp}
+              disabled={resendCooldown > 0 || resendPending}
+              className="font-semibold text-primary hover:underline disabled:opacity-50 disabled:no-underline disabled:cursor-not-allowed cursor-pointer"
+            >
+              {resendCooldown > 0
+                ? `Retry in ${resendCooldown}s`
+                : "Click to Resend OTP"}
+            </button>
+          </div>
         </FieldGroup>
       </form>
 
       <div className="text-center pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-        <Link href="/register" className="hover:text-foreground">
+        <Link
+          href={
+            redirectUrl
+              ? `/register?redirect=${encodeURIComponent(redirectUrl)}`
+              : "/register"
+          }
+          className="hover:text-foreground"
+        >
           Wrong email address?
         </Link>
         <Link
-          href="/login"
+          href={
+            redirectUrl
+              ? `/login?redirect=${encodeURIComponent(redirectUrl)}`
+              : "/login"
+          }
           className="text-primary hover:underline font-medium"
         >
           Back to Sign In

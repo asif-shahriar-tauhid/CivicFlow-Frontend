@@ -6,14 +6,12 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
-  Phone,
-  ShieldCheck,
   UserPlus,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { type ReactNode, Suspense, useState } from "react";
 import { z } from "zod";
 import GoogleLoginComponent from "@/components/GoogleLogin";
 import { Button } from "@/components/ui/button";
@@ -27,7 +25,6 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useRegister } from "@/hooks/auth.hooks";
-import { registrationZodSchema } from "@/validation";
 
 const clientRegisterSchema = z
   .object({
@@ -57,9 +54,11 @@ interface RegisterFormProps {
   googleLogin?: ReactNode;
 }
 
-export default function RegisterForm({ googleLogin }: RegisterFormProps) {
+function RegisterFormInner({ googleLogin }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect");
   const { mutate: register, isPending: registerPending } = useRegister();
 
   const form = useForm({
@@ -89,15 +88,23 @@ export default function RegisterForm({ googleLogin }: RegisterFormProps) {
             description: `We sent a 6-digit OTP code to ${value.email}.`,
           });
           setTimeout(() => {
+            const redirectParam = redirectUrl
+              ? `&redirect=${encodeURIComponent(redirectUrl)}`
+              : "";
             router.push(
-              `/account-verify?email=${encodeURIComponent(value.email.trim())}`,
+              `/account-verify?email=${encodeURIComponent(value.email.trim())}${redirectParam}`,
             );
           }, 600);
         },
-        onError: (err: any) => {
+        onError: (err: unknown) => {
+          const apiErr = err as {
+            message?: string;
+            data?: { message?: string };
+          };
           gooeyToast.error("Registration Failed", {
             description:
-              err.message ||
+              apiErr?.data?.message ||
+              apiErr?.message ||
               "Could not complete registration. Email may already be registered.",
           });
         },
@@ -370,7 +377,11 @@ export default function RegisterForm({ googleLogin }: RegisterFormProps) {
         <p className="text-xs text-muted-foreground">
           Already registered on CivicFlow?{" "}
           <Link
-            href="/login"
+            href={
+              redirectUrl
+                ? `/login?redirect=${encodeURIComponent(redirectUrl)}`
+                : "/login"
+            }
             className="font-semibold text-primary hover:underline inline-flex items-center gap-0.5"
           >
             <span>Sign in to your account</span>
@@ -379,5 +390,19 @@ export default function RegisterForm({ googleLogin }: RegisterFormProps) {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function RegisterForm(props: RegisterFormProps) {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-64 flex items-center justify-center">
+          <Spinner />
+        </div>
+      }
+    >
+      <RegisterFormInner {...props} />
+    </Suspense>
   );
 }

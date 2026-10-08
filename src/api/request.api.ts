@@ -77,19 +77,4 @@ export const submitRequestFeedback = async (
   });
 };
 
-export const initiateRequestPayment = async (
-  requestId: string,
-): Promise<
-  ApiResponse<{
-    id: string;
-    status: string;
-    amount: number;
-    currency: string;
-    checkoutUrl: string;
-    merchantInvoiceNumber: string;
-  }>
-> => {
-  return apiClient(`/request-payments/requests/${requestId}/initiate`, {
-    method: "POST",
-  });
-};
+export { initiateRequestPayment } from "./payment.api";

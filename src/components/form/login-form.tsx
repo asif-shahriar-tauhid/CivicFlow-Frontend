@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   ArrowRight,
   Eye,
@@ -13,6 +14,7 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { type ReactNode, Suspense, useState } from "react";
+import { getMe } from "@/api/auth.api";
 import GoogleLoginComponent from "@/components/GoogleLogin";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +27,9 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useLogin } from "@/hooks/auth.hooks";
+import { decodeJwtPayload, resolvePostAuthUrl } from "@/lib/authUtils";
+import type { AuthTokens } from "@/types/auth.types";
+import type { ApiResponse } from "@/types/dashboard.types";
 import { LoginZodSchema } from "@/validation";
 
 const DEMO_ACCOUNTS = [
@@ -64,6 +69,7 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect");
 
+  const queryClient = useQueryClient();
   const { mutate: login, isPending: loginPending } = useLogin();
 
   const form = useForm({
@@ -81,38 +87,46 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
           password: value.password,
         },
         {
-          onSuccess: (res: any) => {
+          onSuccess: async (res: ApiResponse<AuthTokens>) => {
             gooeyToast.success("Login Successful", {
               description: "Welcome back to CivicFlow Municipal Portal.",
             });
 
-            // Decode role or use redirect param
-            const targetUrl = (() => {
-              if (redirectUrl) return redirectUrl;
-              const userEmail = value.email.toLowerCase();
-              if (
-                userEmail.includes("superadmin") ||
-                userEmail.includes("admin")
-              ) {
-                return "/admin";
-              }
-              if (
-                userEmail.includes("staff") ||
-                userEmail.includes("drainage")
-              ) {
-                return "/staff";
-              }
-              return "/citizen";
-            })();
+            const token = res?.data?.accessToken;
+            const decodedJwt = decodeJwtPayload(token);
+            let tokenRole = decodedJwt?.role;
 
-            setTimeout(() => {
-              router.push(targetUrl);
-            }, 600);
+            // Pre-hydrate authoritative user profile in query cache immediately
+            try {
+              const meRes = await getMe();
+              queryClient.setQueryData(["user"], meRes);
+              if (meRes?.data?.role) {
+                tokenRole = meRes.data.role;
+              }
+            } catch {
+              // Fall back to decoded JWT role
+            }
+            queryClient.invalidateQueries({ queryKey: ["user"] });
+
+            const targetUrl = resolvePostAuthUrl({
+              accessToken: token,
+              userRole: tokenRole,
+              redirectUrl,
+            });
+
+            router.push(targetUrl);
+            router.refresh();
           },
-          onError: (err: any) => {
+          onError: (err: unknown) => {
+            const apiErr = err as {
+              message?: string;
+              data?: { message?: string };
+            };
             gooeyToast.error("Authentication Failed", {
               description:
-                err.message || "Invalid email or password. Please verify.",
+                apiErr?.data?.message ||
+                apiErr?.message ||
+                "Invalid email or password. Please verify.",
             });
           },
         },
@@ -207,7 +221,7 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
                   <div className="flex items-center justify-between">
                     <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                     <Link
-                      href="/login#forgot"
+                      href="/forgot-password"
                       className="text-xs text-primary hover:underline"
                     >
                       Forgot password?
