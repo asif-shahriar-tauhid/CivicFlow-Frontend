@@ -3,18 +3,23 @@
 import { FilePlus2, LayoutDashboard, LogOut, ReceiptText } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import Logo from "@/asset/svg/Logo";
 import { RoleGuard } from "@/components/common/RoleGuard";
+import { UserAvatar } from "@/components/common/UserAvatar";
+import { ProfileSettingsModal } from "@/components/modules/profile/ProfileSettingsModal";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useGetME, useLogout } from "@/hooks";
 
+
 export default function CitizenLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { data: userData } = useGetME();
   const { mutate: logout, isPending: logoutPending } = useLogout();
+
 
   const user = userData?.data;
 
@@ -111,15 +116,18 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
                 </Button>
               )}
 
-              {/* User pill display */}
-              <div className="flex items-center gap-2 rounded-4xl border border-border bg-muted/30 px-3 py-1 text-xs">
-                <div className="flex size-5 items-center justify-center rounded-full bg-primary/20 text-primary font-bold text-[10px]">
-                  {user?.name ? user.name[0].toUpperCase() : "C"}
-                </div>
-                <span className="font-medium text-foreground max-w-[120px] truncate hidden sm:inline">
+              {/* User avatar and profile trigger */}
+              <button
+                type="button"
+                onClick={() => setIsProfileOpen(true)}
+                title="Profile & Avatar Settings"
+                className="flex items-center gap-2 rounded-4xl border border-border bg-muted/30 hover:bg-muted/60 hover:border-primary/40 px-2.5 py-1 text-xs transition-all cursor-pointer group"
+              >
+                <UserAvatar user={user} size="xs" />
+                <span className="font-medium text-foreground max-w-[120px] truncate hidden sm:inline group-hover:text-primary transition-colors">
                   {user?.name || "Citizen User"}
                 </span>
-              </div>
+              </button>
 
               {/* Logout button */}
               <Button
@@ -185,6 +193,13 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
             </span>
           </div>
         </footer>
+
+        {/* Profile & Avatar Settings Modal */}
+        <ProfileSettingsModal
+          user={user}
+          isOpen={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+        />
       </div>
     </RoleGuard>
   );

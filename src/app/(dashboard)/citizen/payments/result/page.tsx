@@ -11,39 +11,88 @@ import {
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { usePaymentById } from "@/hooks/payment.hooks";
 import { formatCurrency, formatDateTime } from "@/lib/paymentUtils";
 
+function normalizeStatus(status: string | null): string {
+  if (!status) return "";
+  const upper = status.trim().toUpperCase();
+  if (upper === "SUCCESS" || upper === "COMPLETED") return "COMPLETED";
+  if (upper === "CANCEL" || upper === "CANCELED" || upper === "CANCELLED")
+    return "CANCELLED";
+  if (upper === "FAILURE" || upper === "FAILED") return "FAILED";
+  return upper;
+}
+
 function PaymentResultContent() {
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const paymentId = searchParams.get("paymentId") || "";
-  const paramStatus = searchParams.get("status") || "";
+  const rawStatus = searchParams.get("status") || "";
   const requestId = searchParams.get("requestId") || "";
 
   // Poll payment if not yet terminal
   const { data: paymentData, refetch } = usePaymentById(paymentId);
   const payment = paymentData?.data;
 
-  // Resolved status prefer fetched data, fallback to query param
-  const currentStatus = payment?.status || paramStatus || "PENDING";
+  // Resolved status: prioritize terminal states (COMPLETED / CANCELLED / FAILED)
+  const paramStatus = normalizeStatus(rawStatus);
+  const fetchedStatus = normalizeStatus(payment?.status || null);
+
+  let currentStatus = "PENDING";
+  if (fetchedStatus === "COMPLETED" || paramStatus === "COMPLETED") {
+    currentStatus = "COMPLETED";
+  } else if (fetchedStatus === "CANCELLED" || paramStatus === "CANCELLED") {
+    currentStatus = "CANCELLED";
+  } else if (fetchedStatus === "FAILED" || paramStatus === "FAILED") {
+    currentStatus = "FAILED";
+  } else if (fetchedStatus) {
+    currentStatus = fetchedStatus;
+  } else if (paramStatus) {
+    currentStatus = paramStatus;
+  }
+
   const isCompleted = currentStatus === "COMPLETED";
-  const isFailed = currentStatus === "FAILED" || currentStatus === "CANCELLED";
+  const isCancelled = currentStatus === "CANCELLED";
+  const isFailed = currentStatus === "FAILED" || isCancelled;
   const isPending = currentStatus === "PENDING";
 
-  // Auto-poll a few times if pending
+  const serviceRequest = payment?.serviceRequest;
+  const targetRequestId = requestId || serviceRequest?.id;
+
+  // Invalidate queries so returning to ticket details or payments table immediately reflects the updated state
+  useEffect(() => {
+    if (isCompleted) {
+      queryClient.invalidateQueries({ queryKey: ["my-payments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-payments"] });
+      if (targetRequestId) {
+        queryClient.invalidateQueries({
+          queryKey: ["service-request", targetRequestId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["request-payment-status", targetRequestId],
+        });
+      }
+      if (paymentId) {
+        queryClient.invalidateQueries({
+          queryKey: ["payment", paymentId],
+        });
+      }
+    }
+  }, [isCompleted, queryClient, targetRequestId, paymentId]);
+
+  // Auto-poll a few times if still pending
   useEffect(() => {
     if (isPending && paymentId) {
       const timer = setInterval(() => {
         refetch();
-      }, 3000);
+      }, 2500);
       return () => clearInterval(timer);
     }
   }, [isPending, paymentId, refetch]);
-
-  const serviceRequest = payment?.serviceRequest;
-  const targetRequestId = requestId || serviceRequest?.id;
 
   return (
     <div className="mx-auto max-w-2xl py-8 animate-in fade-in duration-300">
@@ -77,17 +126,21 @@ function PaymentResultContent() {
           <h1 className="mt-4 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
             {isCompleted
               ? "Municipal Service Fee Settled"
-              : isFailed
-                ? "Payment Unsuccessful or Cancelled"
-                : "Confirming Gateway Settlement..."}
+              : isCancelled
+                ? "Payment Session Cancelled"
+                : isFailed
+                  ? "Payment Unsuccessful"
+                  : "Confirming Gateway Settlement..."}
           </h1>
 
           <p className="mx-auto mt-2 max-w-md text-xs text-muted-foreground">
             {isCompleted
               ? "Your bKash transaction was verified and officially credited to the municipal service dispatch fund."
-              : isFailed
-                ? "The payment session did not complete. No funds were debited or the checkout authorization timed out."
-                : "Reconciling live payment webhook with bKash gateway. Please do not close this window."}
+              : isCancelled
+                ? "The checkout session was cancelled. No funds were debited from your bKash wallet."
+                : isFailed
+                  ? "The payment session did not complete. No funds were debited or the checkout authorization timed out."
+                  : "Reconciling live payment webhook with bKash gateway. Please do not close this window."}
           </p>
         </div>
 

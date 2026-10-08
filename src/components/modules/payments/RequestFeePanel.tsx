@@ -30,14 +30,16 @@ export function RequestFeePanel({
   const { mutate: initiatePayment, isPending: isInitiating } =
     useInitiatePayment();
 
-  // Find latest payment record if attached
+  // Find completed payment or fallback to most recent payment record
   const payments = ticket.payments || [];
-  const latestPayment = payments.length > 0 ? payments[0] : null;
+  const completedPayment = payments.find((p) => p.status === "COMPLETED");
+  const effectivePayment =
+    completedPayment || (payments.length > 0 ? payments[0] : null);
 
   // Fee calculation: check category fee or existing payment record
-  const feeAmount = ticket.category?.feeAmount ?? latestPayment?.amount ?? 0;
+  const feeAmount = ticket.category?.feeAmount ?? effectivePayment?.amount ?? 0;
   const currency =
-    ticket.category?.feeCurrency || latestPayment?.currency || "BDT";
+    ticket.category?.feeCurrency || effectivePayment?.currency || "BDT";
   const requiresPayment =
     (ticket.caseType === "SERVICE_REQUEST" && feeAmount > 0) ||
     payments.length > 0;
@@ -46,10 +48,13 @@ export function RequestFeePanel({
     return null;
   }
 
-  const isCompleted = latestPayment?.status === "COMPLETED";
-  const isPending = latestPayment?.status === "PENDING";
+  const isCompleted =
+    Boolean(completedPayment) || effectivePayment?.status === "COMPLETED";
+  const isPending = !isCompleted && effectivePayment?.status === "PENDING";
   const isFailed =
-    latestPayment?.status === "FAILED" || latestPayment?.status === "CANCELLED";
+    !isCompleted &&
+    (effectivePayment?.status === "FAILED" ||
+      effectivePayment?.status === "CANCELLED");
 
   const handlePay = () => {
     initiatePayment(ticket.id, {
@@ -74,7 +79,7 @@ export function RequestFeePanel({
   };
 
   // State 1: COMPLETED (Official Fee Settled)
-  if (isCompleted && latestPayment) {
+  if (isCompleted && effectivePayment) {
     return (
       <div className="overflow-hidden rounded-xl border border-emerald-500/30 bg-emerald-50/50 p-5 dark:bg-emerald-950/20 sm:p-6 shadow-xs">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -98,16 +103,16 @@ export function RequestFeePanel({
                   Amount:{" "}
                   <strong className="font-mono text-foreground tabular-nums">
                     {formatCurrency(
-                      latestPayment.amount,
-                      latestPayment.currency,
+                      effectivePayment.amount,
+                      effectivePayment.currency,
                     )}
                   </strong>
                 </span>
-                {latestPayment.bkashTrxId && (
+                {effectivePayment.bkashTrxId && (
                   <span className="text-muted-foreground">
                     TrxID:{" "}
                     <strong className="font-mono text-foreground tabular-nums">
-                      {latestPayment.bkashTrxId}
+                      {effectivePayment.bkashTrxId}
                     </strong>
                   </span>
                 )}
@@ -115,7 +120,7 @@ export function RequestFeePanel({
                   Cleared:{" "}
                   <span className="font-mono text-muted-foreground">
                     {formatDateTime(
-                      latestPayment.completedAt || latestPayment.createdAt,
+                      effectivePayment.completedAt || effectivePayment.createdAt,
                     )}
                   </span>
                 </span>
@@ -124,13 +129,13 @@ export function RequestFeePanel({
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {latestPayment.invoiceUrl && (
+            {effectivePayment.invoiceUrl && (
               <Button
                 variant="outline"
                 size="sm"
                 render={
                   <a
-                    href={latestPayment.invoiceUrl}
+                    href={effectivePayment.invoiceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Download PDF Invoice"
@@ -147,7 +152,7 @@ export function RequestFeePanel({
             <Button
               variant="default"
               size="sm"
-              render={<Link href={`/citizen/payments/${latestPayment.id}`} />}
+              render={<Link href={`/citizen/payments/${effectivePayment.id}`} />}
               nativeButton={false}
               className="gap-1.5 rounded-4xl text-xs shadow-xs"
             >
@@ -161,7 +166,7 @@ export function RequestFeePanel({
   }
 
   // State 2: PENDING (Checkout Session Active)
-  if (isPending && latestPayment) {
+  if (isPending && effectivePayment) {
     return (
       <div className="overflow-hidden rounded-xl border border-amber-500/30 bg-amber-50/50 p-5 dark:bg-amber-950/20 sm:p-6 shadow-xs">
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -188,20 +193,20 @@ export function RequestFeePanel({
                   </strong>
                 </span>
                 <span className="text-muted-foreground">
-                  Inv: #{latestPayment.merchantInvoiceNumber}
+                  Inv: #{effectivePayment.merchantInvoiceNumber}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0">
-            {latestPayment.checkoutUrl && (
+            {effectivePayment.checkoutUrl && (
               <Button
                 variant="default"
                 size="sm"
                 render={
                   <a
-                    href={latestPayment.checkoutUrl}
+                    href={effectivePayment.checkoutUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Complete payment in bKash"
