@@ -1,5 +1,10 @@
 import apiClient from "@/lib/apiClient";
-import type { User } from "@/types/auth.types";
+import type {
+  PaginatedUsersResponse,
+  UpdateUserInput,
+  User,
+  UserQueryParams,
+} from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 
 /**
@@ -27,3 +32,40 @@ export const getUserById = async (
     method: "GET",
   });
 };
+
+/**
+ * Fetch all users with search, role/status filtering, and pagination
+ */
+export const getAllUsers = async (
+  query?: UserQueryParams,
+): Promise<PaginatedUsersResponse> => {
+  return apiClient("/user", {
+    method: "GET",
+    query: query as Record<string, any>,
+  });
+};
+
+/**
+ * Update user details, role, status, or department
+ */
+export const updateUser = async (
+  userId: string,
+  payload: UpdateUserInput,
+): Promise<ApiResponse<User>> => {
+  return apiClient(`/user/${userId}`, {
+    method: "PATCH",
+    body: payload,
+  });
+};
+
+/**
+ * Soft-delete / deactivate user
+ */
+export const softDeleteUser = async (
+  userId: string,
+): Promise<ApiResponse<User>> => {
+  return apiClient(`/user/${userId}`, {
+    method: "DELETE",
+  });
+};
+

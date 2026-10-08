@@ -11,6 +11,8 @@ export interface User {
   imageUrl?: string | null;
   departmentId?: string | null;
   emailVerified?: boolean;
+  isDeleted?: boolean;
+  deletedAt?: string | null;
   createdAt?: string;
   updatedAt?: string;
   department?: {
@@ -18,6 +20,38 @@ export interface User {
     name: string;
   } | null;
 }
+
+export interface UserQueryParams {
+  page?: number;
+  limit?: number;
+  searchTerm?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  departmentId?: string;
+}
+
+export interface UpdateUserInput {
+  name?: string;
+  role?: UserRole;
+  status?: UserStatus;
+  departmentId?: string | null;
+}
+
+export interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface PaginatedUsersResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: User[];
+  meta: PaginationMeta;
+}
+
 
 export interface AuthTokens {
   accessToken: string;

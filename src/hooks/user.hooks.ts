@@ -1,6 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUserById, uploadProfileImage } from "@/api/user.api";
-import type { User } from "@/types/auth.types";
+import {
+  getAllUsers,
+  getUserById,
+  softDeleteUser,
+  updateUser,
+  uploadProfileImage,
+} from "@/api/user.api";
+import type {
+  UpdateUserInput,
+  User,
+  UserQueryParams,
+} from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 
 /**
@@ -31,3 +41,57 @@ export const useUserById = (userId: string) => {
     staleTime: 60 * 1000,
   });
 };
+
+/**
+ * Hook to retrieve all users with pagination, filters, and search
+ */
+export const useGetAllUsers = (query?: UserQueryParams) => {
+  return useQuery({
+    queryKey: ["admin-users", query],
+    queryFn: () => getAllUsers(query),
+    staleTime: 15 * 1000,
+  });
+};
+
+/**
+ * Hook to update user role, status, name, or department
+ */
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      userId,
+      payload,
+    }: {
+      userId: string;
+      payload: UpdateUserInput;
+    }) => updateUser(userId, payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({
+        queryKey: ["user-detail", variables.userId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+    },
+  });
+};
+
+/**
+ * Hook to soft-delete / block user
+ */
+export const useSoftDeleteUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (userId: string) => softDeleteUser(userId),
+    onSuccess: (_, userId) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      queryClient.invalidateQueries({
+        queryKey: ["user-detail", userId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+    },
+  });
+};
+

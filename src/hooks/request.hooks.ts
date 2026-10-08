@@ -6,6 +6,7 @@ import {
   getServiceRequestById,
   getServiceRequests,
   reopenServiceRequest,
+  routeServiceRequest,
   submitRequestFeedback,
   updateServiceRequest,
 } from "@/api/request.api";
@@ -114,10 +115,27 @@ export const useDeleteServiceRequest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (requestId: string) => deleteServiceRequest(requestId),
-    onSuccess: () => {
+    onSuccess: (_, requestId) => {
+      queryClient.removeQueries({ queryKey: ["service-request", requestId] });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
     },
   });
 };
 
+export const useRouteServiceRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (requestId: string) => routeServiceRequest(requestId),
+    onSuccess: (_, requestId) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["public-stats"] });
+    },
+  });
+};
+
 export { useInitiatePayment } from "./payment.hooks";
+
