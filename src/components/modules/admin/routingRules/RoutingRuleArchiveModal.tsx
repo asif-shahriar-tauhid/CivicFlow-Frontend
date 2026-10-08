@@ -1,6 +1,14 @@
 "use client";
 
-import { AlertTriangle, Archive, ArrowRight, GitBranch, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Archive,
+  ArrowRight,
+  GitBranch,
+  Globe,
+  MapPin,
+  X,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -95,8 +103,21 @@ export function RoutingRuleArchiveModal({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Jurisdiction Scope:</span>
-              <Badge variant="outline" className="text-[10px]">
-                {rule.location ? rule.location : "🌐 Citywide Fallback"}
+              <Badge
+                variant="outline"
+                className="text-[10px] inline-flex items-center gap-1"
+              >
+                {rule.location ? (
+                  <>
+                    <MapPin className="h-3 w-3 shrink-0" />
+                    <span>{rule.location}</span>
+                  </>
+                ) : (
+                  <>
+                    <Globe className="h-3 w-3 shrink-0 text-muted-foreground/70" />
+                    <span>Citywide Fallback</span>
+                  </>
+                )}
               </Badge>
             </div>
             <div className="flex items-center justify-between">

@@ -6,6 +6,7 @@ import {
   Building2,
   CheckCircle2,
   GitBranch,
+  Globe,
   Info,
   MapPin,
   Shield,
@@ -362,8 +363,21 @@ export function RoutingRuleCreateModal({
               </div>
               <div className="flex items-center gap-1 text-muted-foreground">
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 hidden sm:inline" />
-                <Badge variant="outline" className="text-[10px]">
-                  {location ? `Scope: ${location}` : "🌐 Citywide Scope"}
+                <Badge
+                  variant="outline"
+                  className="text-[10px] inline-flex items-center gap-1"
+                >
+                  {location ? (
+                    <>
+                      <MapPin className="h-3 w-3 shrink-0" />
+                      <span>Scope: {location}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="h-3 w-3 shrink-0 text-muted-foreground/70" />
+                      <span>Citywide Scope</span>
+                    </>
+                  )}
                 </Badge>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 hidden sm:inline" />
               </div>

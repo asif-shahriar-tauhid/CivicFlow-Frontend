@@ -10,6 +10,7 @@ import {
   Clock,
   Edit3,
   GitBranch,
+  Globe,
   Layers,
   MapPin,
   RotateCcw,
@@ -139,16 +140,18 @@ export function RoutingRuleCard({
             {rule.location ? (
               <Badge
                 variant="secondary"
-                className="text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
+                className="text-[10px] font-medium bg-primary/10 text-primary border border-primary/20 shrink-0 inline-flex items-center gap-1.5"
               >
-                {rule.location}
+                <MapPin className="h-3 w-3 shrink-0" />
+                <span>{rule.location}</span>
               </Badge>
             ) : (
               <Badge
                 variant="outline"
-                className="text-[10px] text-muted-foreground"
+                className="text-[10px] text-muted-foreground border-border/60 bg-muted/30 shrink-0 inline-flex items-center gap-1.5"
               >
-                🌐 All Wards (Fallback)
+                <Globe className="h-3 w-3 shrink-0 text-muted-foreground/70" />
+                <span>All Wards (Fallback)</span>
               </Badge>
             )}
           </div>
