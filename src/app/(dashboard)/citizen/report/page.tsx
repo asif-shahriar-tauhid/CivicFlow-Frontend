@@ -144,7 +144,9 @@ function ReportIssueFormInner() {
     defaultValues: {
       title: "",
       description: "",
-      caseType: "COMPLAINT" as "COMPLAINT" | "SERVICE_REQUEST",
+      caseType: (defaultCategory.feeAmount > 0
+        ? "SERVICE_REQUEST"
+        : "COMPLAINT") as "COMPLAINT" | "SERVICE_REQUEST",
       priority: "NORMAL" as "LOW" | "NORMAL" | "HIGH" | "URGENT",
       address: "",
       ward: "",
@@ -152,7 +154,7 @@ function ReportIssueFormInner() {
       landmark: "",
       latitude: null as number | null,
       longitude: null as number | null,
-      categoryId: "",
+      categoryId: defaultCategory.id,
     },
     validators: {
       onSubmit: createServiceRequestClientSchema,
@@ -164,6 +166,11 @@ function ReportIssueFormInner() {
       formData.append("caseType", value.caseType);
       formData.append("priority", value.priority);
       formData.append("address", value.address.trim());
+
+      const finalCategoryId = value.categoryId || selectedCategory.id;
+      if (finalCategoryId) {
+        formData.append("categoryId", finalCategoryId);
+      }
 
       if (value.ward?.trim()) formData.append("ward", value.ward.trim());
       if (value.zone?.trim()) formData.append("zone", value.zone.trim());
@@ -266,6 +273,10 @@ function ReportIssueFormInner() {
                   type="button"
                   onClick={() => {
                     setSelectedCategory(cat);
+                    form.setFieldValue("categoryId", cat.id);
+                    if (cat.feeAmount > 0) {
+                      form.setFieldValue("caseType", "SERVICE_REQUEST");
+                    }
                   }}
                   className={`flex flex-col items-start p-3.5 rounded-xl border text-left transition-all ${
                     isSelected
@@ -330,6 +341,84 @@ function ReportIssueFormInner() {
                 + {prompt}
               </button>
             ))}
+          </div>
+
+          {/* Case Type Classification Selector */}
+          <div className="mt-5 pt-4 border-t border-border">
+            <form.Field name="caseType">
+              {(field) => (
+                <div>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-3">
+                    <div>
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                        Service Intake Classification
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        Choose between a general free public complaint or a
+                        specialized municipal service request.
+                      </p>
+                    </div>
+                    {selectedCategory.feeAmount > 0 &&
+                      field.state.value === "SERVICE_REQUEST" && (
+                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 font-mono text-xs font-bold text-primary self-start sm:self-auto">
+                          Intake Fee: ৳ {selectedCategory.feeAmount}{" "}
+                          {selectedCategory.feeCurrency}
+                        </span>
+                      )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => field.handleChange("COMPLAINT")}
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
+                        field.state.value === "COMPLAINT"
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border bg-card hover:bg-muted/30"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-foreground">
+                          Public Civic Complaint
+                        </span>
+                        <span className="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full">
+                          Free Intake
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed">
+                        Report community infrastructure hazards (waterlogging,
+                        dark streetlights). No municipal fee.
+                      </p>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => field.handleChange("SERVICE_REQUEST")}
+                      className={`p-3.5 rounded-xl border text-left transition-all ${
+                        field.state.value === "SERVICE_REQUEST"
+                          ? "border-primary bg-primary/5 ring-1 ring-primary"
+                          : "border-border bg-card hover:bg-muted/30"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-foreground">
+                          Municipal Service Request
+                        </span>
+                        <span className="text-[10px] font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded-full font-mono">
+                          {selectedCategory.feeAmount > 0
+                            ? `৳ ${selectedCategory.feeAmount} BDT`
+                            : "Standard Service"}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[11px] text-muted-foreground leading-relaxed">
+                        Dedicated departmental intervention, heavy haulage
+                        dispatch, or excavation permits.
+                      </p>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </form.Field>
           </div>
         </div>
 
@@ -516,12 +605,15 @@ function ReportIssueFormInner() {
                   key={url}
                   className="group relative aspect-square rounded-lg overflow-hidden border border-border bg-muted"
                 >
-                  <Image
-                    src={url}
-                    alt={`Evidence ${idx + 1}`}
-                    fill
-                    className="object-cover"
-                  />
+                  {url ? (
+                    <Image
+                      src={url}
+                      alt={`Evidence ${idx + 1}`}
+                      fill
+                      unoptimized
+                      className="object-cover"
+                    />
+                  ) : null}
                   <button
                     type="button"
                     onClick={() => handleRemoveFile(idx)}

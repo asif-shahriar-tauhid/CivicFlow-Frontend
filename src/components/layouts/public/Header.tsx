@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useGetME, useLogout } from "@/hooks";
 
+import { getRoleDashboardUrl } from "@/lib/authUtils";
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const router = useRouter();
@@ -17,17 +19,7 @@ const Header = () => {
   const { mutate: logout, isPending: logoutPending } = useLogout();
   const user = userData?.data;
 
-  const getDashboardUrl = () => {
-    if (!user) return "/citizen";
-    switch (user.role) {
-      case "ADMIN":
-        return "/admin";
-      case "STAFF":
-        return "/staff";
-      default:
-        return "/citizen";
-    }
-  };
+  const getDashboardUrl = () => getRoleDashboardUrl(user?.role);
 
   const handleLogout = () => {
     logout(undefined, {

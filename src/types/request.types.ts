@@ -41,10 +41,14 @@ export interface Department {
 
 export interface RequestAttachment {
   id: string;
-  fileUrl: string;
-  fileType: string;
+  url?: string;
+  fileUrl?: string;
   fileName: string;
+  mimeType?: string;
+  fileType?: string;
   fileSize?: number;
+  resourceType?: string;
+  format?: string | null;
   caption?: string | null;
   createdAt: string;
 }
@@ -106,6 +110,11 @@ export interface RequestPayment {
   checkoutUrl?: string | null;
   bkashTrxId?: string | null;
   invoiceUrl?: string | null;
+  invoicePublicId?: string | null;
+  completedAt?: string | null;
+  failedAt?: string | null;
+  cancelledAt?: string | null;
+  createdAt: string;
 }
 
 export interface ServiceRequest {

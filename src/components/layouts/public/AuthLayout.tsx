@@ -1,13 +1,11 @@
 "use client";
 
 import {
-  Activity,
   ArrowLeft,
   CheckCircle2,
   Clock4,
   MapPin,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -18,14 +16,14 @@ interface AuthLayoutProps {
   children: ReactNode;
   title: string;
   subtitle: string;
-  mode: "login" | "register" | "verify";
+  mode?: "login" | "register" | "verify" | "forgot" | "reset";
 }
 
 export default function AuthLayout({
   children,
   title,
   subtitle,
-  mode,
+  mode = "login",
 }: AuthLayoutProps) {
   return (
     <div className="grid min-h-screen lg:grid-cols-12 bg-background">
@@ -109,7 +107,15 @@ export default function AuthLayout({
         <div className="relative z-10 flex items-center justify-between">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-xs">
             <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Live City Operations Feed</span>
+            <span>
+              {mode === "forgot" || mode === "reset"
+                ? "Account Recovery Conduit"
+                : mode === "verify"
+                  ? "Identity Verification Gate"
+                  : mode === "register"
+                    ? "Citizen Registration Intake"
+                    : "Live City Operations Feed"}
+            </span>
           </div>
           <span className="font-mono text-xs text-muted-foreground">
             Ward 1–12 Active
