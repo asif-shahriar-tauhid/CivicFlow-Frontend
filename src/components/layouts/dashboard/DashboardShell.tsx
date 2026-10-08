@@ -179,9 +179,13 @@ export function DashboardShell({
           {/* Municipal Portal Footer */}
           <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground bg-card/20 shrink-0">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
-              <span>{footerNote || "CivicFlow Municipal Governance & Routing Administration"}</span>
+              <span>
+                {footerNote ||
+                  "CivicFlow Municipal Governance & Routing Administration"}
+              </span>
               <span className="font-mono text-[11px]">
-                {footerSecurityText || "Security Level 4 • Audit Logged Operations"}
+                {footerSecurityText ||
+                  "Security Level 4 • Audit Logged Operations"}
               </span>
             </div>
           </footer>

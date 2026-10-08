@@ -46,7 +46,7 @@ function Badge({
       {dotColor && (
         <span className={cn("size-1.5 rounded-full shrink-0", dotColor)} />
       )}
-      <span>{children}</span>
+      {children}
     </div>
   );
 }

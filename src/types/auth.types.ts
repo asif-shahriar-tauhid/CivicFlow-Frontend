@@ -52,7 +52,6 @@ export interface PaginatedUsersResponse {
   meta: PaginationMeta;
 }
 
-
 export interface AuthTokens {
   accessToken: string;
   refreshToken: string;

@@ -67,16 +67,6 @@ export const reopenServiceRequest = async (
   });
 };
 
-export const submitRequestFeedback = async (
-  requestId: string,
-  payload: { rating: number; comment?: string },
-): Promise<ApiResponse<any>> => {
-  return apiClient(`/requests/${requestId}/feedback`, {
-    method: "POST",
-    body: payload,
-  });
-};
-
 export const routeServiceRequest = async (
   requestId: string,
 ): Promise<ApiResponse<ServiceRequest>> => {
@@ -86,4 +76,3 @@ export const routeServiceRequest = async (
 };
 
 export { initiateRequestPayment } from "./payment.api";
-

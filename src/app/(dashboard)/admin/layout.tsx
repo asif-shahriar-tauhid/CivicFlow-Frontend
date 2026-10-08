@@ -1,6 +1,15 @@
 "use client";
 
-import { CircleDollarSign, LayoutDashboard, Users } from "lucide-react";
+import {
+  Building2,
+  CircleDollarSign,
+  ClockAlert,
+  Database,
+  GitBranch,
+  HeartHandshake,
+  LayoutDashboard,
+  Users,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { DashboardShell } from "@/components/layouts/dashboard";
 
@@ -25,6 +34,20 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               description: "Citywide incident triage and analytics",
             },
             {
+              label: "Departments",
+              href: "/admin/departments",
+              icon: Building2,
+              isActive: (path) => path.startsWith("/admin/departments"),
+              description: "Municipal divisions & routing desks",
+            },
+            {
+              label: "Routing Rules",
+              href: "/admin/routing-rules",
+              icon: GitBranch,
+              isActive: (path) => path.startsWith("/admin/routing-rules"),
+              description: "Automated dispatch rule builder table",
+            },
+            {
               label: "Personnel & Citizens",
               href: "/admin/users",
               icon: Users,
@@ -32,11 +55,37 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               description: "RBAC governance and personnel roster",
             },
             {
+              label: "SLA Overdue Desk",
+              href: "/admin/sla",
+              icon: ClockAlert,
+              isActive: (path) => path.startsWith("/admin/sla"),
+              description: "Overdue breaches & supervisory escalation",
+            },
+            {
               label: "Municipal Revenue",
               href: "/admin/payments",
               icon: CircleDollarSign,
               isActive: (path) => path.startsWith("/admin/payments"),
               description: "bKash payments ledger and financial velocity",
+            },
+          ],
+        },
+        {
+          title: "Governance & Quality",
+          items: [
+            {
+              label: "System Audit Ledger",
+              href: "/admin/audit-logs",
+              icon: Database,
+              isActive: (path) => path.startsWith("/admin/audit-logs"),
+              description: "Immutable ledger of all mutations & clearances",
+            },
+            {
+              label: "Satisfaction Reports",
+              href: "/admin/feedback-reports",
+              icon: HeartHandshake,
+              isActive: (path) => path.startsWith("/admin/feedback-reports"),
+              description: "Citizen feedback, ratings & quality telemetry",
             },
           ],
         },

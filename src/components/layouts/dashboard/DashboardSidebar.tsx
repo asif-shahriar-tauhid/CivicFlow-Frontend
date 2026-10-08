@@ -84,12 +84,21 @@ export function DashboardSidebar({
       {/* 1. Header / Brand Bar */}
       <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4 shrink-0">
         <Link
-          href={userRole === "ADMIN" ? "/admin" : userRole === "STAFF" ? "/staff" : "/citizen"}
+          href={
+            userRole === "ADMIN"
+              ? "/admin"
+              : userRole === "STAFF"
+                ? "/staff"
+                : "/citizen"
+          }
           onClick={handleLinkClick}
           className="flex items-center gap-3 overflow-hidden group focus-visible:outline-none"
           title={`CivicFlow ${roleTitle}`}
         >
-          <Logo size={effectiveCollapsed ? 32 : 36} className="shrink-0 transition-transform group-hover:scale-105" />
+          <Logo
+            size={effectiveCollapsed ? 32 : 36}
+            className="shrink-0 transition-transform group-hover:scale-105"
+          />
           {!effectiveCollapsed && (
             <div className="flex flex-col min-w-0 transition-opacity duration-200">
               <div className="flex items-center gap-1.5">
@@ -134,7 +143,9 @@ export function DashboardSidebar({
               effectiveCollapsed ? "mx-auto mt-0" : ""
             }`}
             title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-label={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            aria-label={
+              effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"
+            }
           >
             {effectiveCollapsed ? (
               <PanelLeftOpen className="size-4" />
@@ -152,7 +163,9 @@ export function DashboardSidebar({
             href={quickAction.href}
             onClick={handleLinkClick}
             className={`flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground font-semibold text-xs shadow-sm hover:bg-primary/90 transition-all ${
-              effectiveCollapsed ? "h-10 w-10 mx-auto p-0" : "w-full py-2.5 px-3"
+              effectiveCollapsed
+                ? "h-10 w-10 mx-auto p-0"
+                : "w-full py-2.5 px-3"
             }`}
             title={quickAction.label}
           >
@@ -200,7 +213,9 @@ export function DashboardSidebar({
 
                   <Icon
                     className={`size-4 shrink-0 transition-transform group-hover:scale-110 ${
-                      active ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                      active
+                        ? "text-primary"
+                        : "text-muted-foreground group-hover:text-foreground"
                     }`}
                   />
 
