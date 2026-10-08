@@ -1,6 +1,12 @@
 "use client";
 
-import { Building2, CircleDollarSign, LayoutDashboard, Users } from "lucide-react";
+import {
+  Building2,
+  CircleDollarSign,
+  GitBranch,
+  LayoutDashboard,
+  Users,
+} from "lucide-react";
 import type { ReactNode } from "react";
 import { DashboardShell } from "@/components/layouts/dashboard";
 
@@ -30,6 +36,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               icon: Building2,
               isActive: (path) => path.startsWith("/admin/departments"),
               description: "Municipal divisions & routing desks",
+            },
+            {
+              label: "Routing Rules",
+              href: "/admin/routing-rules",
+              icon: GitBranch,
+              isActive: (path) => path.startsWith("/admin/routing-rules"),
+              description: "Automated dispatch rule builder table",
             },
             {
               label: "Personnel & Citizens",

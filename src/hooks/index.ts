@@ -3,7 +3,7 @@ export * from "./dashboard.hooks";
 export * from "./department.hooks";
 export * from "./payment.hooks";
 export * from "./request.hooks";
-
+export * from "./routingRule.hooks";
 export * from "./user.hooks";
 export { useInitiatePayment } from "./payment.hooks";
 
