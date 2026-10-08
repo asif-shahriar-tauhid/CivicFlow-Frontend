@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleDollarSign, LayoutDashboard, Users } from "lucide-react";
+import { Building2, CircleDollarSign, LayoutDashboard, Users } from "lucide-react";
 import type { ReactNode } from "react";
 import { DashboardShell } from "@/components/layouts/dashboard";
 
@@ -23,6 +23,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               icon: LayoutDashboard,
               isActive: (path) => path === "/admin",
               description: "Citywide incident triage and analytics",
+            },
+            {
+              label: "Departments",
+              href: "/admin/departments",
+              icon: Building2,
+              isActive: (path) => path.startsWith("/admin/departments"),
+              description: "Municipal divisions & routing desks",
             },
             {
               label: "Personnel & Citizens",

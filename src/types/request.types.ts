@@ -32,12 +32,8 @@ export interface RequestCategory {
   isActive: boolean;
 }
 
-export interface Department {
-  id: string;
-  name: string;
-  description?: string | null;
-  isActive: boolean;
-}
+import type { Department } from "./department.types";
+export type { Department };
 
 export interface RequestAttachment {
   id: string;
