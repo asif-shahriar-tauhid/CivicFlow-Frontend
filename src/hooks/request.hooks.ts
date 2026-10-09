@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { submitRequestFeedback } from "@/api/feedback.api";
 import {
+  addInvestigationNote,
+  assignServiceRequest,
   confirmServiceRequest,
   createServiceRequest,
   deleteServiceRequest,
@@ -8,8 +10,12 @@ import {
   getMyQueue,
   getServiceRequestById,
   getServiceRequests,
+  reassignServiceRequest,
   reopenServiceRequest,
+  resolveServiceRequest,
   routeServiceRequest,
+  type TransitionRequestInput,
+  transitionServiceRequest,
   updateServiceRequest,
 } from "@/api/request.api";
 import type { RequestFilterParams } from "@/types/request.types";
@@ -151,6 +157,101 @@ export const useRouteServiceRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["public-stats"] });
+    },
+  });
+};
+
+export const useTransitionServiceRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      payload,
+    }: {
+      requestId: string;
+      payload: TransitionRequestInput;
+    }) => transitionServiceRequest(requestId, payload),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["public-stats"] });
+    },
+  });
+};
+
+export const useResolveServiceRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      reason,
+    }: {
+      requestId: string;
+      reason: string;
+    }) => resolveServiceRequest(requestId, reason),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+      queryClient.invalidateQueries({ queryKey: ["public-stats"] });
+    },
+  });
+};
+
+export const useAddInvestigationNote = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ requestId, note }: { requestId: string; note: string }) =>
+      addInvestigationNote(requestId, note),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+    },
+  });
+};
+
+export const useAssignServiceRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      assignedToId,
+    }: {
+      requestId: string;
+      assignedToId: string;
+    }) => assignServiceRequest(requestId, assignedToId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+    },
+  });
+};
+
+export const useReassignServiceRequest = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      assignedToId,
+    }: {
+      requestId: string;
+      assignedToId: string;
+    }) => reassignServiceRequest(requestId, assignedToId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
     },
   });
 };

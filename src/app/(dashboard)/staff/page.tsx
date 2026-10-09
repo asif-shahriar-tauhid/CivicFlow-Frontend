@@ -11,13 +11,16 @@ import {
   MapPin,
   RefreshCw,
   Search,
-  ShieldAlert,
   UserCheck,
-  Users,
   X,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  AssignStaffModal,
+  ResolveTicketModal,
+  StatusTransitionModal,
+} from "@/components/modules/requests";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
@@ -25,15 +28,23 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/hooks/auth.hooks";
 import { useGetDepartmentQueue, useGetMyQueue } from "@/hooks/request.hooks";
-import type { RequestPriority, RequestStatus, ServiceRequest } from "@/types/request.types";
+import type { ServiceRequest } from "@/types/request.types";
 
 export default function StaffQueuePage() {
   const { user } = useCurrentUser();
-  const [queueScope, setQueueScope] = useState<"personal" | "department">("personal");
+  const [queueScope, setQueueScope] = useState<"personal" | "department">(
+    "personal",
+  );
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [filterPriority, setFilterPriority] = useState<string>("ALL");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  const [selectedTicketForTransition, setSelectedTicketForTransition] =
+    useState<ServiceRequest | null>(null);
+  const [selectedTicketForResolve, setSelectedTicketForResolve] =
+    useState<ServiceRequest | null>(null);
+  const [selectedTicketForAssign, setSelectedTicketForAssign] =
+    useState<ServiceRequest | null>(null);
 
   // Queries for personal and department queue
   const {
@@ -51,7 +62,26 @@ export default function StaffQueuePage() {
   } = useGetDepartmentQueue();
 
   const myRequests = useMemo(() => myQueueData?.data || [], [myQueueData]);
-  const deptRequests = useMemo(() => deptQueueData?.data || [], [deptQueueData]);
+  const deptRequests = useMemo(
+    () => deptQueueData?.data || [],
+    [deptQueueData],
+  );
+
+  const candidateStaffList = useMemo(() => {
+    const list: Array<{ id: string; name: string; email: string }> = [];
+    const seen = new Set<string>();
+    for (const r of deptRequests) {
+      if (r.assignedTo && !seen.has(r.assignedTo.id)) {
+        seen.add(r.assignedTo.id);
+        list.push({
+          id: r.assignedTo.id,
+          name: r.assignedTo.name,
+          email: r.assignedTo.email,
+        });
+      }
+    }
+    return list;
+  }, [deptRequests]);
 
   const activeRequests = queueScope === "personal" ? myRequests : deptRequests;
   const isLoading = queueScope === "personal" ? isMyLoading : isDeptLoading;
@@ -93,8 +123,12 @@ export default function StaffQueuePage() {
           .toLowerCase()
           .includes(query);
         const matchesWard = (r.ward || "").toLowerCase().includes(query);
-        const matchesCategory = (r.category?.name || "").toLowerCase().includes(query);
-        const matchesAssignee = (r.assignedTo?.name || "").toLowerCase().includes(query);
+        const matchesCategory = (r.category?.name || "")
+          .toLowerCase()
+          .includes(query);
+        const matchesAssignee = (r.assignedTo?.name || "")
+          .toLowerCase()
+          .includes(query);
         return (
           matchesNumber ||
           matchesTitle ||
@@ -112,9 +146,13 @@ export default function StaffQueuePage() {
   const activeCount = useMemo(
     () =>
       activeRequests.filter((r) =>
-        ["SUBMITTED", "TRIAGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"].includes(
-          r.status,
-        ),
+        [
+          "SUBMITTED",
+          "TRIAGED",
+          "ASSIGNED",
+          "IN_PROGRESS",
+          "REOPENED",
+        ].includes(r.status),
       ).length,
     [activeRequests],
   );
@@ -167,8 +205,8 @@ export default function StaffQueuePage() {
             </Badge>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            Manage assigned civic complaints, monitor SLA countdowns, and execute
-            municipal field work orders.
+            Manage assigned civic complaints, monitor SLA countdowns, and
+            execute municipal field work orders.
           </p>
         </div>
 
@@ -181,7 +219,10 @@ export default function StaffQueuePage() {
             className="gap-1.5 rounded-4xl"
           >
             <RefreshCw
-              className={cn("size-3.5", isFetching && "animate-spin text-primary")}
+              className={cn(
+                "size-3.5",
+                isFetching && "animate-spin text-primary",
+              )}
             />
             <span>{isFetching ? "Syncing..." : "Refresh Queue"}</span>
           </Button>
@@ -294,7 +335,9 @@ export default function StaffQueuePage() {
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {queueScope === "personal" ? "Active Assignments" : "Department In-Flight"}
+              {queueScope === "personal"
+                ? "Active Assignments"
+                : "Department In-Flight"}
             </span>
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
               <HardHat className="size-4" />
@@ -304,7 +347,9 @@ export default function StaffQueuePage() {
             <span className="text-3xl font-extrabold tracking-tight text-foreground">
               {isLoading ? "—" : activeCount}
             </span>
-            <span className="text-xs text-muted-foreground">in active triage</span>
+            <span className="text-xs text-muted-foreground">
+              in active triage
+            </span>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
             {queueScope === "personal"
@@ -369,7 +414,8 @@ export default function StaffQueuePage() {
                   : "Department Dispatch Pool"}
               </h2>
               <Badge variant="outline" className="text-xs font-mono">
-                {filteredRequests.length} {filteredRequests.length === 1 ? "order" : "orders"}
+                {filteredRequests.length}{" "}
+                {filteredRequests.length === 1 ? "order" : "orders"}
               </Badge>
             </div>
             <p className="text-xs text-muted-foreground">
@@ -470,7 +516,10 @@ export default function StaffQueuePage() {
               <Spinner className="size-4 text-primary" />
               <span>
                 Loading{" "}
-                {queueScope === "personal" ? "personal queue" : "department queue"}...
+                {queueScope === "personal"
+                  ? "personal queue"
+                  : "department queue"}
+                ...
               </span>
             </div>
           </div>
@@ -532,7 +581,9 @@ export default function StaffQueuePage() {
                 <thead className="border-b border-border bg-muted/40 text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Tracking ID</th>
-                    <th className="px-4 py-3 font-medium">Incident & Category</th>
+                    <th className="px-4 py-3 font-medium">
+                      Incident & Category
+                    </th>
                     <th className="px-4 py-3 font-medium">Location & Ward</th>
                     <th className="px-4 py-3 font-medium">Assignee</th>
                     <th className="px-4 py-3 font-medium">Status</th>
@@ -581,9 +632,7 @@ export default function StaffQueuePage() {
                           <div className="flex items-center gap-1 text-[11px] text-foreground font-medium truncate max-w-xs">
                             <MapPin className="size-3 shrink-0 text-muted-foreground" />
                             <span>
-                              {request.ward
-                                ? `${request.ward} • `
-                                : ""}
+                              {request.ward ? `${request.ward} • ` : ""}
                               {request.address ||
                                 request.location ||
                                 "Location recorded"}
@@ -598,24 +647,36 @@ export default function StaffQueuePage() {
 
                         {/* Assignee */}
                         <td className="px-4 py-3 whitespace-nowrap">
-                          {isAssignedToMe ? (
-                            <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-medium">
-                              Assigned to You
-                            </Badge>
-                          ) : request.assignedTo ? (
-                            <div className="flex items-center gap-1 text-muted-foreground">
-                              <span className="text-[11px] font-medium text-foreground truncate max-w-[120px]">
-                                {request.assignedTo.name}
-                              </span>
-                            </div>
-                          ) : (
-                            <Badge
-                              variant="outline"
-                              className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px]"
-                            >
-                              Unassigned
-                            </Badge>
-                          )}
+                          <button
+                            type="button"
+                            onClick={() => setSelectedTicketForAssign(request)}
+                            className="group/assignee inline-flex items-center gap-1.5 text-left rounded-lg p-1 -m-1 hover:bg-muted/60 transition-colors cursor-pointer"
+                            title={
+                              request.assignedTo
+                                ? "Click to reassign officer"
+                                : "Click to assign officer"
+                            }
+                          >
+                            {isAssignedToMe ? (
+                              <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-medium group-hover/assignee:border-primary/40">
+                                Assigned to You
+                              </Badge>
+                            ) : request.assignedTo ? (
+                              <div className="flex items-center gap-1 text-muted-foreground group-hover/assignee:text-foreground">
+                                <span className="text-[11px] font-medium text-foreground truncate max-w-[120px]">
+                                  {request.assignedTo.name}
+                                </span>
+                                <UserCheck className="size-3 text-muted-foreground opacity-0 group-hover/assignee:opacity-100 transition-opacity" />
+                              </div>
+                            ) : (
+                              <Badge
+                                variant="outline"
+                                className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] group-hover/assignee:bg-amber-500/20"
+                              >
+                                + Assign
+                              </Badge>
+                            )}
+                          </button>
                         </td>
 
                         {/* Status */}
@@ -672,16 +733,65 @@ export default function StaffQueuePage() {
 
                         {/* Action */}
                         <td className="px-4 py-3 text-right whitespace-nowrap">
-                          <Link
-                            href={`/staff/requests/${request.id}`}
-                            className={cn(
-                              buttonVariants({ variant: "ghost", size: "xs" }),
-                              "gap-1 text-primary hover:text-primary cursor-pointer font-medium",
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              onClick={() =>
+                                setSelectedTicketForAssign(request)
+                              }
+                              className="gap-1 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-7 px-2.5"
+                              title={
+                                request.assignedTo
+                                  ? "Reassign field technician"
+                                  : "Assign field technician"
+                              }
+                            >
+                              <UserCheck className="size-3" />
+                              <span>
+                                {request.assignedTo ? "Reassign" : "Assign"}
+                              </span>
+                            </Button>
+                            {request.status === "IN_PROGRESS" && (
+                              <Button
+                                variant="outline"
+                                size="xs"
+                                onClick={() =>
+                                  setSelectedTicketForResolve(request)
+                                }
+                                className="gap-1 rounded-full border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10 shadow-xs text-xs font-semibold h-7 px-2.5"
+                                title="Mark field work as resolved with mandatory summary"
+                              >
+                                <CheckCircle2 className="size-3 text-emerald-600" />
+                                <span>Resolve</span>
+                              </Button>
                             )}
-                          >
-                            <span>Manage</span>
-                            <ArrowRight className="size-3" />
-                          </Link>
+                            <Button
+                              variant="outline"
+                              size="xs"
+                              onClick={() =>
+                                setSelectedTicketForTransition(request)
+                              }
+                              className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-7 px-2.5"
+                              title="Transition ticket lifecycle status"
+                            >
+                              <HardHat className="size-3" />
+                              <span>Transition</span>
+                            </Button>
+                            <Link
+                              href={`/staff/requests/${request.id}`}
+                              className={cn(
+                                buttonVariants({
+                                  variant: "ghost",
+                                  size: "xs",
+                                }),
+                                "gap-1 text-primary hover:text-primary cursor-pointer font-medium",
+                              )}
+                            >
+                              <span>Manage</span>
+                              <ArrowRight className="size-3" />
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -692,6 +802,43 @@ export default function StaffQueuePage() {
           </div>
         )}
       </div>
+
+      {/* State Machine Transition Modal (Outside Table) */}
+      <StatusTransitionModal
+        ticket={selectedTicketForTransition}
+        isOpen={Boolean(selectedTicketForTransition)}
+        onClose={() => setSelectedTicketForTransition(null)}
+        onSuccess={() => {
+          setSelectedTicketForTransition(null);
+          refetchMy();
+          refetchDept();
+        }}
+      />
+
+      {/* Field Work Resolution Modal (Outside Table) */}
+      <ResolveTicketModal
+        ticket={selectedTicketForResolve}
+        isOpen={Boolean(selectedTicketForResolve)}
+        onClose={() => setSelectedTicketForResolve(null)}
+        onSuccess={() => {
+          setSelectedTicketForResolve(null);
+          refetchMy();
+          refetchDept();
+        }}
+      />
+
+      {/* Assign / Reassign Staff Modal (Outside Table) */}
+      <AssignStaffModal
+        ticket={selectedTicketForAssign}
+        isOpen={Boolean(selectedTicketForAssign)}
+        candidateStaffList={candidateStaffList}
+        onClose={() => setSelectedTicketForAssign(null)}
+        onSuccess={() => {
+          setSelectedTicketForAssign(null);
+          refetchMy();
+          refetchDept();
+        }}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import type * as React from "react";
 import type { RequestPriority, RequestStatus } from "@/types/request.types";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 h-6 px-2.5 rounded-4xl text-xs font-medium transition-colors select-none",
+  "inline-flex shrink-0 items-center gap-1.5 h-6 px-2.5 rounded-4xl text-xs font-medium whitespace-nowrap transition-colors select-none",
   {
     variants: {
       variant: {
