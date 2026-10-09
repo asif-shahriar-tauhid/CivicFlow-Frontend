@@ -15,24 +15,18 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section with Quick Ticket Tracking Search */}
       <HeroSection
         onSearchTicket={(ticketId) => setActiveSearchTicket(ticketId)}
       />
 
-      {/* Real-time Public Telemetry Statistics */}
       <TelemetryBanner />
 
-      {/* Core Municipal Department Services */}
       <ServiceGrid />
 
-      {/* 4-Stage Lifecycle State Machine & SLA Process */}
       <WorkflowSection />
 
-      {/* Public Trust, 7-Day Reopening Right, and Audit Integrity */}
       <TrustGuarantees />
 
-      {/* Quick Track Telemetry Modal */}
       <QuickTrackModal
         ticketId={activeSearchTicket}
         onClose={() => setActiveSearchTicket(null)}

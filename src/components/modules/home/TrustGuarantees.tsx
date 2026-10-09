@@ -40,7 +40,6 @@ export default function TrustGuarantees() {
     <section className="w-full py-16 lg:py-24 bg-card border-t border-border">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Column: Heading and CTA */}
           <div className="lg:col-span-5 flex flex-col gap-5">
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               Public Accountability
@@ -76,7 +75,6 @@ export default function TrustGuarantees() {
             </div>
           </div>
 
-          {/* Right Column: 4 Guarantees */}
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
             {guarantees.map((item) => {
               const Icon = item.icon;

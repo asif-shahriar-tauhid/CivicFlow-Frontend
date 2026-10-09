@@ -50,7 +50,6 @@ export function FinancialVelocityWidget({
           </span>
         </div>
 
-        {/* Hero Revenue Card */}
         <div className="mt-5 rounded-xl border border-border/60 bg-linear-to-br from-muted/30 to-muted/10 p-4">
           <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
             Completed Settlements
@@ -69,7 +68,6 @@ export function FinancialVelocityWidget({
           </span>
         </div>
 
-        {/* Pending vs Total breakdown */}
         <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
           <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
             <div className="flex items-center gap-1.5 text-muted-foreground mb-1">

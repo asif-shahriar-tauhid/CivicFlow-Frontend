@@ -104,7 +104,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
                 tokenRole = meRes.data.role;
               }
             } catch {
-              // Fall back to decoded JWT role
             }
             queryClient.invalidateQueries({ queryKey: ["user"] });
 
@@ -141,7 +140,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Demo Quick-Fill Bar */}
       <div className="rounded-xl border border-border bg-muted/30 p-3.5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -176,7 +174,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
         </form.Subscribe>
       </div>
 
-      {/* Main Login Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -184,7 +181,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
         }}
       >
         <FieldGroup>
-          {/* Email Field */}
           <form.Field name="email">
             {(field) => {
               const isInvalid =
@@ -210,7 +206,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
             }}
           </form.Field>
 
-          {/* Password Field */}
           <form.Field name="password">
             {(field) => {
               const isInvalid =
@@ -261,7 +256,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
             }}
           </form.Field>
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="default"
@@ -281,7 +275,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
         </FieldGroup>
       </form>
 
-      {/* Divider & Google OAuth */}
       <div className="flex flex-col gap-3">
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 flex items-center">
@@ -297,7 +290,6 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
         </div>
       </div>
 
-      {/* Switch to Register */}
       <div className="text-center pt-2 border-t border-border">
         <p className="text-xs text-muted-foreground">
           Don&apos;t have an account yet?{" "}

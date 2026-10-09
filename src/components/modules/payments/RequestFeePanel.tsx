@@ -78,7 +78,6 @@ export function RequestFeePanel({
     });
   };
 
-  // State 1: COMPLETED (Official Fee Settled)
   if (isCompleted && effectivePayment) {
     return (
       <div className="overflow-hidden rounded-xl border border-emerald-500/30 bg-emerald-50/50 p-5 dark:bg-emerald-950/20 sm:p-6 shadow-xs">
@@ -168,7 +167,6 @@ export function RequestFeePanel({
     );
   }
 
-  // State 2: PENDING (Checkout Session Active)
   if (isPending && effectivePayment) {
     return (
       <div className="overflow-hidden rounded-xl border border-amber-500/30 bg-amber-50/50 p-5 dark:bg-amber-950/20 sm:p-6 shadow-xs">
@@ -245,7 +243,6 @@ export function RequestFeePanel({
     );
   }
 
-  // State 3: UNPAID or FAILED (Payment Due)
   return (
     <div className="overflow-hidden rounded-xl border border-sky-500/30 bg-sky-50/50 p-5 dark:bg-sky-950/20 sm:p-6 shadow-xs">
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">

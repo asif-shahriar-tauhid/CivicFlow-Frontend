@@ -27,7 +27,6 @@ export function FeedbackReportTelemetryStrip({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Average Rating */}
       <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-amber-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -53,7 +52,6 @@ export function FeedbackReportTelemetryStrip({
         </div>
       </div>
 
-      {/* 2. Total Verified Feedback */}
       <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-primary/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -76,7 +74,6 @@ export function FeedbackReportTelemetryStrip({
         </p>
       </div>
 
-      {/* 3. 5-Star Reviews */}
       <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -99,7 +96,6 @@ export function FeedbackReportTelemetryStrip({
         </p>
       </div>
 
-      {/* 4. Critical Dissatisfaction Alerts */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-border">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">

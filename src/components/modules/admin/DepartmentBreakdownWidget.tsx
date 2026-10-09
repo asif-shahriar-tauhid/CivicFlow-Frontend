@@ -50,7 +50,6 @@ export function DepartmentBreakdownWidget({
           </span>
         </div>
 
-        {/* Proportional Segmented Progress Bar */}
         <div className="mt-5 space-y-2">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-medium">
             <span>Overall Dispatch Ratio</span>
@@ -76,7 +75,6 @@ export function DepartmentBreakdownWidget({
           </div>
         </div>
 
-        {/* Detailed Department List */}
         <div className="mt-5 space-y-3">
           {departments.map((dept, idx) => {
             const pct = Math.round((dept.count / total) * 100);
@@ -134,7 +132,6 @@ export function DepartmentBreakdownWidget({
                   </div>
                 </div>
 
-                {/* Micro Progress Bar */}
                 <div className="h-1.5 w-full rounded-full bg-muted/80 overflow-hidden">
                   <div
                     className={`h-full ${color} rounded-full transition-all duration-500`}

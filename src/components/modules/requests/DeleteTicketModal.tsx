@@ -54,11 +54,9 @@ export function DeleteTicketModal({
         aria-describedby="delete-ticket-description"
         aria-modal="true"
       >
-        {/* Top Warning Accent Line */}
         <div className="h-1.5 w-full bg-linear-to-r from-destructive via-red-500 to-amber-500" />
 
         <div className="p-6 space-y-4">
-          {/* Header Row */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive shrink-0">
@@ -88,7 +86,6 @@ export function DeleteTicketModal({
             </button>
           </div>
 
-          {/* Ticket preview summary box */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 space-y-2 text-xs">
             <div className="flex items-center gap-2">
               <StatusBadge status={ticket.status} />
@@ -114,7 +111,6 @@ export function DeleteTicketModal({
           </p>
         </div>
 
-        {/* Footer Actions */}
         <div className="border-t border-border px-6 py-3.5 bg-muted/20 flex items-center justify-end gap-2.5">
           <Button
             type="button"

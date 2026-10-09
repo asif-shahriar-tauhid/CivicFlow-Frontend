@@ -65,7 +65,6 @@ export function DepartmentsTable({
                       : "hover:bg-muted/30"
                   }`}
                 >
-                  {/* Department Name & ID */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
                       <div
@@ -88,7 +87,6 @@ export function DepartmentsTable({
                     </div>
                   </td>
 
-                  {/* Status */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {isArchived ? (
                       <Badge
@@ -108,7 +106,6 @@ export function DepartmentsTable({
                     )}
                   </td>
 
-                  {/* Description */}
                   <td className="py-3.5 px-4 max-w-xs">
                     <p className="line-clamp-2 text-muted-foreground leading-relaxed">
                       {dept.description || (
@@ -119,7 +116,6 @@ export function DepartmentsTable({
                     </p>
                   </td>
 
-                  {/* Rules Count */}
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <span className="inline-flex items-center gap-1 font-semibold text-foreground px-2 py-0.5 rounded-md bg-muted/60 text-xs">
                       <GitBranch className="h-3 w-3 text-indigo-500" />
@@ -127,7 +123,6 @@ export function DepartmentsTable({
                     </span>
                   </td>
 
-                  {/* Requests Count */}
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <span className="inline-flex items-center gap-1 font-semibold text-foreground px-2 py-0.5 rounded-md bg-muted/60 text-xs">
                       <Inbox className="h-3 w-3 text-amber-500" />
@@ -135,12 +130,10 @@ export function DepartmentsTable({
                     </span>
                   </td>
 
-                  {/* Registered Date */}
                   <td className="py-3.5 px-4 whitespace-nowrap text-muted-foreground text-[11px]">
                     {formattedDate}
                   </td>
 
-                  {/* Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
                       <Button

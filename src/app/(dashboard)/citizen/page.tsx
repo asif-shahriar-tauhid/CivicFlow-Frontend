@@ -27,7 +27,6 @@ import { Spinner } from "@/components/ui/spinner";
 import { useGetServiceRequests } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
-// Mock fallbacks ensuring high visual feedback when backend is offline or empty
 const _DEMO_CITIZEN_TICKETS: Partial<ServiceRequest>[] = [
   {
     id: "demo-1",
@@ -126,7 +125,6 @@ export default function CitizenPortalPage() {
 
   const { data: response, isLoading, refetch } = useGetServiceRequests();
 
-  // Pick API data if available, or empty list
   const rawTickets = useMemo(() => {
     if (Array.isArray(response?.data)) {
       return response.data;
@@ -134,10 +132,8 @@ export default function CitizenPortalPage() {
     return [];
   }, [response]);
 
-  // Filter & Search
   const filteredTickets = useMemo(() => {
     return rawTickets.filter((item) => {
-      // Search term
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase();
         const matchesTitle = item.title?.toLowerCase().includes(query);
@@ -146,7 +142,6 @@ export default function CitizenPortalPage() {
         if (!matchesTitle && !matchesNumber && !matchesAddress) return false;
       }
 
-      // Status Filter
       if (statusFilter === "ALL") return true;
       if (statusFilter === "ACTIVE") {
         return [
@@ -168,7 +163,6 @@ export default function CitizenPortalPage() {
     });
   }, [rawTickets, searchTerm, statusFilter]);
 
-  // Compute KPI Counts
   const totalCount = rawTickets.length;
   const activeCount = rawTickets.filter((t) =>
     ["SUBMITTED", "TRIAGED", "ASSIGNED", "IN_PROGRESS", "REOPENED"].includes(
@@ -182,7 +176,6 @@ export default function CitizenPortalPage() {
 
   return (
     <div className="flex flex-col gap-8 pb-16 animate-in fade-in duration-200">
-      {/* Portal Greeting Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2 mb-1">
@@ -224,9 +217,7 @@ export default function CitizenPortalPage() {
         </div>
       </div>
 
-      {/* 4 KPI Telemetry Cards */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
-        {/* Total */}
         <div className="rounded-xl border border-border bg-card p-4 flex flex-col justify-between">
           <span className="text-xs font-medium text-muted-foreground">
             Total Reported
@@ -239,7 +230,6 @@ export default function CitizenPortalPage() {
           </div>
         </div>
 
-        {/* In Progress */}
         <div className="rounded-xl border border-border bg-card p-4 flex flex-col justify-between">
           <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <span className="size-1.5 rounded-full bg-sky-500 animate-pulse" />
@@ -255,7 +245,6 @@ export default function CitizenPortalPage() {
           </div>
         </div>
 
-        {/* Action Required */}
         <div
           className={`rounded-xl border p-4 flex flex-col justify-between transition-colors ${
             actionRequiredCount > 0
@@ -277,7 +266,6 @@ export default function CitizenPortalPage() {
           </div>
         </div>
 
-        {/* Verified & Closed */}
         <div className="rounded-xl border border-border bg-card p-4 flex flex-col justify-between">
           <span className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
             <CheckCircle2 className="size-3.5 text-emerald-500" />
@@ -292,7 +280,6 @@ export default function CitizenPortalPage() {
         </div>
       </div>
 
-      {/* Action Required Prompt Banner (if any ticket is resolved awaiting citizen confirmation) */}
       {actionRequiredCount > 0 && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2.5">
@@ -319,9 +306,7 @@ export default function CitizenPortalPage() {
         </div>
       )}
 
-      {/* Search & Filter Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        {/* Search input */}
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
@@ -332,7 +317,6 @@ export default function CitizenPortalPage() {
           />
         </div>
 
-        {/* Filter Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {[
             { id: "ALL", label: "All Tickets" },
@@ -359,7 +343,6 @@ export default function CitizenPortalPage() {
         </div>
       </div>
 
-      {/* Ticket List View */}
       {isLoading ? (
         <div className="h-64 flex flex-col items-center justify-center gap-3">
           <Spinner />
@@ -401,10 +384,8 @@ export default function CitizenPortalPage() {
                 key={ticket.id}
                 className="group relative rounded-xl border border-border bg-card p-5 transition-all hover:border-border/80 hover:shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4"
               >
-                {/* Left ticket overview */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
-                    {/* Monospace Tracking ID */}
                     <span className="font-mono text-xs font-bold text-primary tracking-wider">
                       {ticket.requestNumber || "CF-PENDING"}
                     </span>
@@ -426,7 +407,6 @@ export default function CitizenPortalPage() {
                     )}
                   </div>
 
-                  {/* Title & Description */}
                   <Link
                     href={`/citizen/requests/${ticket.id}`}
                     className="block group-hover:text-primary transition-colors"
@@ -440,7 +420,6 @@ export default function CitizenPortalPage() {
                     {ticket.description}
                   </p>
 
-                  {/* Telemetry metadata footer */}
                   <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1 text-muted-foreground">
                       <MapPin className="size-3.5 shrink-0" />
@@ -466,7 +445,6 @@ export default function CitizenPortalPage() {
                   </div>
                 </div>
 
-                {/* Right Action Button Column */}
                 <div className="flex items-center gap-2 w-full md:w-auto justify-end border-t border-border/60 pt-3 md:border-0 md:pt-0">
                   {ticket.status === "SUBMITTED" && (
                     <>
@@ -521,7 +499,6 @@ export default function CitizenPortalPage() {
         </div>
       )}
 
-      {/* Edit Ticket Modal */}
       <EditTicketModal
         ticket={editingTicket}
         isOpen={Boolean(editingTicket)}
@@ -529,7 +506,6 @@ export default function CitizenPortalPage() {
         onSuccess={() => refetch()}
       />
 
-      {/* Delete / Cancel Ticket Modal */}
       <DeleteTicketModal
         ticket={deletingTicket}
         isOpen={Boolean(deletingTicket)}

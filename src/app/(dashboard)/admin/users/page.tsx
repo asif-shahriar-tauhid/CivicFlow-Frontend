@@ -31,7 +31,6 @@ import { useGetAllUsers } from "@/hooks/user.hooks";
 import type { User, UserRole, UserStatus } from "@/types/auth.types";
 
 export default function AdminUsersPage() {
-  // Query Filters & Pagination State
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<UserRole | "ALL">("ALL");
@@ -40,11 +39,9 @@ export default function AdminUsersPage() {
   );
   const [selectedDeptId, setSelectedDeptId] = useState<string>("");
 
-  // Modals
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deactivatingUser, setDeactivatingUser] = useState<User | null>(null);
 
-  // Data fetching
   const {
     data: usersResponse,
     isLoading: usersLoading,
@@ -65,7 +62,6 @@ export default function AdminUsersPage() {
   const users = usersResponse?.data || [];
   const meta = usersResponse?.meta;
 
-  // Overview quick stats computed from active query
   const totalUsers = meta?.total ?? users.length;
   const citizenCount = useMemo(
     () => users.filter((u) => u.role === "CITIZEN").length,
@@ -96,7 +92,6 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-8">
-      {/* Executive Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2.5">
@@ -136,7 +131,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Directory Metrics Strip */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center justify-between">
@@ -225,10 +219,8 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Search & Filter Toolbar */}
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-          {/* Search Box */}
           <form
             onSubmit={handleSearchSubmit}
             className="relative flex-1 max-w-md"
@@ -251,9 +243,7 @@ export default function AdminUsersPage() {
             )}
           </form>
 
-          {/* Quick Filters */}
           <div className="flex flex-wrap items-center gap-2">
-            {/* Department Dropdown */}
             <select
               value={selectedDeptId}
               onChange={(e) => {
@@ -270,7 +260,6 @@ export default function AdminUsersPage() {
               ))}
             </select>
 
-            {/* Status Dropdown */}
             <select
               value={selectedStatus}
               onChange={(e) => {
@@ -301,7 +290,6 @@ export default function AdminUsersPage() {
           </div>
         </div>
 
-        {/* Role Filter Pills */}
         <div className="flex flex-wrap items-center gap-1.5 pt-1">
           {(["ALL", "CITIZEN", "STAFF", "ADMIN"] as const).map((role) => (
             <button
@@ -323,7 +311,6 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Users Management Table */}
       <div className="space-y-4">
         {usersLoading ? (
           <div className="flex h-56 w-full items-center justify-center rounded-2xl border border-dashed border-border bg-muted/10">
@@ -373,7 +360,6 @@ export default function AdminUsersPage() {
                       key={item.id}
                       className="transition-colors hover:bg-muted/30"
                     >
-                      {/* User Column */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
                           <UserAvatar user={item} size="sm" />
@@ -395,7 +381,6 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
 
-                      {/* Role Column */}
                       <td className="px-4 py-3">
                         {item.role === "ADMIN" ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
@@ -415,7 +400,6 @@ export default function AdminUsersPage() {
                         )}
                       </td>
 
-                      {/* Department Column */}
                       <td className="px-4 py-3">
                         {item.department ? (
                           <div className="flex items-center gap-1.5 font-medium text-foreground max-w-[170px] truncate">
@@ -431,7 +415,6 @@ export default function AdminUsersPage() {
                         )}
                       </td>
 
-                      {/* Status Column */}
                       <td className="px-4 py-3">
                         {item.status === "ACTIVE" ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono uppercase">
@@ -451,7 +434,6 @@ export default function AdminUsersPage() {
                         )}
                       </td>
 
-                      {/* Registered Date Column */}
                       <td className="px-4 py-3 text-muted-foreground font-mono text-[11px]">
                         {item.createdAt
                           ? new Date(item.createdAt).toLocaleDateString(
@@ -465,7 +447,6 @@ export default function AdminUsersPage() {
                           : "—"}
                       </td>
 
-                      {/* Actions Column */}
                       <td className="px-4 py-3 text-right">
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
@@ -499,7 +480,6 @@ export default function AdminUsersPage() {
               </table>
             </div>
 
-            {/* Pagination Controls */}
             {meta && meta.totalPages > 1 && (
               <div className="flex items-center justify-between border-t border-border px-4 py-3 text-xs bg-muted/20">
                 <span className="text-muted-foreground">
@@ -543,7 +523,6 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      {/* User Edit Modal */}
       <UserEditModal
         user={editingUser}
         isOpen={Boolean(editingUser)}
@@ -551,7 +530,6 @@ export default function AdminUsersPage() {
         onSuccess={() => refetch()}
       />
 
-      {/* User Deactivation Modal */}
       <UserDeactivateModal
         user={deactivatingUser}
         isOpen={Boolean(deactivatingUser)}

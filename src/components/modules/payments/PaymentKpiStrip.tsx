@@ -24,7 +24,6 @@ export function PaymentKpiStrip({
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      {/* Total Settled Amount */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-shadow hover:shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -46,7 +45,6 @@ export function PaymentKpiStrip({
         </p>
       </div>
 
-      {/* Completed Count */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-shadow hover:shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -67,7 +65,6 @@ export function PaymentKpiStrip({
         </p>
       </div>
 
-      {/* Pending Gateway */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-shadow hover:shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -88,7 +85,6 @@ export function PaymentKpiStrip({
         </p>
       </div>
 
-      {/* Failed / Aborted */}
       <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-shadow hover:shadow-md">
         <div className="flex items-center justify-between">
           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">

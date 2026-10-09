@@ -62,7 +62,6 @@ export function StatusTransitionModal({
 
   const isPending = isTransitioning || isResolving;
 
-  // Calculate available transitions for this ticket
   const availableOptions = useMemo(() => {
     if (!ticket) return [];
     const transitions = [...(STATE_MACHINE_TRANSITIONS[ticket.status] || [])];
@@ -77,7 +76,6 @@ export function StatusTransitionModal({
     return transitions;
   }, [ticket, role]);
 
-  // Reset or initialize target status when modal opens or ticket changes
   useEffect(() => {
     if (isOpen) {
       setReason("");
@@ -196,7 +194,6 @@ export function StatusTransitionModal({
       return;
     }
 
-    // Standard state machine transition
     transitionRequest(
       {
         requestId: ticket.id,
@@ -233,7 +230,6 @@ export function StatusTransitionModal({
       aria-labelledby="transition-modal-title"
     >
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 my-auto">
-        {/* Accent Top Border */}
         <div
           className={`h-1.5 w-full ${
             isRejection
@@ -246,7 +242,6 @@ export function StatusTransitionModal({
           }`}
         />
 
-        {/* Modal Header */}
         <div className="p-6 pb-4 border-b border-border flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
@@ -296,7 +291,6 @@ export function StatusTransitionModal({
           </button>
         </div>
 
-        {/* Form Body */}
         {availableOptions.length === 0 ? (
           <div className="p-6 space-y-4">
             <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex items-center gap-3 text-xs text-muted-foreground">
@@ -331,7 +325,6 @@ export function StatusTransitionModal({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            {/* Status Selector: rendered if not explicitly locked or multiple choices available */}
             <div>
               <span className="text-xs font-semibold text-foreground block mb-2">
                 Choose Target Lifecycle State:
@@ -407,7 +400,6 @@ export function StatusTransitionModal({
               </div>
             </div>
 
-            {/* State Transition Diff Banner */}
             <div className="rounded-xl border border-border bg-muted/30 p-3.5 flex items-center justify-between gap-3 text-xs">
               <div className="flex flex-col items-start gap-0.5">
                 <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
@@ -432,7 +424,6 @@ export function StatusTransitionModal({
               </div>
             </div>
 
-            {/* Target Status Protocol Explainer */}
             {targetMeta && (
               <div className="rounded-xl border border-border/70 bg-card p-3 text-xs text-muted-foreground leading-relaxed">
                 <span className="font-semibold text-foreground block mb-0.5">
@@ -442,7 +433,6 @@ export function StatusTransitionModal({
               </div>
             )}
 
-            {/* Missing Assignee Warning */}
             {isMissingRequiredAssignee && (
               <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
                 <AlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
@@ -459,7 +449,6 @@ export function StatusTransitionModal({
               </div>
             )}
 
-            {/* Reason / Notes Input */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
                 <label
@@ -508,7 +497,6 @@ export function StatusTransitionModal({
               />
             </div>
 
-            {/* Local Error Message */}
             {errorMsg && (
               <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 flex items-start gap-2 text-xs text-destructive">
                 <AlertCircle className="size-4 shrink-0 mt-0.5" />
@@ -516,7 +504,6 @@ export function StatusTransitionModal({
               </div>
             )}
 
-            {/* Modal Actions */}
             <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
               <Button
                 type="button"

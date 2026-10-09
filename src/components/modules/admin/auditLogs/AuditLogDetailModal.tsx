@@ -66,10 +66,8 @@ export function AuditLogDetailModal({
         aria-modal="true"
         aria-labelledby="audit-modal-title"
       >
-        {/* Top Accent */}
         <div className="h-1.5 w-full bg-linear-to-r from-indigo-500 via-primary to-sky-400" />
 
-        {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -125,9 +123,7 @@ export function AuditLogDetailModal({
           </div>
         </div>
 
-        {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-4 flex-1">
-          {/* Metadata Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div className="rounded-xl border border-border/60 bg-muted/30 p-3 space-y-1">
               <div className="flex items-center gap-1.5 text-muted-foreground font-semibold text-[10px] uppercase">
@@ -176,7 +172,6 @@ export function AuditLogDetailModal({
             </div>
           </div>
 
-          {/* State Diff Section */}
           <div className="space-y-2 pt-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
@@ -184,7 +179,6 @@ export function AuditLogDetailModal({
                 <span>State Payload Diff</span>
               </div>
 
-              {/* Diff Tabs */}
               <div className="flex items-center gap-1 p-0.5 rounded-lg bg-muted text-[11px]">
                 <button
                   type="button"
@@ -222,7 +216,6 @@ export function AuditLogDetailModal({
               </div>
             </div>
 
-            {/* JSON Code Displays */}
             {activeTab === "after" && (
               <div className="rounded-xl border border-border/80 bg-muted/40 p-3.5 overflow-x-auto max-h-60 font-mono text-[11px] text-foreground leading-relaxed">
                 {log.after ? (
@@ -275,7 +268,6 @@ export function AuditLogDetailModal({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="p-4 px-6 border-t border-border/60 bg-muted/20 flex items-center justify-between text-xs text-muted-foreground shrink-0">
           <div className="flex items-center gap-1.5 font-mono text-[11px]">
             <Lock className="h-3.5 w-3.5 text-emerald-500" />

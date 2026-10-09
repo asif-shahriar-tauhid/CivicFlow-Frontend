@@ -48,7 +48,6 @@ function GoogleLoginInner() {
               tokenRole = meRes.data.role;
             }
           } catch {
-            // Proceed with decoded token role
           }
           queryClient.invalidateQueries({ queryKey: ["user"] });
 
@@ -58,7 +57,6 @@ function GoogleLoginInner() {
             redirectUrl,
           });
 
-          // Navigate cleanly to /citizen or requested destination
           router.push(targetUrl);
           router.refresh();
         },

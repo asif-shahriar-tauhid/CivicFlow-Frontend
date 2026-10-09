@@ -134,10 +134,8 @@ export function ResolveTicketModal({
       aria-labelledby="resolve-ticket-title"
     >
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 my-auto">
-        {/* Accent Top Border */}
         <div className="h-1.5 w-full bg-linear-to-r from-emerald-500 via-teal-500 to-emerald-600" />
 
-        {/* Modal Header */}
         <div className="p-6 pb-4 border-b border-border flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 shrink-0">
@@ -172,9 +170,7 @@ export function ResolveTicketModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Unauthorized Alert if non-admin */}
           {!isAuthorized && (
             <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 flex items-start gap-3 text-xs text-destructive">
               <AlertCircle className="size-5 shrink-0 mt-0.5" />
@@ -188,7 +184,6 @@ export function ResolveTicketModal({
               </div>
             </div>
           )}
-          {/* Ticket Context Pill Row */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-[11px]">
@@ -206,7 +201,6 @@ export function ResolveTicketModal({
             </div>
           </div>
 
-          {/* Missing Assignee Warning */}
           {!hasAssignee && (
             <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 flex items-start gap-2.5 text-xs text-amber-800 dark:text-amber-300">
               <AlertTriangle className="size-4 shrink-0 text-amber-600 dark:text-amber-400 mt-0.5" />
@@ -221,7 +215,6 @@ export function ResolveTicketModal({
             </div>
           )}
 
-          {/* Citizen Verification Protocol Notice */}
           <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 flex items-start gap-3 text-xs text-emerald-800 dark:text-emerald-300">
             <ShieldCheck className="size-5 shrink-0 text-emerald-600 dark:text-emerald-400 mt-0.5" />
             <div>
@@ -237,7 +230,6 @@ export function ResolveTicketModal({
             </div>
           </div>
 
-          {/* Resolution Statement Input */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <label
@@ -252,7 +244,6 @@ export function ResolveTicketModal({
               </span>
             </div>
 
-            {/* Quick Template Chips */}
             <div className="flex flex-wrap items-center gap-1.5">
               <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium mr-1">
                 <Sparkles className="size-2.5 text-emerald-600 dark:text-emerald-400" />
@@ -285,7 +276,6 @@ export function ResolveTicketModal({
             />
           </div>
 
-          {/* Verification Checkbox */}
           <label className="flex items-start gap-2.5 p-3 rounded-xl border border-border/80 bg-muted/20 text-xs cursor-pointer select-none hover:bg-muted/30 transition-colors">
             <input
               type="checkbox"
@@ -304,7 +294,6 @@ export function ResolveTicketModal({
             </span>
           </label>
 
-          {/* Error Message */}
           {errorMsg && (
             <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 flex items-start gap-2 text-xs text-destructive">
               <AlertCircle className="size-4 shrink-0 mt-0.5" />
@@ -312,7 +301,6 @@ export function ResolveTicketModal({
             </div>
           )}
 
-          {/* Modal Actions */}
           <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
             <Button
               type="button"

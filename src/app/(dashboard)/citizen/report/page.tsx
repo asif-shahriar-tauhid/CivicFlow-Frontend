@@ -42,7 +42,6 @@ function ReportIssueFormInner() {
   const searchParams = useSearchParams();
   const initialCategoryQuery = searchParams.get("category");
 
-  // Matched category state
   const defaultCategory =
     MUNICIPAL_CATEGORIES.find((cat) =>
       initialCategoryQuery
@@ -113,7 +112,6 @@ function ReportIssueFormInner() {
       return;
     }
 
-    // Validate size (<10MB)
     const validFiles: File[] = [];
     const validPreviews: string[] = [];
 
@@ -180,7 +178,6 @@ function ReportIssueFormInner() {
         formData.append("longitude", String(value.longitude));
       }
 
-      // Append files
       for (const file of evidenceFiles) {
         formData.append("files", file);
       }
@@ -210,7 +207,6 @@ function ReportIssueFormInner() {
 
   return (
     <div className="mx-auto max-w-3xl pb-16 animate-in fade-in duration-200">
-      {/* Top Breadcrumb & Header */}
       <div className="mb-6">
         <Link
           href="/citizen"
@@ -243,7 +239,6 @@ function ReportIssueFormInner() {
         }}
         className="flex flex-col gap-8"
       >
-        {/* Section 1: Municipal Category Selection */}
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-4">
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -322,7 +317,6 @@ function ReportIssueFormInner() {
             })}
           </div>
 
-          {/* Prompt chips for one-tap topic prefill */}
           <div className="mt-4 pt-3 border-t border-border flex flex-wrap items-center gap-1.5">
             <span className="text-[11px] font-medium text-muted-foreground">
               Common issues:
@@ -341,7 +335,6 @@ function ReportIssueFormInner() {
             ))}
           </div>
 
-          {/* Case Type Classification Selector */}
           <div className="mt-5 pt-4 border-t border-border">
             <form.Field name="caseType">
               {(field) => (
@@ -420,7 +413,6 @@ function ReportIssueFormInner() {
           </div>
         </div>
 
-        {/* Section 2: Location & GPS Geotagging */}
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -453,7 +445,6 @@ function ReportIssueFormInner() {
             </Button>
           </div>
 
-          {/* Live GPS Telemetry Indicator */}
           {gpsCoordinates.latitude !== null && (
             <div className="mb-4 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 p-2.5 flex items-center justify-between text-xs">
               <span className="inline-flex items-center gap-1.5 text-emerald-700 dark:text-emerald-300 font-medium">
@@ -472,7 +463,6 @@ function ReportIssueFormInner() {
           )}
 
           <FieldGroup>
-            {/* Street Address */}
             <form.Field name="address">
               {(field) => {
                 const isInvalid =
@@ -501,7 +491,6 @@ function ReportIssueFormInner() {
               }}
             </form.Field>
 
-            {/* Ward, Zone, Landmark Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <form.Field name="ward">
                 {(field) => (
@@ -553,7 +542,6 @@ function ReportIssueFormInner() {
           </FieldGroup>
         </div>
 
-        {/* Section 3: Photographic Evidence & Verification */}
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
@@ -575,7 +563,6 @@ function ReportIssueFormInner() {
             </span>
           </div>
 
-          {/* Upload Dropzone */}
           {evidenceFiles.length < 5 && (
             <label className="relative flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 px-6 py-8 text-center transition-colors hover:border-primary/50 hover:bg-muted/40 cursor-pointer">
               <Upload className="size-6 text-muted-foreground mb-2" />
@@ -595,7 +582,6 @@ function ReportIssueFormInner() {
             </label>
           )}
 
-          {/* Uploaded Photos Grid */}
           {filePreviews.length > 0 && (
             <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
               {filePreviews.map((url, idx) => (
@@ -626,7 +612,6 @@ function ReportIssueFormInner() {
           )}
         </div>
 
-        {/* Section 4: Grievance Details & Priority */}
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-4">
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -644,7 +629,6 @@ function ReportIssueFormInner() {
           </div>
 
           <FieldGroup>
-            {/* Title */}
             <form.Field name="title">
               {(field) => {
                 const isInvalid =
@@ -678,7 +662,6 @@ function ReportIssueFormInner() {
               }}
             </form.Field>
 
-            {/* Description */}
             <form.Field name="description">
               {(field) => {
                 const isInvalid =
@@ -713,9 +696,7 @@ function ReportIssueFormInner() {
               }}
             </form.Field>
 
-            {/* Priority & Case Type Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              {/* Urgency */}
               <form.Field name="priority">
                 {(field) => (
                   <div>
@@ -746,7 +727,6 @@ function ReportIssueFormInner() {
                 )}
               </form.Field>
 
-              {/* Case Type */}
               <form.Field name="caseType">
                 {(field) => (
                   <div>
@@ -784,7 +764,6 @@ function ReportIssueFormInner() {
           </FieldGroup>
         </div>
 
-        {/* SLA Guarantee Note */}
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3 text-xs text-muted-foreground">
           <Info className="size-4 text-primary shrink-0 mt-0.5" />
           <div>
@@ -801,7 +780,6 @@ function ReportIssueFormInner() {
           </div>
         </div>
 
-        {/* Form Submission Action */}
         <div className="flex flex-col sm:flex-row items-center justify-end gap-3 pt-2">
           <Button
             type="button"

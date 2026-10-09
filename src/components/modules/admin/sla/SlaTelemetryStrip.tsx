@@ -33,7 +33,6 @@ export function SlaTelemetryStrip({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Total Overdue */}
       <div className="relative overflow-hidden rounded-2xl border border-destructive/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-destructive/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -57,7 +56,6 @@ export function SlaTelemetryStrip({
         </p>
       </div>
 
-      {/* 2. Confirmed Breaches */}
       <div className="relative overflow-hidden rounded-2xl border border-amber-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-amber-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -80,7 +78,6 @@ export function SlaTelemetryStrip({
         </p>
       </div>
 
-      {/* 3. Supervisory Escalations */}
       <div className="relative overflow-hidden rounded-2xl border border-purple-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-purple-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -103,7 +100,6 @@ export function SlaTelemetryStrip({
         </p>
       </div>
 
-      {/* 4. Batch Detection Trigger */}
       <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-primary/40 flex flex-col justify-between">
         <div>
           <div className="flex items-center justify-between">

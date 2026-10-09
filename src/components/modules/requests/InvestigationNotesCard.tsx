@@ -105,7 +105,6 @@ export function InvestigationNotesCard({
     <div
       className={`rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs flex flex-col gap-5 ${className}`}
     >
-      {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-border">
         <div className="flex items-center gap-2.5">
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -134,7 +133,6 @@ export function InvestigationNotesCard({
         )}
       </div>
 
-      {/* Notes Feed */}
       <div className="flex flex-col gap-3">
         {notes.length > 0 ? (
           notes.map((item) => (
@@ -182,7 +180,6 @@ export function InvestigationNotesCard({
         )}
       </div>
 
-      {/* Staff Submission Form (Staff & Admin only) */}
       {isStaffOrAdmin && (
         <form
           onSubmit={handleSubmit}
@@ -198,7 +195,6 @@ export function InvestigationNotesCard({
             </span>
           </div>
 
-          {/* Quick Template Chips */}
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] text-muted-foreground flex items-center gap-1 font-medium mr-1">
               <Sparkles className="size-2.5 text-primary" />
@@ -216,7 +212,6 @@ export function InvestigationNotesCard({
             ))}
           </div>
 
-          {/* Textarea */}
           <Textarea
             rows={3}
             placeholder={
@@ -233,7 +228,6 @@ export function InvestigationNotesCard({
             className="text-xs resize-none min-h-[76px]"
           />
 
-          {/* Error alert */}
           {errorMsg && (
             <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-2.5 flex items-start gap-2 text-xs text-destructive">
               <AlertCircle className="size-3.5 shrink-0 mt-0.5" />
@@ -241,7 +235,6 @@ export function InvestigationNotesCard({
             </div>
           )}
 
-          {/* Submit button */}
           <div className="flex items-center justify-between pt-1">
             <p className="text-[10px] text-muted-foreground">
               Entries are permanently logged to the municipal audit history.

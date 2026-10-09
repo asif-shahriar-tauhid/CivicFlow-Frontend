@@ -45,7 +45,6 @@ export function RoutingRuleCreateModal({
     priority?: string;
   }>({});
 
-  // Data fetching
   const { data: deptData, isLoading: deptsLoading } = useGetDepartments();
   const { data: catData, isLoading: catsLoading } = useGetCategories();
 
@@ -57,7 +56,6 @@ export function RoutingRuleCreateModal({
     if (catData?.data && catData.data.length > 0) {
       return catData.data;
     }
-    // Fallback to static municipal categories
     return MUNICIPAL_CATEGORIES.map((c) => ({ id: c.id, name: c.name }));
   }, [catData]);
 
@@ -118,7 +116,6 @@ export function RoutingRuleCreateModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Error handled by hook toast
     }
   };
 
@@ -135,10 +132,8 @@ export function RoutingRuleCreateModal({
         aria-modal="true"
         aria-labelledby="create-rule-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-primary via-indigo-500 to-emerald-400" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -168,9 +163,7 @@ export function RoutingRuleCreateModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* 1. Category Selection */}
           <div className="space-y-1.5">
             <label
               htmlFor="rule-cat-select"
@@ -208,7 +201,6 @@ export function RoutingRuleCreateModal({
             )}
           </div>
 
-          {/* 2. Target Department Selection */}
           <div className="space-y-1.5">
             <label
               htmlFor="rule-dept-select"
@@ -247,9 +239,7 @@ export function RoutingRuleCreateModal({
             )}
           </div>
 
-          {/* 3. Location Scope & Priority Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Location Scope */}
             <div className="space-y-1.5">
               <label
                 htmlFor="rule-location-input"
@@ -275,7 +265,6 @@ export function RoutingRuleCreateModal({
               </p>
             </div>
 
-            {/* Priority Weight */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label
@@ -314,7 +303,6 @@ export function RoutingRuleCreateModal({
             </div>
           </div>
 
-          {/* Quick Location Scope Presets */}
           <div className="flex items-center gap-1.5 flex-wrap text-xs">
             <span className="text-[11px] text-muted-foreground font-medium">
               Quick presets:
@@ -347,7 +335,6 @@ export function RoutingRuleCreateModal({
             )}
           </div>
 
-          {/* 4. Live Dispatch Pipeline Simulation Card */}
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2 text-xs">
             <div className="flex items-center gap-1.5 text-primary font-bold">
               <Zap className="h-3.5 w-3.5" />
@@ -388,7 +375,6 @@ export function RoutingRuleCreateModal({
             </p>
           </div>
 
-          {/* Modal Actions */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/60">
             <Button
               type="button"

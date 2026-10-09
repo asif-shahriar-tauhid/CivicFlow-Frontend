@@ -31,7 +31,6 @@ export function SlaGovernanceWidget({
     (sla.totalRequests || 0) - (sla.breachedRequests || 0),
   );
 
-  // Health tier classification
   const isHealthy = compliance >= 90;
   const isWarning = compliance >= 75 && compliance < 90;
 
@@ -40,7 +39,6 @@ export function SlaGovernanceWidget({
   return (
     <div className="rounded-2xl border border-border bg-card p-6 shadow-xs flex flex-col justify-between">
       <div>
-        {/* Widget Header */}
         <div className="flex items-center justify-between pb-4 border-b border-border/60">
           <div className="flex items-center gap-2.5">
             <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
@@ -66,9 +64,7 @@ export function SlaGovernanceWidget({
           </Badge>
         </div>
 
-        {/* Circular Gauge & Hero Metric */}
         <div className="mt-5 flex items-center justify-center gap-6 py-2">
-          {/* Radial SVG Gauge */}
           <div className="relative flex size-28 items-center justify-center">
             <svg
               className="size-full -rotate-90"
@@ -77,7 +73,6 @@ export function SlaGovernanceWidget({
               aria-label="SLA Compliance Gauge"
             >
               <title>SLA Compliance Gauge: {compliance.toFixed(1)}%</title>
-              {/* Background Circle */}
               <circle
                 cx="50"
                 cy="50"
@@ -86,7 +81,6 @@ export function SlaGovernanceWidget({
                 strokeWidth="10"
                 fill="transparent"
               />
-              {/* Animated Progress Circle */}
               <circle
                 cx="50"
                 cy="50"
@@ -115,7 +109,6 @@ export function SlaGovernanceWidget({
             </div>
           </div>
 
-          {/* Quick Metrics Column */}
           <div className="flex flex-col gap-2 min-w-32">
             <div className="rounded-xl border border-border/60 bg-muted/20 p-2.5">
               <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider block">
@@ -143,7 +136,6 @@ export function SlaGovernanceWidget({
           </div>
         </div>
 
-        {/* Breakdown Stats Strip */}
         <div className="mt-5 grid grid-cols-2 gap-2.5">
           <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3">
             <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-0.5">
@@ -174,7 +166,6 @@ export function SlaGovernanceWidget({
           </div>
         </div>
 
-        {/* Alert Callout if breach present */}
         {sla.breachedRequests > 0 ? (
           <div className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 flex items-start gap-2.5 text-xs">
             <AlertTriangle className="size-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
@@ -195,7 +186,6 @@ export function SlaGovernanceWidget({
         )}
       </div>
 
-      {/* Footer shortcut */}
       <div className="mt-5 pt-3.5 border-t border-border/60 flex items-center justify-between">
         <span className="text-[11px] text-muted-foreground">
           SLA Timers active 24/7

@@ -85,7 +85,6 @@ function VerifyEmailFormInner() {
                 role = meRes.data.role;
               }
             } catch {
-              // Proceed with decoded role
             }
             queryClient.invalidateQueries({ queryKey: ["user"] });
 
@@ -170,7 +169,6 @@ function VerifyEmailFormInner() {
         }}
       >
         <FieldGroup>
-          {/* Email field */}
           <form.Field name="email">
             {(field) => {
               const isInvalid =
@@ -195,7 +193,6 @@ function VerifyEmailFormInner() {
             }}
           </form.Field>
 
-          {/* 6-Digit OTP field with Inline Resend Action */}
           <form.Field name="otp">
             {(field) => {
               const isInvalid =
@@ -264,7 +261,6 @@ function VerifyEmailFormInner() {
             )}
           </Button>
 
-          {/* Secondary Resend Helper */}
           <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground pt-1">
             <span>Didn't receive the email code?</span>
             <button

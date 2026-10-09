@@ -50,7 +50,6 @@ export function RoleGuard({
     if (!hasRequiredRole) {
       setRedirectScheduled(true);
       if (role) {
-        // Automatically reroute the user to their designated portal
         const targetPortal = getRoleDashboardUrl(role);
         const timer = setTimeout(() => {
           router.replace(targetPortal);
@@ -68,7 +67,6 @@ export function RoleGuard({
     router,
   ]);
 
-  // Loading state: Verifying session credentials and role clearance
   if (isLoading) {
     if (fallback) return <>{fallback}</>;
 
@@ -94,7 +92,6 @@ export function RoleGuard({
     );
   }
 
-  // Unauthenticated redirecting state
   if (!isAuthenticated || !user) {
     return (
       <div className="flex min-h-[60vh] w-full flex-col items-center justify-center px-4 py-12">
@@ -108,7 +105,6 @@ export function RoleGuard({
     );
   }
 
-  // Mismatched Role state: Access restricted
   if (!hasRequiredRole) {
     const designatedPortal = getRoleDashboardUrl(role);
     return (
@@ -162,6 +158,5 @@ export function RoleGuard({
     );
   }
 
-  // Authorized: render guarded subtree
   return <>{children}</>;
 }

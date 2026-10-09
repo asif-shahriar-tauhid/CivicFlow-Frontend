@@ -27,7 +27,6 @@ export default function NotFound() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col justify-between">
-      {/* Top Header */}
       <header className="border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Link
@@ -58,10 +57,8 @@ export default function NotFound() {
         </div>
       </header>
 
-      {/* Main Error & Recovery Center */}
       <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
         <div className="w-full max-w-2xl rounded-2xl border border-border bg-card p-6 sm:p-10 shadow-xs text-center flex flex-col items-center">
-          {/* Telemetry Icon Beacon */}
           <div className="relative mb-6 flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20">
             <Compass className="size-8" />
             <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
@@ -70,7 +67,6 @@ export default function NotFound() {
             </span>
           </div>
 
-          {/* Monospace 404 Telemetry Code */}
           <span className="font-mono text-5xl sm:text-7xl font-extrabold tracking-tight text-primary tabular-nums">
             404
           </span>
@@ -80,7 +76,6 @@ export default function NotFound() {
             <span>ROUTE_STATUS: UNMAPPED_SECTOR</span>
           </span>
 
-          {/* Explanation */}
           <h1 className="mt-4 text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Municipal Sector or Dossier Not Found
           </h1>
@@ -90,7 +85,6 @@ export default function NotFound() {
             number may contain a typo.
           </p>
 
-          {/* Inline Ticket Lookup Form */}
           <div className="mt-8 w-full max-w-md rounded-xl border border-border bg-muted/20 p-4 text-left">
             <label
               htmlFor="ticket-input"
@@ -121,7 +115,6 @@ export default function NotFound() {
             </form>
           </div>
 
-          {/* Recovery Actions */}
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 w-full">
             <Button
               variant="default"
@@ -146,7 +139,6 @@ export default function NotFound() {
             </Button>
           </div>
 
-          {/* Directory Links Footer */}
           <div className="mt-10 pt-6 border-t border-border w-full flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
             <Link
               href="/#services"
@@ -179,7 +171,6 @@ export default function NotFound() {
         </div>
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground">
         <div className="mx-auto max-w-7xl px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>CivicFlow Public Intake & Verification Engine</span>

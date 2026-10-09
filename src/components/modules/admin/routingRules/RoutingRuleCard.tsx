@@ -46,7 +46,6 @@ export function RoutingRuleCard({
           : "border-border/70 bg-card/70 backdrop-blur-md hover:border-primary/40 hover:-translate-y-0.5"
       }`}
     >
-      {/* Top Accent line */}
       <div
         className={`h-1 w-full rounded-t-2xl ${
           isArchived
@@ -58,7 +57,6 @@ export function RoutingRuleCard({
       />
 
       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        {/* Top Header: Category & Status */}
         <div>
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -81,7 +79,6 @@ export function RoutingRuleCard({
               </div>
             </div>
 
-            {/* Status Pill */}
             {isArchived ? (
               <Badge
                 variant="outline"
@@ -100,7 +97,6 @@ export function RoutingRuleCard({
             )}
           </div>
 
-          {/* Visual Pipeline Dispatch Arrow */}
           <div className="mt-3.5 p-3 rounded-xl bg-muted/30 border border-border/50 flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-[10px] font-semibold uppercase text-muted-foreground flex items-center gap-1">
@@ -126,7 +122,6 @@ export function RoutingRuleCard({
           </div>
         </div>
 
-        {/* Scope Pill & Meta */}
         <div className="space-y-2 pt-2 border-t border-border/40">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground flex items-center gap-1">
@@ -161,7 +156,6 @@ export function RoutingRuleCard({
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border/40">
           <span className="text-[10px] font-mono text-muted-foreground truncate max-w-[100px]">
             {rule.id.slice(0, 8)}...

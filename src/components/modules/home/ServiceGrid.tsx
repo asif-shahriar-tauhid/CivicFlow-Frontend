@@ -63,7 +63,6 @@ export default function ServiceGrid() {
       className="w-full py-16 bg-muted/20 border-t border-border"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
@@ -86,7 +85,6 @@ export default function ServiceGrid() {
           </Link>
         </div>
 
-        {/* 4 Cards Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service) => {
             const Icon = service.icon;
@@ -96,7 +94,6 @@ export default function ServiceGrid() {
                 className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-all hover:border-border hover:shadow-md"
               >
                 <div>
-                  {/* Service Image Banner with Floating Icon and SLA */}
                   <div className="relative mb-4 h-36 w-full overflow-hidden rounded-lg bg-muted">
                     <Image
                       src={service.image}
@@ -107,12 +104,10 @@ export default function ServiceGrid() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
 
-                    {/* Floating Icon Badge */}
                     <div className="absolute bottom-2.5 left-2.5 flex size-9 items-center justify-center rounded-lg bg-background/90 text-primary shadow-xs backdrop-blur-md">
                       <Icon className="size-4" />
                     </div>
 
-                    {/* Floating SLA Badge */}
                     <span
                       className={`absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold backdrop-blur-md shadow-xs ${
                         service.slaUrgent
@@ -125,7 +120,6 @@ export default function ServiceGrid() {
                     </span>
                   </div>
 
-                  {/* Title & Description */}
                   <h3 className="text-base font-semibold text-foreground">
                     {service.name}
                   </h3>
@@ -133,7 +127,6 @@ export default function ServiceGrid() {
                     {service.description}
                   </p>
 
-                  {/* Common issues pill tags */}
                   <div className="mt-4 flex flex-wrap gap-1.5">
                     {service.examples.map((example) => (
                       <span
@@ -146,7 +139,6 @@ export default function ServiceGrid() {
                   </div>
                 </div>
 
-                {/* Card Action Link */}
                 <div className="mt-6 pt-4 border-t border-border/60">
                   <Link
                     href={`/login?redirect=/citizen/report?category=${service.id}`}

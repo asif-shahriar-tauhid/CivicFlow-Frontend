@@ -47,7 +47,6 @@ export function StatusTransitionControl({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -109,7 +108,6 @@ export function StatusTransitionControl({
     }
   };
 
-  // 1. DROPDOWN MODE (for top bar / header placement)
   const renderDropdown = () => {
     const hasNextSteps = allowedTransitions.length > 0 || canResolve;
 
@@ -193,7 +191,6 @@ export function StatusTransitionControl({
                 );
               })}
 
-              {/* Quick Resolve Bridge for IN_PROGRESS */}
               {canResolve && (
                 <button
                   type="button"
@@ -212,7 +209,6 @@ export function StatusTransitionControl({
                 </button>
               )}
 
-              {/* Quick Assign / Reassign Option (Admin Authority Only) */}
               {isAdmin && (
                 <button
                   type="button"
@@ -246,7 +242,6 @@ export function StatusTransitionControl({
     );
   };
 
-  // 2. PANEL MODE (for main dossier workflow control card)
   const renderPanel = () => {
     const isTerminal =
       ticket.status === "CLOSED" || ticket.status === "REJECTED";
@@ -256,10 +251,8 @@ export function StatusTransitionControl({
       <div
         className={`rounded-2xl border border-border bg-card p-5 sm:p-6 shadow-xs relative overflow-hidden ${className}`}
       >
-        {/* Subtle background glow */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 size-48 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
 
-        {/* Panel Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
@@ -291,7 +284,6 @@ export function StatusTransitionControl({
           </div>
         </div>
 
-        {/* State Machine Transition Cards */}
         {isTerminal ? (
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex items-center gap-3 text-xs text-muted-foreground">
             <Lock className="size-4 shrink-0 text-muted-foreground" />
@@ -416,7 +408,6 @@ export function StatusTransitionControl({
                 );
               })}
 
-              {/* Dedicated Resolve Card when IN_PROGRESS */}
               {canResolve && (
                 <button
                   type="button"
@@ -473,7 +464,6 @@ export function StatusTransitionControl({
         </>
       )}
 
-      {/* Transition Confirmation Modal */}
       <StatusTransitionModal
         ticket={ticket}
         targetStatus={targetStatus}
@@ -487,7 +477,6 @@ export function StatusTransitionControl({
         }}
       />
 
-      {/* Dedicated Resolve Ticket Modal */}
       <ResolveTicketModal
         ticket={ticket}
         isOpen={isResolveModalOpen}
@@ -497,7 +486,6 @@ export function StatusTransitionControl({
         }}
       />
 
-      {/* Assign / Reassign Staff Modal */}
       <AssignStaffModal
         ticket={ticket}
         isOpen={isAssignModalOpen}

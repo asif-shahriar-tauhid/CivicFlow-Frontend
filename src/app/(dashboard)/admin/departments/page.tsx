@@ -28,14 +28,12 @@ import { useGetDepartments } from "@/hooks/department.hooks";
 import type { Department } from "@/types/department.types";
 
 export default function AdminDepartmentsPage() {
-  // Filters & View State
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<
     "ALL" | "ACTIVE" | "ARCHIVED"
   >("ALL");
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid");
 
-  // Modals State
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [editingDepartment, setEditingDepartment] = useState<Department | null>(
     null,
@@ -48,7 +46,6 @@ export default function AdminDepartmentsPage() {
     null,
   );
 
-  // Fetch departments (requesting all including archived so admin can view/manage both)
   const {
     data: departmentsResponse,
     isLoading,
@@ -58,15 +55,12 @@ export default function AdminDepartmentsPage() {
 
   const departments: Department[] = departmentsResponse?.data || [];
 
-  // Filtered list based on search and status tab
   const filteredDepartments = useMemo(() => {
     return departments.filter((dept) => {
-      // 1. Status Filter
       const isArchived = Boolean(dept.isArchived || !dept.isActive);
       if (statusFilter === "ACTIVE" && isArchived) return false;
       if (statusFilter === "ARCHIVED" && !isArchived) return false;
 
-      // 2. Search Term Filter
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase().trim();
         const matchesName = dept.name.toLowerCase().includes(query);
@@ -80,7 +74,6 @@ export default function AdminDepartmentsPage() {
     });
   }, [departments, statusFilter, searchTerm]);
 
-  // Counts for tabs
   const totalCount = departments.length;
   const activeCount = useMemo(
     () => departments.filter((d) => !d.isArchived && d.isActive).length,
@@ -93,7 +86,6 @@ export default function AdminDepartmentsPage() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Header & Quick Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -122,7 +114,6 @@ export default function AdminDepartmentsPage() {
           </div>
         </div>
 
-        {/* Action Controls */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             type="button"
@@ -152,16 +143,13 @@ export default function AdminDepartmentsPage() {
         </div>
       </div>
 
-      {/* 2. Executive KPI Header */}
       <DepartmentTelemetryHeader
         departments={departments}
         isLoading={isLoading}
       />
 
-      {/* 3. Controls & Filter Toolbar */}
       <div className="rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Status Tabs */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/50 text-xs self-start md:self-auto overflow-x-auto max-w-full">
             <button
               type="button"
@@ -212,7 +200,6 @@ export default function AdminDepartmentsPage() {
             </button>
           </div>
 
-          {/* Search & View Mode Switcher */}
           <div className="flex items-center gap-2.5 flex-1 md:max-w-md md:justify-end">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -233,7 +220,6 @@ export default function AdminDepartmentsPage() {
               )}
             </div>
 
-            {/* View Mode Buttons */}
             <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/60 border border-border/50">
               <button
                 type="button"
@@ -263,7 +249,6 @@ export default function AdminDepartmentsPage() {
           </div>
         </div>
 
-        {/* Search Results Filter Banner (when filtering active) */}
         {(searchTerm || statusFilter !== "ALL") && (
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
             <div className="flex items-center gap-1.5">
@@ -296,7 +281,6 @@ export default function AdminDepartmentsPage() {
         )}
       </div>
 
-      {/* 4. Content State (Loading / Empty / Cards / Table) */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
           <Spinner className="h-8 w-8 text-primary" />
@@ -366,7 +350,6 @@ export default function AdminDepartmentsPage() {
         />
       )}
 
-      {/* 5. Modals */}
       <DepartmentStaffRosterModal
         department={rosterDepartment}
         isOpen={Boolean(rosterDepartment)}

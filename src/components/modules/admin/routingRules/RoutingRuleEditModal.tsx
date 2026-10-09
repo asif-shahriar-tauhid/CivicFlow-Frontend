@@ -128,7 +128,6 @@ export function RoutingRuleEditModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook toast
     }
   };
 
@@ -153,10 +152,8 @@ export function RoutingRuleEditModal({
         aria-modal="true"
         aria-labelledby="edit-rule-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0">
@@ -202,9 +199,7 @@ export function RoutingRuleEditModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Metadata pill */}
           <div className="flex items-center justify-between p-2.5 rounded-xl bg-muted/40 border border-border/40 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5" />
@@ -215,7 +210,6 @@ export function RoutingRuleEditModal({
             </div>
           </div>
 
-          {/* Category */}
           <div className="space-y-1.5">
             <label
               htmlFor="edit-rule-cat"
@@ -238,7 +232,6 @@ export function RoutingRuleEditModal({
             </select>
           </div>
 
-          {/* Department */}
           <div className="space-y-1.5">
             <label
               htmlFor="edit-rule-dept"
@@ -261,7 +254,6 @@ export function RoutingRuleEditModal({
             </select>
           </div>
 
-          {/* Scope and Priority */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label
@@ -308,7 +300,6 @@ export function RoutingRuleEditModal({
             </div>
           </div>
 
-          {/* Simulation Preview */}
           <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4 space-y-2 text-xs">
             <div className="flex items-center gap-1.5 text-blue-600 dark:text-blue-400 font-bold">
               <Zap className="h-3.5 w-3.5" />
@@ -344,7 +335,6 @@ export function RoutingRuleEditModal({
             </div>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/60">
             <Button
               type="button"

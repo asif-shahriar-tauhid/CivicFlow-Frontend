@@ -97,7 +97,6 @@ function ForgotPasswordFormInner() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Informational Conduit Card */}
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-muted-foreground flex items-start gap-3">
         <Mail className="size-4 text-primary shrink-0 mt-0.5" />
         <div>
@@ -109,7 +108,6 @@ function ForgotPasswordFormInner() {
         </div>
       </div>
 
-      {/* Demo Quick-Fill Bar */}
       <div className="rounded-xl border border-border bg-muted/30 p-3.5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -144,7 +142,6 @@ function ForgotPasswordFormInner() {
         </form.Subscribe>
       </div>
 
-      {/* Recovery Form */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -199,7 +196,6 @@ function ForgotPasswordFormInner() {
         </FieldGroup>
       </form>
 
-      {/* Navigation Footer */}
       <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
         <Link
           href="/login"

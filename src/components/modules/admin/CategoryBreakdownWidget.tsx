@@ -25,7 +25,6 @@ export function CategoryBreakdownWidget({
 }: CategoryBreakdownWidgetProps) {
   const total = totalIncidents > 0 ? totalIncidents : 1;
 
-  // Sort descending by count
   const sorted = [...categories].sort((a, b) => b.count - a.count);
 
   return (
@@ -51,7 +50,6 @@ export function CategoryBreakdownWidget({
           </span>
         </div>
 
-        {/* Categories Grid / Rows */}
         <div className="mt-5 space-y-3">
           {sorted.map((cat, idx) => {
             const pct = Math.round((cat.count / total) * 100);
@@ -81,7 +79,6 @@ export function CategoryBreakdownWidget({
                   </div>
                 </div>
 
-                {/* Progress bar */}
                 <div className="h-1.5 w-full rounded-full bg-muted/80 overflow-hidden">
                   <div
                     className={`h-full ${color} rounded-full transition-all duration-500`}

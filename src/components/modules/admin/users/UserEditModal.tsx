@@ -93,10 +93,8 @@ export function UserEditModal({
         aria-labelledby="user-edit-modal-title"
         aria-modal="true"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-primary via-blue-500 to-indigo-600" />
 
-        {/* Header */}
         <div className="p-6 border-b border-border flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
@@ -126,9 +124,7 @@ export function UserEditModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Full Name */}
           <div className="space-y-1.5">
             <label
               htmlFor="edit-user-name"
@@ -147,7 +143,6 @@ export function UserEditModal({
             />
           </div>
 
-          {/* Role Promoter Grid */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground flex items-center justify-between">
               <span>System Role & Clearance Tier</span>
@@ -157,7 +152,6 @@ export function UserEditModal({
             </label>
 
             <div className="grid grid-cols-3 gap-2.5">
-              {/* Citizen */}
               <button
                 type="button"
                 onClick={() => setRole("CITIZEN")}
@@ -181,7 +175,6 @@ export function UserEditModal({
                 </span>
               </button>
 
-              {/* Staff */}
               <button
                 type="button"
                 onClick={() => setRole("STAFF")}
@@ -203,7 +196,6 @@ export function UserEditModal({
                 </span>
               </button>
 
-              {/* Admin */}
               <button
                 type="button"
                 onClick={() => setRole("ADMIN")}
@@ -227,7 +219,6 @@ export function UserEditModal({
             </div>
           </div>
 
-          {/* Department Selection (Conditional on Staff) */}
           {role === "STAFF" && (
             <div className="space-y-1.5 p-3.5 rounded-xl border border-blue-500/30 bg-blue-500/5 animate-in fade-in duration-200">
               <label
@@ -259,7 +250,6 @@ export function UserEditModal({
             </div>
           )}
 
-          {/* Admin Role Warning */}
           {role === "ADMIN" && (
             <div className="flex items-start gap-2.5 p-3 rounded-xl border border-purple-500/30 bg-purple-500/5 text-xs text-purple-700 dark:text-purple-300 animate-in fade-in duration-200">
               <ShieldAlert className="size-4 shrink-0 mt-0.5" />
@@ -275,7 +265,6 @@ export function UserEditModal({
             </div>
           )}
 
-          {/* Account Status Radio Group */}
           <div className="space-y-2">
             <label className="text-xs font-semibold text-foreground">
               Account Access Status
@@ -319,7 +308,6 @@ export function UserEditModal({
             </div>
           </div>
 
-          {/* Footer Actions */}
           <div className="pt-4 border-t border-border flex items-center justify-end gap-2.5">
             <Button
               type="button"

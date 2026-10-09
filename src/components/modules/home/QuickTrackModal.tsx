@@ -25,7 +25,6 @@ export default function QuickTrackModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-xl animate-in zoom-in-95 duration-150">
-        {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
@@ -35,7 +34,6 @@ export default function QuickTrackModal({
           <X className="size-5" />
         </button>
 
-        {/* Header */}
         <div className="flex items-center gap-2 mb-4">
           <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary">
             <Shield className="size-4" />
@@ -50,7 +48,6 @@ export default function QuickTrackModal({
           </div>
         </div>
 
-        {/* Live Status Card */}
         <div className="rounded-xl border border-border bg-muted/30 p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-muted-foreground uppercase">
@@ -79,7 +76,6 @@ export default function QuickTrackModal({
           </div>
         </div>
 
-        {/* Timeline Preview */}
         <div className="mt-4 flex flex-col gap-2">
           <span className="text-xs font-semibold text-muted-foreground">
             Progress Milestones:
@@ -103,7 +99,6 @@ export default function QuickTrackModal({
           </div>
         </div>
 
-        {/* Citizen Portal Notice */}
         <div className="mt-5 rounded-lg bg-primary/5 border border-primary/20 p-3 text-xs text-muted-foreground">
           <p>
             Log in to your <strong>Citizen Portal</strong> to view attached
@@ -111,7 +106,6 @@ export default function QuickTrackModal({
           </p>
         </div>
 
-        {/* Modal Actions */}
         <div className="mt-6 flex flex-col sm:flex-row items-center justify-end gap-2.5">
           <Button
             variant="outline"

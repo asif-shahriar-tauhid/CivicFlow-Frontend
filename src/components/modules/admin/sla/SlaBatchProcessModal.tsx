@@ -27,7 +27,6 @@ export function SlaBatchProcessModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook gooeyToast
     }
   };
 
@@ -48,11 +47,9 @@ export function SlaBatchProcessModal({
         aria-modal="true"
         aria-labelledby="batch-modal-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-primary via-indigo-500 to-sky-400" />
 
         <div className="p-6 space-y-4">
-          {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -87,7 +84,6 @@ export function SlaBatchProcessModal({
             stamps.
           </p>
 
-          {/* Batch Size Selector */}
           <div className="space-y-1.5">
             <label
               htmlFor="batch-size"
@@ -113,7 +109,6 @@ export function SlaBatchProcessModal({
             </div>
           </div>
 
-          {/* Info Banner */}
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs text-muted-foreground space-y-1">
             <div className="flex items-center gap-1.5 font-medium text-foreground">
               <ShieldAlert className="h-3.5 w-3.5 text-primary" />
@@ -125,7 +120,6 @@ export function SlaBatchProcessModal({
             </p>
           </div>
 
-          {/* Footer Controls */}
           <div className="flex items-center justify-end gap-2.5 pt-2">
             <Button
               type="button"

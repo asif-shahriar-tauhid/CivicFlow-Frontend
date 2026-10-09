@@ -62,7 +62,6 @@ export function RoutingRulesTable({
                       : "hover:bg-muted/30"
                   }`}
                 >
-                  {/* Category */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
                       <div
@@ -85,7 +84,6 @@ export function RoutingRulesTable({
                     </div>
                   </td>
 
-                  {/* Destination Department */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-2">
                       <ArrowRight className="h-3.5 w-3.5 text-primary shrink-0" />
@@ -98,7 +96,6 @@ export function RoutingRulesTable({
                     </div>
                   </td>
 
-                  {/* Location Scope */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {rule.location ? (
                       <Badge
@@ -119,7 +116,6 @@ export function RoutingRulesTable({
                     )}
                   </td>
 
-                  {/* Priority */}
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <Badge
                       variant="outline"
@@ -133,7 +129,6 @@ export function RoutingRulesTable({
                     </Badge>
                   </td>
 
-                  {/* Status */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {isArchived ? (
                       <Badge
@@ -153,12 +148,10 @@ export function RoutingRulesTable({
                     )}
                   </td>
 
-                  {/* Registered */}
                   <td className="py-3.5 px-4 whitespace-nowrap text-muted-foreground text-[11px]">
                     {formattedDate}
                   </td>
 
-                  {/* Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
                       <Button

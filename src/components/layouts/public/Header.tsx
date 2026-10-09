@@ -48,7 +48,6 @@ const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md transition-all">
       <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Brand */}
         <div className="flex items-center gap-6">
           <Link
             href="/"
@@ -66,7 +65,6 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Desktop Nav - Absolutely centered to align with hero section */}
         <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 lg:gap-8 md:flex">
           {navLinks.map((link) => (
             <Link
@@ -79,7 +77,6 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Action Buttons */}
         <div className="hidden sm:flex items-center gap-2.5">
           {isLoading ? (
             <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
@@ -135,7 +132,6 @@ const Header = () => {
           )}
         </div>
 
-        {/* Mobile menu trigger */}
         <button
           type="button"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -150,7 +146,6 @@ const Header = () => {
         </button>
       </div>
 
-      {/* Mobile Drawer */}
       {mobileMenuOpen && (
         <div className="border-b border-border bg-background px-4 py-5 shadow-lg md:hidden">
           <nav className="flex flex-col gap-4">

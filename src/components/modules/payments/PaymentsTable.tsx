@@ -67,7 +67,6 @@ export function PaymentsTable({
 
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-card shadow-xs">
-      {/* Desktop Responsive Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead className="border-b border-border bg-muted/40 font-semibold uppercase text-muted-foreground">
@@ -92,7 +91,6 @@ export function PaymentsTable({
                   key={payment.id}
                   className="transition-colors hover:bg-muted/30"
                 >
-                  {/* Invoice # */}
                   <td className="px-4 py-3.5">
                     <Link
                       href={`${detailBaseRoute}/${payment.id}`}
@@ -102,7 +100,6 @@ export function PaymentsTable({
                     </Link>
                   </td>
 
-                  {/* Service Reference */}
                   <td className="px-4 py-3.5">
                     {req ? (
                       <div className="max-w-[220px]">
@@ -132,7 +129,6 @@ export function PaymentsTable({
                     )}
                   </td>
 
-                  {/* Citizen (Admin only) */}
                   {isAdmin && (
                     <td className="px-4 py-3.5">
                       <div className="max-w-[160px]">
@@ -146,12 +142,10 @@ export function PaymentsTable({
                     </td>
                   )}
 
-                  {/* Amount */}
                   <td className="px-4 py-3.5 font-mono text-sm font-bold tabular-nums text-foreground">
                     {formatCurrency(payment.amount, payment.currency)}
                   </td>
 
-                  {/* Gateway / TrxID */}
                   <td className="px-4 py-3.5">
                     <div className="flex flex-col gap-0.5">
                       <span className="inline-flex items-center gap-1 text-[11px] font-medium text-muted-foreground">
@@ -164,17 +158,14 @@ export function PaymentsTable({
                     </div>
                   </td>
 
-                  {/* Status */}
                   <td className="px-4 py-3.5">
                     <PaymentStatusBadge status={payment.status} />
                   </td>
 
-                  {/* Recorded At */}
                   <td className="px-4 py-3.5 font-mono text-[11px] text-muted-foreground">
                     {formatDateTime(payment.createdAt)}
                   </td>
 
-                  {/* Actions */}
                   <td className="px-4 py-3.5 text-right">
                     <div className="inline-flex items-center gap-1.5 justify-end">
                       {payment.status === "PENDING" && payment.checkoutUrl && (

@@ -128,7 +128,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
         }}
       >
         <FieldGroup>
-          {/* Full Name */}
           <form.Field name="name">
             {(field) => {
               const isInvalid =
@@ -154,7 +153,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             }}
           </form.Field>
 
-          {/* Email Address */}
           <form.Field name="email">
             {(field) => {
               const isInvalid =
@@ -180,7 +178,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             }}
           </form.Field>
 
-          {/* Contact Number (Optional) */}
           <form.Field name="contactNumber">
             {(field) => {
               return (
@@ -208,7 +205,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             }}
           </form.Field>
 
-          {/* Password */}
           <form.Field name="password">
             {(field) => {
               const isInvalid =
@@ -251,7 +247,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             }}
           </form.Field>
 
-          {/* Confirm Password */}
           <form.Field name="confirmPassword">
             {(field) => {
               const isInvalid =
@@ -277,7 +272,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             }}
           </form.Field>
 
-          {/* Live Password Requirements Checklist */}
           {pwd.length > 0 && (
             <div className="rounded-xl border border-border bg-muted/30 p-3 text-xs flex flex-col gap-1.5">
               <span className="font-semibold text-muted-foreground">
@@ -336,7 +330,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
             </div>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             variant="default"
@@ -356,7 +349,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
         </FieldGroup>
       </form>
 
-      {/* Divider & Google OAuth */}
       <div className="flex flex-col gap-3">
         <div className="relative flex items-center justify-center">
           <div className="absolute inset-0 flex items-center">
@@ -372,7 +364,6 @@ function RegisterFormInner({ googleLogin }: RegisterFormProps) {
         </div>
       </div>
 
-      {/* Switch to Sign In */}
       <div className="text-center pt-2 border-t border-border">
         <p className="text-xs text-muted-foreground">
           Already registered on CivicFlow?{" "}

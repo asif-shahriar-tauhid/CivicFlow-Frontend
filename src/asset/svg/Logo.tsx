@@ -26,7 +26,6 @@ export default function Logo({
       {...props}
     >
       <defs>
-        {/* Primary Civic Anchor Gradient: Deep Cobalt through Marine Teal to Emerald */}
         <linearGradient
           id="cf-civic-anchor"
           x1="6"
@@ -40,7 +39,6 @@ export default function Logo({
           <stop offset="100%" stopColor="#10B981" />
         </linearGradient>
 
-        {/* Dynamic Telemetry Pulse Gradient: Sky Blue to Luminous Electric Cyan */}
         <linearGradient
           id="cf-flow-stream"
           x1="12"
@@ -54,7 +52,6 @@ export default function Logo({
           <stop offset="100%" stopColor="#75D8FC" />
         </linearGradient>
 
-        {/* Ambient Telemetry Glow filter */}
         <filter
           id="cf-telemetry-glow"
           x="-20%"
@@ -67,7 +64,6 @@ export default function Logo({
         </filter>
       </defs>
 
-      {/* Subtle background ambient pulse orb */}
       <circle
         cx="20"
         cy="20"
@@ -79,7 +75,6 @@ export default function Logo({
         strokeWidth="1"
       />
 
-      {/* Outer Civic Governance Arc ('C' shape) */}
       <path
         d="M 28 6.5 C 16.5 6.5 7.5 14.5 7.5 24 C 7.5 31 12.5 35 18 35 C 23.5 35 27.5 32 29.5 28"
         stroke="url(#cf-civic-anchor)"
@@ -88,7 +83,6 @@ export default function Logo({
         strokeLinejoin="round"
       />
 
-      {/* Inner Responsive Telemetry Wave (Municipal Flow & Dispatch) */}
       <path
         d="M 13.5 22.5 C 13.5 17 18 13.5 23.5 13.5 C 29 13.5 33 16.8 33 21 C 33 25.2 29 28 23.5 28 C 17.5 28 14.5 23.5 19 18.5 L 30 18.5"
         stroke="url(#cf-flow-stream)"
@@ -97,7 +91,6 @@ export default function Logo({
         strokeLinejoin="round"
       />
 
-      {/* Active Civic Telemetry Beacon Node */}
       <g filter="url(#cf-telemetry-glow)">
         <circle cx="33.5" cy="18.5" r="3.2" fill="#0072E5" />
         <circle cx="33.5" cy="18.5" r="1.8" fill="#75D8FC" />

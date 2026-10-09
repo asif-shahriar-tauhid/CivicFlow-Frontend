@@ -59,14 +59,12 @@ export function AssignStaffModal({
     ticket?.assignedToId || ticket?.assignedTo?.id,
   );
 
-  // Queries
   const { data: usersResponse, isLoading: isLoadingUsers } = useGetAllUsers({
     role: "STAFF",
     departmentId: ticket?.departmentId || undefined,
     limit: 100,
   });
 
-  // Mutations
   const { mutate: assignRequest, isPending: isAssigning } =
     useAssignServiceRequest();
   const { mutate: reassignRequest, isPending: isReassigning } =
@@ -76,14 +74,12 @@ export function AssignStaffModal({
 
   const isAuthorized = currentUser?.role === "ADMIN";
 
-  // Initialize or reset selections
   useEffect(() => {
     if (isOpen && ticket) {
       setErrorMsg("");
       setSearchTerm("");
       setManualIdInput("");
       setShowManualInput(false);
-      // Pre-select current assignee if reassignment
       if (ticket.assignedToId || ticket.assignedTo?.id) {
         setSelectedStaffId(ticket.assignedToId || ticket.assignedTo?.id || "");
       } else {
@@ -92,11 +88,6 @@ export function AssignStaffModal({
     }
   }, [isOpen, ticket]);
 
-  // Consolidate staff candidates from:
-  // 1. API users response (admin / authorized)
-  // 2. Candidate list passed via props
-  // 3. Current assignee of ticket
-  // 4. Current user (if staff)
   const staffCandidates = useMemo(() => {
     const map = new Map<
       string,
@@ -109,7 +100,6 @@ export function AssignStaffModal({
       }
     >();
 
-    // 1. From API
     if (usersResponse?.data && Array.isArray(usersResponse.data)) {
       for (const u of usersResponse.data) {
         if (u.role === "STAFF" || u.role === "ADMIN") {
@@ -124,7 +114,6 @@ export function AssignStaffModal({
       }
     }
 
-    // 2. From candidate props
     for (const c of candidateStaffList) {
       if (c?.id && !map.has(c.id)) {
         map.set(c.id, {
@@ -136,7 +125,6 @@ export function AssignStaffModal({
       }
     }
 
-    // 3. From ticket assignedTo
     if (ticket?.assignedTo && !map.has(ticket.assignedTo.id)) {
       map.set(ticket.assignedTo.id, {
         id: ticket.assignedTo.id,
@@ -146,7 +134,6 @@ export function AssignStaffModal({
       });
     }
 
-    // 4. From current logged-in user if staff
     if (
       currentUser &&
       currentUser.role === "STAFF" &&
@@ -164,7 +151,6 @@ export function AssignStaffModal({
     return Array.from(map.values());
   }, [usersResponse, candidateStaffList, ticket, currentUser]);
 
-  // Filter candidates by search term
   const filteredCandidates = useMemo(() => {
     if (!searchTerm.trim()) return staffCandidates;
     const query = searchTerm.toLowerCase().trim();
@@ -266,10 +252,8 @@ export function AssignStaffModal({
       aria-labelledby="assign-staff-title"
     >
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-150 my-auto">
-        {/* Accent Top Border */}
         <div className="h-1.5 w-full bg-linear-to-r from-blue-500 via-indigo-500 to-sky-500" />
 
-        {/* Modal Header */}
         <div className="p-6 pb-4 border-b border-border flex items-start justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-xl bg-blue-500/15 text-blue-600 dark:text-blue-400 shrink-0">
@@ -306,9 +290,7 @@ export function AssignStaffModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Unauthorized Alert if non-admin */}
           {!isAuthorized && (
             <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 flex items-start gap-3 text-xs text-destructive">
               <AlertCircle className="size-5 shrink-0 mt-0.5" />
@@ -321,7 +303,6 @@ export function AssignStaffModal({
               </div>
             </div>
           )}
-          {/* Ticket Context Pill Row */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground text-[11px]">Ticket:</span>
@@ -337,7 +318,6 @@ export function AssignStaffModal({
             </div>
           </div>
 
-          {/* Current Assignee Status Callout */}
           {isReassignment ? (
             <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 p-3 flex items-start gap-2.5 text-xs text-blue-900 dark:text-blue-300">
               <UserCheck className="size-4 shrink-0 text-blue-600 dark:text-blue-400 mt-0.5" />
@@ -368,7 +348,6 @@ export function AssignStaffModal({
             </div>
           )}
 
-          {/* Quick 1-Click "Assign to Myself" for Staff */}
           {currentUser &&
             (currentUser.role === "STAFF" || currentUser.role === "ADMIN") && (
               <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
@@ -412,7 +391,6 @@ export function AssignStaffModal({
               </div>
             )}
 
-          {/* Candidate Selection Section */}
           <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs">
               <label
@@ -452,7 +430,6 @@ export function AssignStaffModal({
               </div>
             ) : (
               <div className="space-y-2">
-                {/* Search Filter Box */}
                 {staffCandidates.length > 3 && (
                   <div className="relative">
                     <Search className="size-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
@@ -466,7 +443,6 @@ export function AssignStaffModal({
                   </div>
                 )}
 
-                {/* Candidate Selection List */}
                 <div className="max-h-48 overflow-y-auto rounded-xl border border-border divide-y divide-border/60 bg-muted/10">
                   {isLoadingUsers && staffCandidates.length === 0 ? (
                     <div className="p-6 flex flex-col items-center justify-center gap-2 text-muted-foreground text-xs">
@@ -569,7 +545,6 @@ export function AssignStaffModal({
             )}
           </div>
 
-          {/* Error Message Alert */}
           {errorMsg && (
             <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 flex items-start gap-2 text-xs text-destructive">
               <AlertCircle className="size-4 shrink-0 mt-0.5" />
@@ -577,7 +552,6 @@ export function AssignStaffModal({
             </div>
           )}
 
-          {/* Modal Actions */}
           <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
             <Button
               type="button"

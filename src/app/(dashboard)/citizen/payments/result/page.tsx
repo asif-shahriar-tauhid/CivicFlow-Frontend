@@ -38,7 +38,6 @@ function PaymentResultContent() {
   const { data: paymentData, refetch } = usePaymentById(paymentId);
   const payment = paymentData?.data;
 
-  // Resolved status: prioritize terminal states (COMPLETED / CANCELLED / FAILED)
   const paramStatus = normalizeStatus(rawStatus);
   const fetchedStatus = normalizeStatus(payment?.status || null);
 
@@ -97,7 +96,6 @@ function PaymentResultContent() {
   return (
     <div className="mx-auto max-w-2xl py-8 animate-in fade-in duration-300">
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-        {/* Top Status Header */}
         <div
           className={`px-6 py-8 sm:px-10 text-center ${
             isCompleted
@@ -144,7 +142,6 @@ function PaymentResultContent() {
           </p>
         </div>
 
-        {/* Transaction Telemetry Body */}
         <div className="p-6 sm:p-10 space-y-6">
           {payment && (
             <div className="rounded-xl border border-border/70 bg-muted/20 p-5 space-y-3.5 text-xs">
@@ -193,7 +190,6 @@ function PaymentResultContent() {
             </div>
           )}
 
-          {/* Action CTAs */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             {isCompleted && (
               <>

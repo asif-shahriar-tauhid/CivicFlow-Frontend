@@ -46,7 +46,6 @@ import {
 } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
-// Fallback mock detail for preview when API is idle
 const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
   id: "demo-1",
   requestNumber: "CF-2026-0941",
@@ -143,7 +142,6 @@ export default function RequestDossierPage() {
   } = useGetServiceRequestById(requestId);
   const ticket = response?.data || MOCK_FALLBACK_DOSSIER;
 
-  // Verification & Action States
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
@@ -154,10 +152,8 @@ export default function RequestDossierPage() {
   const [comment, setComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  // User Role & Permissions
   const { role } = useCurrentUser();
 
-  // Mutations
   const { mutate: confirmResolution, isPending: isConfirming } =
     useConfirmServiceRequest();
   const { mutate: reopenRequest, isPending: isReopening } =
@@ -167,7 +163,6 @@ export default function RequestDossierPage() {
   const { mutateAsync: routeRequest, isPending: isRerouting } =
     useRouteServiceRequest();
 
-  // Handlers
   const handleReroute = async () => {
     if (!ticket?.id) return;
     try {
@@ -282,7 +277,6 @@ export default function RequestDossierPage() {
 
   return (
     <div className="mx-auto max-w-4xl pb-16 animate-in fade-in duration-200 flex flex-col gap-6">
-      {/* Top Breadcrumb */}
       <div>
         <Link
           href={
@@ -304,7 +298,6 @@ export default function RequestDossierPage() {
           </span>
         </Link>
 
-        {/* Dossier Header Card */}
         <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 mb-4">
             <div>
@@ -423,7 +416,6 @@ export default function RequestDossierPage() {
             </div>
           </div>
 
-          {/* Department, Assignee & Meta pill tags */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
             {ticket.department && (
               <span className="rounded-4xl border border-border bg-muted/30 px-3 py-1 font-medium text-foreground">
@@ -472,7 +464,6 @@ export default function RequestDossierPage() {
         </div>
       </div>
 
-      {/* STAFF & ADMIN MUNICIPAL STATE MACHINE FIELD OPERATIONS DECK */}
       {(role === "STAFF" || role === "ADMIN") && (
         <StatusTransitionControl
           ticket={ticket}
@@ -481,7 +472,6 @@ export default function RequestDossierPage() {
         />
       )}
 
-      {/* CITIZEN SUBMITTED TRIAGE BANNER */}
       {ticket.status === "SUBMITTED" && (role === "CITIZEN" || !role) && (
         <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
@@ -522,7 +512,6 @@ export default function RequestDossierPage() {
         </div>
       )}
 
-      {/* THE CITIZEN VERIFICATION LOOP BANNER */}
       {isResolved && (
         <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6 shadow-sm">
           <div className="flex items-start gap-3.5 mb-4">
@@ -543,7 +532,6 @@ export default function RequestDossierPage() {
             </div>
           </div>
 
-          {/* Technician resolution notes */}
           {ticket.resolutionSummary && (
             <div className="rounded-lg bg-card/80 border border-emerald-500/20 p-3.5 mb-4 text-xs">
               <span className="font-semibold text-foreground block mb-1">
@@ -555,7 +543,6 @@ export default function RequestDossierPage() {
             </div>
           )}
 
-          {/* Verification buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <Button
               variant="default"
@@ -587,10 +574,8 @@ export default function RequestDossierPage() {
         </div>
       )}
 
-      {/* MUNICIPAL SERVICE FEE & PAYMENT RECONCILIATION PANEL */}
       <RequestFeePanel ticket={ticket} onPaymentUpdated={() => refetch()} />
 
-      {/* CITIZEN FEEDBACK FORM (on CLOSED tickets) */}
       {isClosed && (
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-3">
@@ -616,7 +601,6 @@ export default function RequestDossierPage() {
                 municipal repair?
               </p>
 
-              {/* Star selector */}
               <div className="flex items-center gap-1.5">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <button
@@ -665,11 +649,8 @@ export default function RequestDossierPage() {
         </div>
       )}
 
-      {/* Main Grid: Details + State Machine Timeline */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column (2 Cols): Problem Description & Evidence */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Incident Description */}
           <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
             <h2 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
               <FileText className="size-4 text-primary" />
@@ -679,7 +660,6 @@ export default function RequestDossierPage() {
               {ticket.description}
             </p>
 
-            {/* Geotag & Location card */}
             <div className="mt-4 pt-4 border-t border-border flex flex-col gap-2">
               <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
                 <MapPin className="size-3.5 text-primary" />
@@ -704,13 +684,11 @@ export default function RequestDossierPage() {
             </div>
           </div>
 
-          {/* Field Crew Investigation Notes & Staff Entry Form */}
           <InvestigationNotesCard
             ticket={ticket}
             onNoteAdded={() => refetch()}
           />
 
-          {/* Evidence Attachments */}
           {ticket.attachments && ticket.attachments.length > 0 && (
             <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
               <h2 className="text-sm font-semibold text-foreground mb-3">
@@ -766,7 +744,6 @@ export default function RequestDossierPage() {
           )}
         </div>
 
-        {/* Right Column (1 Col): Deterministic State Machine Progression */}
         <div className="flex flex-col gap-6">
           <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
             <h2 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
@@ -774,12 +751,10 @@ export default function RequestDossierPage() {
               <span>Lifecycle State Progression</span>
             </h2>
 
-            {/* Stages Flow */}
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
               {ticket.statusHistory && ticket.statusHistory.length > 0 ? (
                 ticket.statusHistory.map((item, _idx) => (
                   <div key={item.id} className="relative">
-                    {/* Dot */}
                     <div className="absolute -left-6 top-0.5 size-3 rounded-full border-2 border-background bg-primary ring-2 ring-primary/20" />
                     <div className="flex flex-col">
                       <span className="text-xs font-bold text-foreground">
@@ -809,7 +784,6 @@ export default function RequestDossierPage() {
             </div>
           </div>
 
-          {/* Assigned Technician Card */}
           {ticket.assignedTo && (
             <div className="rounded-xl border border-border bg-card p-4 text-xs">
               <span className="text-muted-foreground block mb-1">
@@ -824,7 +798,6 @@ export default function RequestDossierPage() {
         </div>
       </div>
 
-      {/* 7-DAY REOPEN DIALOG MODAL */}
       {isReopenModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
           <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-xl animate-in zoom-in-95 duration-150">
@@ -907,7 +880,6 @@ export default function RequestDossierPage() {
         </div>
       )}
 
-      {/* RESOLVE TICKET MODAL */}
       <ResolveTicketModal
         ticket={ticket}
         isOpen={isResolveModalOpen}
@@ -915,7 +887,6 @@ export default function RequestDossierPage() {
         onSuccess={() => refetch()}
       />
 
-      {/* ASSIGN / REASSIGN STAFF MODAL */}
       <AssignStaffModal
         ticket={ticket}
         isOpen={isAssignModalOpen}
@@ -923,7 +894,6 @@ export default function RequestDossierPage() {
         onSuccess={() => refetch()}
       />
 
-      {/* EDIT TICKET MODAL */}
       <EditTicketModal
         ticket={ticket}
         isOpen={isEditModalOpen}
@@ -931,7 +901,6 @@ export default function RequestDossierPage() {
         onSuccess={() => refetch()}
       />
 
-      {/* DELETE / CANCEL TICKET MODAL */}
       <DeleteTicketModal
         ticket={ticket}
         isOpen={isDeleteModalOpen}

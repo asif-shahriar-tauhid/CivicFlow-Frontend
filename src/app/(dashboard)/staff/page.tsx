@@ -47,7 +47,6 @@ export default function StaffQueuePage() {
   const [selectedTicketForAssign, setSelectedTicketForAssign] =
     useState<ServiceRequest | null>(null);
 
-  // Queries for personal and department queue
   const {
     data: myQueueData,
     isLoading: isMyLoading,
@@ -104,18 +103,14 @@ export default function StaffQueuePage() {
     }
   };
 
-  // Filtered dataset
   const filteredRequests = useMemo(() => {
     return activeRequests.filter((r: ServiceRequest) => {
-      // Status filter
       if (filterStatus !== "ALL" && r.status !== filterStatus) {
         return false;
       }
-      // Priority filter
       if (filterPriority !== "ALL" && r.priority !== filterPriority) {
         return false;
       }
-      // Search query
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase().trim();
         const matchesNumber = r.requestNumber?.toLowerCase().includes(query);
@@ -143,7 +138,6 @@ export default function StaffQueuePage() {
     });
   }, [activeRequests, filterStatus, filterPriority, searchQuery]);
 
-  // Metric counts
   const activeCount = useMemo(
     () =>
       activeRequests.filter((r) =>
@@ -185,7 +179,6 @@ export default function StaffQueuePage() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <div>
           <div className="flex flex-wrap items-center gap-2">
@@ -230,10 +223,8 @@ export default function StaffQueuePage() {
         </div>
       </div>
 
-      {/* Queue Scope Tabs (Personal vs Department) */}
       <div className="rounded-2xl border border-border bg-card p-1.5 shadow-xs">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
-          {/* Tab 1: Personal Queue */}
           <button
             type="button"
             onClick={() => setQueueScope("personal")}
@@ -281,7 +272,6 @@ export default function StaffQueuePage() {
             </span>
           </button>
 
-          {/* Tab 2: Department-Wide Queue */}
           <button
             type="button"
             onClick={() => setQueueScope("department")}
@@ -331,7 +321,6 @@ export default function StaffQueuePage() {
         </div>
       </div>
 
-      {/* Quick Summary Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center justify-between">
@@ -404,7 +393,6 @@ export default function StaffQueuePage() {
         </div>
       </div>
 
-      {/* Filter and Search Bar */}
       <div className="space-y-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -427,7 +415,6 @@ export default function StaffQueuePage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* Search Input */}
             <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
               <Input
@@ -448,7 +435,6 @@ export default function StaffQueuePage() {
               )}
             </div>
 
-            {/* Priority Filter */}
             <div className="flex items-center gap-1 rounded-4xl bg-muted/40 p-0.5 border border-border">
               {(["ALL", "URGENT", "HIGH"] as const).map((p) => (
                 <button
@@ -469,7 +455,6 @@ export default function StaffQueuePage() {
           </div>
         </div>
 
-        {/* Status Filter Pills */}
         <div className="flex flex-wrap items-center gap-1.5 pb-1">
           {[
             { label: "All Tickets", value: "ALL" },
@@ -510,7 +495,6 @@ export default function StaffQueuePage() {
           )}
         </div>
 
-        {/* Incidents Table / List */}
         {isLoading ? (
           <div className="flex h-56 w-full items-center justify-center rounded-2xl border border-dashed border-border bg-muted/10">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -607,7 +591,6 @@ export default function StaffQueuePage() {
                         key={request.id}
                         className="transition-colors hover:bg-muted/30"
                       >
-                        {/* Tracking ID */}
                         <td className="px-4 py-3 font-mono font-medium text-foreground whitespace-nowrap">
                           <div className="flex items-center gap-1.5">
                             <span className="text-primary font-bold">
@@ -616,7 +599,6 @@ export default function StaffQueuePage() {
                           </div>
                         </td>
 
-                        {/* Title & Category */}
                         <td className="px-4 py-3">
                           <div className="font-semibold text-foreground max-w-xs truncate">
                             {request.title}
@@ -628,7 +610,6 @@ export default function StaffQueuePage() {
                           )}
                         </td>
 
-                        {/* Location */}
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-1 text-[11px] text-foreground font-medium truncate max-w-xs">
                             <MapPin className="size-3 shrink-0 text-muted-foreground" />
@@ -646,7 +627,6 @@ export default function StaffQueuePage() {
                           )}
                         </td>
 
-                        {/* Assignee */}
                         <td className="px-4 py-3 whitespace-nowrap">
                           {isAdmin ? (
                             <button
@@ -703,7 +683,6 @@ export default function StaffQueuePage() {
                           )}
                         </td>
 
-                        {/* Status */}
                         <td className="px-4 py-3 whitespace-nowrap">
                           <Badge
                             variant={
@@ -720,7 +699,6 @@ export default function StaffQueuePage() {
                           </Badge>
                         </td>
 
-                        {/* Priority & SLA */}
                         <td className="px-4 py-3 whitespace-nowrap">
                           <div className="flex flex-col gap-1 items-start">
                             <span
@@ -744,7 +722,6 @@ export default function StaffQueuePage() {
                           </div>
                         </td>
 
-                        {/* Reported */}
                         <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
                           {new Date(request.createdAt).toLocaleDateString(
                             undefined,
@@ -755,7 +732,6 @@ export default function StaffQueuePage() {
                           )}
                         </td>
 
-                        {/* Action */}
                         <td className="px-4 py-3 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-2">
                             {isAdmin && (
@@ -829,7 +805,6 @@ export default function StaffQueuePage() {
         )}
       </div>
 
-      {/* State Machine Transition Modal (Outside Table) */}
       <StatusTransitionModal
         ticket={selectedTicketForTransition}
         isOpen={Boolean(selectedTicketForTransition)}
@@ -841,7 +816,6 @@ export default function StaffQueuePage() {
         }}
       />
 
-      {/* Field Work Resolution Modal (Outside Table) */}
       <ResolveTicketModal
         ticket={selectedTicketForResolve}
         isOpen={Boolean(selectedTicketForResolve)}
@@ -853,7 +827,6 @@ export default function StaffQueuePage() {
         }}
       />
 
-      {/* Assign / Reassign Staff Modal (Outside Table) */}
       <AssignStaffModal
         ticket={selectedTicketForAssign}
         isOpen={Boolean(selectedTicketForAssign)}

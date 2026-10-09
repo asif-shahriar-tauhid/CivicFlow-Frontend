@@ -17,7 +17,6 @@ export default function UnauthorizedPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-16">
       <div className="w-full max-w-md rounded-2xl border border-destructive/20 bg-card p-6 sm:p-8 shadow-sm text-center">
-        {/* Brand & Security Header */}
         <div className="mx-auto mb-6 flex items-center justify-center gap-3">
           <Logo size={42} />
         </div>
@@ -55,7 +54,6 @@ export default function UnauthorizedPage() {
           </div>
         )}
 
-        {/* Navigation & Resolution Actions */}
         <div className="mt-6 flex flex-col gap-2.5">
           {isAuthenticated ? (
             <Button

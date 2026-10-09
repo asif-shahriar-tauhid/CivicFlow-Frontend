@@ -14,16 +14,13 @@ export function AuditLogTelemetryStrip({
   totalLogs,
   isLoading,
 }: AuditLogTelemetryStripProps) {
-  // Unique entities tracked in current view
   const uniqueEntities = new Set(logs.map((l) => l.entity)).size;
 
-  // Unique actors in current view
   const uniqueActors = new Set(logs.map((l) => l.actorEmail).filter(Boolean))
     .size;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Total Audit Entries */}
       <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-primary/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -46,7 +43,6 @@ export function AuditLogTelemetryStrip({
         </p>
       </div>
 
-      {/* 2. Target Entities Covered */}
       <div className="relative overflow-hidden rounded-2xl border border-indigo-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-indigo-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -69,7 +65,6 @@ export function AuditLogTelemetryStrip({
         </p>
       </div>
 
-      {/* 3. Authorised Actors */}
       <div className="relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-emerald-500/40">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
@@ -92,7 +87,6 @@ export function AuditLogTelemetryStrip({
         </p>
       </div>
 
-      {/* 4. Security & Compliance Guarantee */}
       <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/70 backdrop-blur-md p-5 shadow-xs transition-all hover:border-border">
         <div className="flex items-center justify-between">
           <span className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">

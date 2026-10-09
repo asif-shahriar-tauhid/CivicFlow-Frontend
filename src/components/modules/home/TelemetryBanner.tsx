@@ -7,7 +7,6 @@ export default function TelemetryBanner() {
   const { data: statsResponse, isLoading } = useGetPublicStats();
   const stats = statsResponse?.data;
 
-  // Realistic defaults matching backend seed when API is connecting
   const totalResolved = stats?.resolvedRequests ?? 1428;
   const slaCompliance = stats?.slaComplianceRate ?? 94.6;
   const avgResponseHours = stats?.avgResolutionTimeHours ?? 4.2;
@@ -17,10 +16,8 @@ export default function TelemetryBanner() {
     <section id="telemetry" className="w-full pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs lg:p-8">
-          {/* Subtle background flow accent */}
           <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
 
-          {/* Header row */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-6">
             <div className="flex items-center gap-2.5">
               <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary">
@@ -41,9 +38,7 @@ export default function TelemetryBanner() {
             </div>
           </div>
 
-          {/* Key Metrics Grid */}
           <div className="grid grid-cols-1 gap-6 pt-6 sm:grid-cols-3 lg:gap-8">
-            {/* Metric 1 */}
             <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-4xl font-bold tracking-tight text-foreground lg:text-5xl tabular-nums">
@@ -65,7 +60,6 @@ export default function TelemetryBanner() {
               </span>
             </div>
 
-            {/* Metric 2 */}
             <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:border-l sm:border-border sm:pl-6 lg:pl-8">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-4xl font-bold tracking-tight text-foreground lg:text-5xl tabular-nums">
@@ -85,7 +79,6 @@ export default function TelemetryBanner() {
               </span>
             </div>
 
-            {/* Metric 3 */}
             <div className="flex flex-col items-center text-center sm:items-start sm:text-left sm:border-l sm:border-border sm:pl-6 lg:pl-8">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-4xl font-bold tracking-tight text-foreground lg:text-5xl tabular-nums">
@@ -106,7 +99,6 @@ export default function TelemetryBanner() {
             </div>
           </div>
 
-          {/* Real-time Status Breakdown Bar */}
           <div className="mt-8 rounded-xl bg-muted/40 p-4 border border-border/60">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
               <span className="font-medium text-foreground">

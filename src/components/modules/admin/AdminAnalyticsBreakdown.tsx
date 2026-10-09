@@ -11,7 +11,6 @@ import { DepartmentBreakdownWidget } from "./DepartmentBreakdownWidget";
 import { FinancialVelocityWidget } from "./FinancialVelocityWidget";
 import { SlaGovernanceWidget } from "./SlaGovernanceWidget";
 
-// Realistic fallback metrics ensuring executive preview even if backend is seeding
 const FALLBACK_ADMIN_ANALYTICS: AdminDashboardData = {
   statusBreakdown: [
     { status: "SUBMITTED", count: 9 },
@@ -133,7 +132,6 @@ export function AdminAnalyticsBreakdown({
     onDepartmentFilterChange?.(deptId);
   };
 
-  // Compute total incidents across breakdown
   const totalIncidents = useMemo(() => {
     if (analytics.departmentBreakdown?.length) {
       return analytics.departmentBreakdown.reduce(
@@ -146,7 +144,6 @@ export function AdminAnalyticsBreakdown({
 
   return (
     <div className="space-y-6">
-      {/* Analytics Section Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
         <div>
           <div className="flex items-center gap-2">
@@ -161,9 +158,7 @@ export function AdminAnalyticsBreakdown({
           </p>
         </div>
 
-        {/* Controls: Department Picker & Refresh */}
         <div className="flex flex-wrap items-center gap-2 self-start md:self-auto">
-          {/* Department Filter Select */}
           <div className="flex items-center gap-1.5 rounded-lg border border-border bg-card px-2.5 py-1 text-xs text-muted-foreground shadow-xs">
             <Filter className="size-3 text-primary" />
             <select
@@ -210,7 +205,6 @@ export function AdminAnalyticsBreakdown({
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Row 1: Department Workload (2 cols) + SLA Governance (1 col) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <DepartmentBreakdownWidget
@@ -229,7 +223,6 @@ export function AdminAnalyticsBreakdown({
             </div>
           </div>
 
-          {/* Row 2: Categories Breakdown (2 cols) + Financial Velocity (1 col) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <CategoryBreakdownWidget

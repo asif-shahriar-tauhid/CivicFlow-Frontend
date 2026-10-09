@@ -39,7 +39,6 @@ import { useCurrentUser } from "@/hooks/auth.hooks";
 import { useGetServiceRequestById } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
-// Fallback mock detail for offline/preview mode
 const MOCK_FALLBACK_STAFF_DOSSIER: ServiceRequest = {
   id: "demo-staff-1",
   requestNumber: "CF-2026-0941",
@@ -121,7 +120,6 @@ export default function StaffRequestDetailsPage() {
   const { user: currentUser, role } = useCurrentUser();
   const isAdmin = role === "ADMIN";
 
-  // Queries
   const {
     data: response,
     isLoading,
@@ -130,7 +128,6 @@ export default function StaffRequestDetailsPage() {
   } = useGetServiceRequestById(requestId);
   const ticket = response?.data || MOCK_FALLBACK_STAFF_DOSSIER;
 
-  // Modal states
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
 
@@ -141,7 +138,6 @@ export default function StaffRequestDetailsPage() {
   const isEscalated =
     ticket.slaEscalationState === "ESCALATED" || Boolean(ticket.slaBreachedAt);
 
-  // Calculate SLA countdown
   const slaRemainingHours = useMemo(() => {
     if (!ticket.slaDueAt) return null;
     const dueTime = new Date(ticket.slaDueAt).getTime();
@@ -170,7 +166,6 @@ export default function StaffRequestDetailsPage() {
 
   return (
     <div className="space-y-6 pb-12">
-      {/* 1. TOP BREADCRUMB & UTILITY BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/80 pb-3">
         <div className="flex items-center gap-2 text-xs">
           <Link
@@ -216,9 +211,7 @@ export default function StaffRequestDetailsPage() {
         </div>
       </div>
 
-      {/* 2. COMMAND HEADER HERO CARD */}
       <div className="rounded-2xl border border-border bg-card p-6 shadow-xs relative z-20">
-        {/* Subtle top gradient accent */}
         <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-linear-to-r from-blue-600 via-primary to-emerald-500" />
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 border-b border-border/70 pb-5 mb-5">
@@ -261,9 +254,7 @@ export default function StaffRequestDetailsPage() {
             </div>
           </div>
 
-          {/* Quick Action Header Controls */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            {/* Assign / Reassign Button (Admin Authority Only) */}
             {isAdmin && (
               <Button
                 variant="outline"
@@ -283,7 +274,6 @@ export default function StaffRequestDetailsPage() {
               </Button>
             )}
 
-            {/* Mark as Resolved (when IN_PROGRESS and Admin Authority Only) */}
             {isAdmin && ticket.status === "IN_PROGRESS" && (
               <Button
                 size="sm"
@@ -296,7 +286,6 @@ export default function StaffRequestDetailsPage() {
               </Button>
             )}
 
-            {/* State Machine Transition Dropdown */}
             <StatusTransitionControl
               ticket={ticket}
               mode="dropdown"
@@ -305,10 +294,8 @@ export default function StaffRequestDetailsPage() {
           </div>
         </div>
 
-        {/* Priority SLA & Assignee Banner Line */}
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex flex-wrap items-center gap-2">
-            {/* Assignee Pill */}
             {hasAssignee ? (
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300 font-medium">
                 <HardHat className="size-3.5" />
@@ -337,7 +324,6 @@ export default function StaffRequestDetailsPage() {
               </div>
             )}
 
-            {/* Ward & Zone Pill */}
             {(ticket.ward || ticket.zone) && (
               <span className="px-3 py-1 rounded-full border border-border bg-muted/30 text-muted-foreground font-mono text-[11px]">
                 {ticket.ward ? `${ticket.ward}` : ""}
@@ -347,7 +333,6 @@ export default function StaffRequestDetailsPage() {
             )}
           </div>
 
-          {/* SLA Countdown Pill */}
           <div className="flex items-center gap-2">
             {ticket.slaDueAt && (
               <div
@@ -373,7 +358,6 @@ export default function StaffRequestDetailsPage() {
         </div>
       </div>
 
-      {/* 3. FIELD ALERT CALLOUTS */}
       {!hasAssignee && (
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-amber-900 dark:text-amber-300">
           <div className="flex items-start gap-3">
@@ -439,18 +423,14 @@ export default function StaffRequestDetailsPage() {
         </div>
       )}
 
-      {/* 4. FIELD OPERATIONS STATE MACHINE PANEL */}
       <StatusTransitionControl
         ticket={ticket}
         mode="panel"
         onTransitionSuccess={() => refetch()}
       />
 
-      {/* 5. MAIN WORKBENCH GRID (2 COLUMNS) */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* LEFT / PRIMARY COLUMN (2 COLS) */}
         <div className="lg:col-span-2 space-y-6">
-          {/* INCIDENT DETAILS & CITIZEN REPORT CARD */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -466,7 +446,6 @@ export default function StaffRequestDetailsPage() {
               {ticket.description}
             </p>
 
-            {/* Citizen Reporter Metadata */}
             <div className="pt-3 border-t border-border flex flex-wrap items-center justify-between gap-3 text-xs bg-muted/20 p-3 rounded-xl">
               <div className="flex items-center gap-2.5">
                 <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs">
@@ -491,7 +470,6 @@ export default function StaffRequestDetailsPage() {
             </div>
           </div>
 
-          {/* GEOSPATIAL & SITE INSPECTION CARD */}
           <div className="rounded-2xl border border-border bg-card p-6 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h2 className="text-sm font-bold text-foreground flex items-center gap-2">
@@ -570,7 +548,6 @@ export default function StaffRequestDetailsPage() {
             </div>
           </div>
 
-          {/* EVIDENCE PHOTOS & ATTACHMENTS GALLERY */}
           {ticket.attachments && ticket.attachments.length > 0 && (
             <div className="rounded-2xl border border-border bg-card p-6 shadow-xs space-y-3">
               <div className="flex items-center justify-between border-b border-border pb-3">
@@ -628,13 +605,11 @@ export default function StaffRequestDetailsPage() {
             </div>
           )}
 
-          {/* FIELD INVESTIGATION NOTES CARD (Staff Notes Input & List) */}
           <InvestigationNotesCard
             ticket={ticket}
             onNoteAdded={() => refetch()}
           />
 
-          {/* RESOLUTION AUDIT CARD (when resolved or closed) */}
           {ticket.resolutionSummary && (
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 shadow-xs space-y-3">
               <div className="flex items-center gap-2">
@@ -650,9 +625,7 @@ export default function StaffRequestDetailsPage() {
           )}
         </div>
 
-        {/* RIGHT / TELEMETRY COLUMN (1 COL) */}
         <div className="space-y-6">
-          {/* ASSIGNED TECHNICIAN CARD */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 font-mono">
@@ -736,7 +709,6 @@ export default function StaffRequestDetailsPage() {
             )}
           </div>
 
-          {/* SLA & DISPATCH MONITOR */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 font-mono border-b border-border pb-3">
               <Clock className="size-3.5 text-primary" />
@@ -783,7 +755,6 @@ export default function StaffRequestDetailsPage() {
             </div>
           </div>
 
-          {/* STATE MACHINE TIMELINE (Audit History) */}
           <div className="rounded-2xl border border-border bg-card p-5 shadow-xs space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5 font-mono border-b border-border pb-3">
               <History className="size-3.5 text-primary" />
@@ -825,7 +796,6 @@ export default function StaffRequestDetailsPage() {
         </div>
       </div>
 
-      {/* 6. MODALS MOUNTED CLEANLY OUTSIDE CONTAINERS */}
       <AssignStaffModal
         ticket={ticket}
         isOpen={isAssignModalOpen}

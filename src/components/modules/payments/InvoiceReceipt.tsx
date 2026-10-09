@@ -29,7 +29,6 @@ export function InvoiceReceipt({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      {/* Action Header (Hidden in Print) */}
       <div className="flex flex-wrap items-center justify-between gap-4 print:hidden">
         {showBackAction && backHref ? (
           <Link
@@ -76,9 +75,7 @@ export function InvoiceReceipt({
         </div>
       </div>
 
-      {/* Printable Receipt Paper Container */}
       <div className="relative overflow-hidden rounded-xl border border-border bg-card p-6 shadow-sm sm:p-10 print:border-none print:p-0 print:shadow-none">
-        {/* Background Status Watermark */}
         {isPaid && (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.03] select-none print:opacity-[0.05]">
             <span className="font-mono text-8xl font-black uppercase tracking-widest text-emerald-600 rotate-[-20deg]">
@@ -87,7 +84,6 @@ export function InvoiceReceipt({
           </div>
         )}
 
-        {/* Municipal Header */}
         <div className="flex flex-col justify-between gap-6 border-b border-border pb-8 sm:flex-row sm:items-start">
           <div className="flex items-start gap-3.5">
             <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -124,9 +120,7 @@ export function InvoiceReceipt({
           </div>
         </div>
 
-        {/* Bill Metadata Grid */}
         <div className="grid grid-cols-1 gap-6 py-8 sm:grid-cols-2">
-          {/* Citizen / Payer Info */}
           <div className="space-y-1.5 rounded-lg border border-border/60 bg-muted/20 p-4">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Billed To
@@ -144,7 +138,6 @@ export function InvoiceReceipt({
             )}
           </div>
 
-          {/* Payment & Gateway Telemetry */}
           <div className="space-y-1.5 rounded-lg border border-border/60 bg-muted/20 p-4">
             <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
               Gateway Settlement Details
@@ -170,7 +163,6 @@ export function InvoiceReceipt({
           </div>
         </div>
 
-        {/* Service Request Link Note */}
         {serviceRequest && (
           <div className="mb-8 rounded-lg border border-primary/20 bg-primary/5 p-4 text-xs">
             <div className="flex items-center justify-between">
@@ -195,7 +187,6 @@ export function InvoiceReceipt({
           </div>
         )}
 
-        {/* Line Items Table */}
         <div className="overflow-hidden rounded-lg border border-border">
           <table className="w-full text-left text-xs">
             <thead className="border-b border-border bg-muted/40 font-semibold text-muted-foreground uppercase">
@@ -267,7 +258,6 @@ export function InvoiceReceipt({
           </table>
         </div>
 
-        {/* Security Stamp & Verification Footer */}
         <div className="mt-8 flex flex-col justify-between gap-4 border-t border-border pt-6 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Shield className="size-4 text-primary shrink-0" />

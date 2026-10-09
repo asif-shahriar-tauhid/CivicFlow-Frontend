@@ -36,7 +36,6 @@ export function DepartmentTelemetryHeader({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Total Departments */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -62,7 +61,6 @@ export function DepartmentTelemetryHeader({
         </div>
       </div>
 
-      {/* 2. Operational / Active */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -88,7 +86,6 @@ export function DepartmentTelemetryHeader({
         </div>
       </div>
 
-      {/* 3. Automated Routing Rules */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-indigo-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -114,7 +111,6 @@ export function DepartmentTelemetryHeader({
         </div>
       </div>
 
-      {/* 4. Active Grievance Load / Archived */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-amber-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">

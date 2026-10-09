@@ -41,7 +41,6 @@ export function EditTicketModal({
   onClose,
   onSuccess,
 }: EditTicketModalProps) {
-  // Form fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [caseType, setCaseType] = useState<CaseType>("COMPLAINT");
@@ -54,14 +53,12 @@ export function EditTicketModal({
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
 
-  // UI state
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDetectingGps, setIsDetectingGps] = useState(false);
 
   const { mutate: updateRequest, isPending: isUpdating } =
     useUpdateServiceRequest();
 
-  // Populate initial values when modal opens or ticket changes
   useEffect(() => {
     if (ticket && isOpen) {
       setTitle(ticket.title || "");
@@ -79,7 +76,6 @@ export function EditTicketModal({
     }
   }, [ticket, isOpen]);
 
-  // Find currently selected category definition
   const selectedCategoryDef = useMemo(() => {
     if (!categoryId) return null;
     return (
@@ -102,7 +98,6 @@ export function EditTicketModal({
 
   if (!isOpen || !ticket) return null;
 
-  // Live GPS locator handler
   const handleGpsDetect = () => {
     if (!navigator.geolocation) {
       gooeyToast.error("GPS Unavailable", {
@@ -141,7 +136,6 @@ export function EditTicketModal({
     gooeyToast.info("GPS Coordinates Cleared");
   };
 
-  // Submit Handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -159,7 +153,6 @@ export function EditTicketModal({
       categoryId: categoryId.trim(),
     };
 
-    // Client schema validation
     const result = updateServiceRequestClientSchema.safeParse(formValues);
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -180,7 +173,6 @@ export function EditTicketModal({
 
     setErrors({});
 
-    // Build payload matching PATCH /requests/:requestId
     const payload: UpdateServiceRequestInput = {
       title: formValues.title,
       description: formValues.description,
@@ -236,10 +228,8 @@ export function EditTicketModal({
         aria-labelledby="edit-ticket-title"
         aria-modal="true"
       >
-        {/* Accent Top Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-primary via-sky-500 to-emerald-500" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 pb-4 border-b border-border bg-muted/10">
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1.5">
@@ -272,13 +262,11 @@ export function EditTicketModal({
           </button>
         </div>
 
-        {/* Scrollable Form Body */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col flex-1 overflow-hidden"
         >
           <div className="overflow-y-auto p-6 space-y-6 flex-1 text-xs">
-            {/* Classification & Priority */}
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-4">
               <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="size-3.5 text-primary" />
@@ -286,7 +274,6 @@ export function EditTicketModal({
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Case Type */}
                 <div className="space-y-1.5">
                   <label
                     htmlFor="edit-caseType"
@@ -321,7 +308,6 @@ export function EditTicketModal({
                   </div>
                 </div>
 
-                {/* Priority Selection */}
                 <div className="space-y-1.5">
                   <span className="font-semibold text-foreground text-xs block">
                     Priority Level
@@ -356,7 +342,6 @@ export function EditTicketModal({
                 </div>
               </div>
 
-              {/* Category Picker */}
               <div className="space-y-1.5 pt-2 border-t border-border/60">
                 <label
                   htmlFor="edit-category"
@@ -399,9 +384,7 @@ export function EditTicketModal({
               </div>
             </div>
 
-            {/* Grievance Title & Description */}
             <div className="space-y-4">
-              {/* Title */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label
@@ -443,7 +426,6 @@ export function EditTicketModal({
                 )}
               </div>
 
-              {/* Description */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label
@@ -488,14 +470,12 @@ export function EditTicketModal({
               </div>
             </div>
 
-            {/* Location & GPS Section */}
             <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-4">
               <span className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
                 <MapPin className="size-3.5 text-primary" />
                 <span>Location Telemetry &amp; Field Coordinates</span>
               </span>
 
-              {/* Address */}
               <div className="space-y-1.5">
                 <label
                   htmlFor="edit-ticket-address-input"
@@ -527,7 +507,6 @@ export function EditTicketModal({
                 )}
               </div>
 
-              {/* Ward, Zone, Landmark */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="space-y-1">
                   <label
@@ -578,7 +557,6 @@ export function EditTicketModal({
                 </div>
               </div>
 
-              {/* GPS Coordinates Bar */}
               <div className="rounded-lg border border-border bg-card p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="flex size-7 items-center justify-center rounded-full bg-primary/10 text-primary shrink-0">
@@ -648,7 +626,6 @@ export function EditTicketModal({
             </div>
           </div>
 
-          {/* Footer Bar */}
           <div className="border-t border-border px-6 py-4 bg-muted/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <span className="text-[11px] text-muted-foreground font-mono">
               🛡️ Editable only while ticket status is SUBMITTED

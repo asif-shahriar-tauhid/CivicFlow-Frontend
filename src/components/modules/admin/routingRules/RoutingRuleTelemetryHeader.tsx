@@ -16,12 +16,10 @@ export function RoutingRuleTelemetryHeader({
   const active = rules.filter((r) => !r.isArchived && r.isActive).length;
   const archived = rules.filter((r) => r.isArchived || !r.isActive).length;
 
-  // Distinct active categories covered
   const activeCategoriesCovered = new Set(
     rules.filter((r) => !r.isArchived && r.isActive).map((r) => r.categoryId),
   ).size;
 
-  // Localized (ward specific) vs Global fallback
   const localizedRules = rules.filter((r) =>
     Boolean(r.location?.trim()),
   ).length;
@@ -29,7 +27,6 @@ export function RoutingRuleTelemetryHeader({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* 1. Total Routing Rules */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-primary/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -55,7 +52,6 @@ export function RoutingRuleTelemetryHeader({
         </div>
       </div>
 
-      {/* 2. Active Operational Rules */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-emerald-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -81,7 +77,6 @@ export function RoutingRuleTelemetryHeader({
         </div>
       </div>
 
-      {/* 3. Categories Covered */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-indigo-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
@@ -107,7 +102,6 @@ export function RoutingRuleTelemetryHeader({
         </div>
       </div>
 
-      {/* 4. Scope Breakdown (Localized vs Global) */}
       <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-card/60 backdrop-blur-md p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-amber-500/30">
         <div className="flex items-center justify-between">
           <div className="flex flex-col">

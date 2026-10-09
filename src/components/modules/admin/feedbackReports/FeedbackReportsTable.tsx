@@ -64,7 +64,6 @@ export function FeedbackReportsTable({
                   key={fb.id}
                   className="group hover:bg-muted/30 transition-colors"
                 >
-                  {/* 1. Rating */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <FeedbackStarRating
                       rating={fb.rating}
@@ -73,7 +72,6 @@ export function FeedbackReportsTable({
                     />
                   </td>
 
-                  {/* 2. Comment snippet */}
                   <td className="py-3.5 px-4 max-w-xs">
                     <p
                       className="text-foreground line-clamp-2 leading-relaxed"
@@ -89,7 +87,6 @@ export function FeedbackReportsTable({
                     </p>
                   </td>
 
-                  {/* 3. Ticket # & Title */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {fb.request ? (
                       <div className="space-y-0.5 max-w-[180px]">
@@ -107,7 +104,6 @@ export function FeedbackReportsTable({
                     )}
                   </td>
 
-                  {/* 4. Division */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-1.5 text-foreground font-medium">
                       <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
@@ -117,7 +113,6 @@ export function FeedbackReportsTable({
                     </div>
                   </td>
 
-                  {/* 5. Citizen */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-0.5 max-w-[140px]">
                       <span className="font-medium text-foreground truncate block">
@@ -129,12 +124,10 @@ export function FeedbackReportsTable({
                     </div>
                   </td>
 
-                  {/* 6. Date */}
                   <td className="py-3.5 px-4 whitespace-nowrap text-muted-foreground text-[11px]">
                     {formattedDate}
                   </td>
 
-                  {/* 7. Inspect Action */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <Button
                       type="button"

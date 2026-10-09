@@ -30,7 +30,6 @@ export function RoutingRuleRestoreModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook toast
     }
   };
 
@@ -47,7 +46,6 @@ export function RoutingRuleRestoreModal({
         aria-modal="true"
         aria-labelledby="restore-rule-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500" />
 
         <div className="p-6">

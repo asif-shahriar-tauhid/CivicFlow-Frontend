@@ -61,7 +61,6 @@ export default function AdminFeedbackReportsPage() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Header & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -92,7 +91,6 @@ export default function AdminFeedbackReportsPage() {
           </div>
         </div>
 
-        {/* Sync Controls */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             type="button"
@@ -113,17 +111,14 @@ export default function AdminFeedbackReportsPage() {
         </div>
       </div>
 
-      {/* 2. Telemetry Strip */}
       <FeedbackReportTelemetryStrip
         feedbacks={rawFeedbacks}
         totalFeedbacks={meta.total || rawFeedbacks.length}
         isLoading={isLoading}
       />
 
-      {/* 3. Toolbar & Filters */}
       <div className="rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Rating Tabs */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/50 text-xs self-start md:self-auto overflow-x-auto max-w-full">
             <button
               type="button"
@@ -160,7 +155,6 @@ export default function AdminFeedbackReportsPage() {
             ))}
           </div>
 
-          {/* Department Filter & Search */}
           <div className="flex items-center gap-2.5 flex-1 md:max-w-md md:justify-end">
             <div className="relative shrink-0">
               <select
@@ -182,7 +176,6 @@ export default function AdminFeedbackReportsPage() {
               <Building2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none text-muted-foreground" />
             </div>
 
-            {/* Keyword Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
@@ -204,7 +197,6 @@ export default function AdminFeedbackReportsPage() {
           </div>
         </div>
 
-        {/* Filter Summary Banner */}
         {(searchTerm ||
           selectedDepartmentId ||
           selectedRating !== undefined) && (
@@ -229,7 +221,6 @@ export default function AdminFeedbackReportsPage() {
         )}
       </div>
 
-      {/* 4. Table Content */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
           <Spinner className="h-8 w-8 text-primary" />
@@ -245,7 +236,6 @@ export default function AdminFeedbackReportsPage() {
             isLoading={isLoading}
           />
 
-          {/* Pagination Controls */}
           {meta.totalPages > 1 && (
             <div className="flex items-center justify-between px-2 pt-2 text-xs text-muted-foreground">
               <span>
@@ -281,7 +271,6 @@ export default function AdminFeedbackReportsPage() {
         </div>
       )}
 
-      {/* 5. Inspection Modal */}
       <FeedbackDetailModal
         feedback={inspectingFeedback}
         isOpen={Boolean(inspectingFeedback)}

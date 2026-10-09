@@ -72,7 +72,6 @@ export function UserAvatar({
 
   const initial = effectiveName.trim().charAt(0).toUpperCase() || "U";
 
-  // Role based fallback gradients
   const roleStyles = {
     ADMIN:
       "bg-gradient-to-br from-indigo-500/20 via-primary/20 to-cyan-500/30 text-primary border-primary/30",
@@ -86,7 +85,6 @@ export function UserAvatar({
     <div
       className={`relative inline-flex shrink-0 select-none ${sizeClass} ${className}`}
     >
-      {/* Circular avatar body (masked to circle) */}
       <div
         className={`size-full rounded-full overflow-hidden border flex items-center justify-center font-mono font-bold shadow-2xs ${roleStyles}`}
       >
@@ -107,7 +105,6 @@ export function UserAvatar({
         )}
       </div>
 
-      {/* Role badge (positioned on bottom-right, unclipped) */}
       {showBadge && (
         <span
           className={`absolute z-10 rounded-full border-2 border-background flex items-center justify-center shadow-xs ${badgeClass} ${

@@ -98,7 +98,6 @@ export function CategorySlaModal({
   onClose,
   onSuccess,
 }: CategorySlaModalProps) {
-  // Query live categories from backend
   const {
     data: categoriesResponse,
     isLoading,
@@ -107,7 +106,6 @@ export function CategorySlaModal({
   } = useGetCategorySlaConfigs();
   const { mutateAsync: configureSla, isPending } = useConfigureCategorySla();
 
-  // Active categories list with fallback
   const rawCategories: RequestCategory[] = useMemo(() => {
     if (categoriesResponse?.data && categoriesResponse.data.length > 0) {
       return categoriesResponse.data;
@@ -124,7 +122,6 @@ export function CategorySlaModal({
     }));
   }, [categoriesResponse]);
 
-  // Filters & Selected Category
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterTier, setFilterTier] = useState<
     "ALL" | "URGENT" | "STANDARD" | "EXTENDED"
@@ -132,13 +129,11 @@ export function CategorySlaModal({
   const [selectedCategory, setSelectedCategory] =
     useState<RequestCategory | null>(null);
 
-  // Edit form state
   const [customValue, setCustomValue] = useState<number>(24);
   const [customUnit, setCustomUnit] = useState<"HOURS" | "DAYS" | "MINUTES">(
     "HOURS",
   );
 
-  // When selecting a category to edit, seed the custom values
   const handleSelectCategory = (cat: RequestCategory) => {
     setSelectedCategory(cat);
     const mins = cat.slaMinutes || 1440;
@@ -154,14 +149,12 @@ export function CategorySlaModal({
     }
   };
 
-  // Calculate minutes from currently entered values
   const targetMinutes = useMemo(() => {
     if (customUnit === "DAYS") return Math.round(customValue * 1440);
     if (customUnit === "HOURS") return Math.round(customValue * 60);
     return Math.round(customValue);
   }, [customValue, customUnit]);
 
-  // Projected breach date from current time
   const projectedBreachPreview = useMemo(() => {
     if (!targetMinutes || targetMinutes < 1) return null;
     const date = new Date(Date.now() + targetMinutes * 60 * 1000);
@@ -174,7 +167,6 @@ export function CategorySlaModal({
     });
   }, [targetMinutes]);
 
-  // Filter categories
   const filteredCategories = useMemo(() => {
     return rawCategories.filter((cat) => {
       const matchSearch =
@@ -197,7 +189,6 @@ export function CategorySlaModal({
     });
   }, [rawCategories, searchTerm, filterTier]);
 
-  // Submit configured SLA timer
   const handleSaveSla = async () => {
     if (!selectedCategory) return;
     if (targetMinutes < 1 || targetMinutes > 525600) return;
@@ -208,7 +199,6 @@ export function CategorySlaModal({
         payload: { slaMinutes: targetMinutes },
       });
 
-      // Update selected category in local state
       setSelectedCategory((prev) =>
         prev ? { ...prev, slaMinutes: targetMinutes } : null,
       );
@@ -216,7 +206,6 @@ export function CategorySlaModal({
       onSuccess?.();
       refetch();
     } catch {
-      // Handled by mutation hook toast
     }
   };
 
@@ -236,10 +225,8 @@ export function CategorySlaModal({
       }}
     >
       <div className="relative w-full max-w-4xl rounded-2xl border border-border/70 bg-card shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-150 my-auto">
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-amber-500 via-primary to-emerald-500" />
 
-        {/* Modal Header */}
         <div className="p-6 border-b border-border/60 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3.5">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -295,11 +282,8 @@ export function CategorySlaModal({
           </div>
         </div>
 
-        {/* Modal Main Body (2 Columns) */}
         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Categories List (7 Columns) */}
           <div className="lg:col-span-7 space-y-4 flex flex-col">
-            {/* Search & Tier Filters */}
             <div className="flex flex-col sm:flex-row gap-2.5 items-stretch sm:items-center justify-between">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -320,7 +304,6 @@ export function CategorySlaModal({
                 )}
               </div>
 
-              {/* Tier Filter Pills */}
               <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/60 border border-border/50 text-[11px] self-start sm:self-auto">
                 <button
                   type="button"
@@ -369,7 +352,6 @@ export function CategorySlaModal({
               </div>
             </div>
 
-            {/* Category Cards List */}
             {isLoading ? (
               <div className="flex flex-col items-center justify-center p-12 rounded-xl border border-border/60 bg-muted/20">
                 <Spinner className="h-6 w-6 text-primary" />
@@ -395,7 +377,6 @@ export function CategorySlaModal({
                   const hours = mins / 60;
                   const days = (mins / 1440).toFixed(1);
 
-                  // Find companion metadata from static definitions
                   const staticMeta = MUNICIPAL_CATEGORIES.find(
                     (mc) => mc.id === cat.id || mc.name === cat.name,
                   );
@@ -443,7 +424,6 @@ export function CategorySlaModal({
                           </div>
                         </div>
 
-                        {/* Current SLA Pill */}
                         <div className="flex flex-col items-end shrink-0">
                           <Badge
                             variant="outline"
@@ -472,11 +452,9 @@ export function CategorySlaModal({
             )}
           </div>
 
-          {/* Right Column: Editor Workspace (5 Columns) */}
           <div className="lg:col-span-5 flex flex-col justify-between rounded-xl border border-border/80 bg-muted/20 p-5 space-y-5">
             {selectedCategory ? (
               <div className="space-y-4">
-                {/* Active Category Header */}
                 <div className="pb-3 border-b border-border/60">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
                     Active Category Editor
@@ -494,7 +472,6 @@ export function CategorySlaModal({
                   </div>
                 </div>
 
-                {/* Quick Presets */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="text-xs font-semibold text-foreground flex items-center gap-1.5">
@@ -540,7 +517,6 @@ export function CategorySlaModal({
                   </div>
                 </div>
 
-                {/* Custom Duration Stepper & Input */}
                 <div className="space-y-2 pt-2 border-t border-border/40">
                   <label
                     htmlFor="sla-duration-input"
@@ -573,7 +549,6 @@ export function CategorySlaModal({
                       />
                     </div>
 
-                    {/* Unit Selector */}
                     <div className="flex items-center p-0.5 rounded-lg bg-muted border border-border/60">
                       <button
                         type="button"
@@ -611,7 +586,6 @@ export function CategorySlaModal({
                     </div>
                   </div>
 
-                  {/* Quick Adjust Buttons */}
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1">
                     <span>Adjust:</span>
                     <button
@@ -645,7 +619,6 @@ export function CategorySlaModal({
                   </div>
                 </div>
 
-                {/* Calculation & Timeline Simulation Preview */}
                 <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2">
                   <div className="flex items-center justify-between text-xs font-semibold text-primary">
                     <span className="flex items-center gap-1.5">
@@ -675,7 +648,6 @@ export function CategorySlaModal({
                     )}
                   </div>
 
-                  {/* Delta difference */}
                   {selectedCategory.slaMinutes !== targetMinutes && (
                     <div className="pt-1.5 border-t border-primary/15 flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Variance:</span>
@@ -702,7 +674,6 @@ export function CategorySlaModal({
                   )}
                 </div>
 
-                {/* Notice alert */}
                 <div className="flex items-start gap-2 text-[11px] text-muted-foreground leading-relaxed bg-muted/40 p-2.5 rounded-lg border border-border/50">
                   <Info className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />
                   <span>
@@ -728,7 +699,6 @@ export function CategorySlaModal({
               </div>
             )}
 
-            {/* Bottom Actions */}
             <div className="pt-3 border-t border-border/60 flex items-center justify-end gap-2.5">
               <Button
                 type="button"

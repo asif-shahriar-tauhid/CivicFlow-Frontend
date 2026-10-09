@@ -30,7 +30,6 @@ export function DepartmentArchiveModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook toast
     }
   };
 
@@ -50,7 +49,6 @@ export function DepartmentArchiveModal({
         aria-modal="true"
         aria-labelledby="archive-dept-title"
       >
-        {/* Warning Accent */}
         <div className="h-1.5 w-full bg-linear-to-r from-destructive via-red-500 to-amber-500" />
 
         <div className="p-6">
@@ -85,7 +83,6 @@ export function DepartmentArchiveModal({
             </p>
           </div>
 
-          {/* Department Highlight Card */}
           <div className="mt-4 rounded-xl border border-border/60 bg-muted/30 p-3.5 space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Department:</span>
@@ -115,7 +112,6 @@ export function DepartmentArchiveModal({
             </div>
           </div>
 
-          {/* Caution callout */}
           <div className="mt-4 flex items-start gap-3 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-xs text-muted-foreground leading-relaxed">
             <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
             <p>
@@ -129,7 +125,6 @@ export function DepartmentArchiveModal({
             </p>
           </div>
 
-          {/* Action buttons */}
           <div className="mt-6 flex items-center justify-end gap-3">
             <Button
               type="button"

@@ -69,7 +69,6 @@ export function DepartmentCreateModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Error handled by hook's gooeyToast
     }
   };
 
@@ -86,10 +85,8 @@ export function DepartmentCreateModal({
         aria-modal="true"
         aria-labelledby="create-dept-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-primary via-indigo-500 to-sky-400" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -119,9 +116,7 @@ export function DepartmentCreateModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Department Name */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label
@@ -165,7 +160,6 @@ export function DepartmentCreateModal({
             )}
           </div>
 
-          {/* Department Description */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label
@@ -204,7 +198,6 @@ export function DepartmentCreateModal({
             )}
           </div>
 
-          {/* Explanatory Tip Box */}
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 flex items-start gap-3 text-xs text-muted-foreground">
             <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
             <div className="space-y-1 leading-relaxed">
@@ -219,7 +212,6 @@ export function DepartmentCreateModal({
             </div>
           </div>
 
-          {/* Modal Actions */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/60">
             <Button
               type="button"

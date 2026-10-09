@@ -127,7 +127,6 @@ export default function AdminDashboardPage() {
             newlyAssignedCount++;
           }
         } catch {
-          // Continue processing remaining requests
         }
       }
 
@@ -146,7 +145,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Executive Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2">
@@ -198,7 +196,6 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Primary KPI Grid */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center justify-between">
@@ -289,13 +286,11 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Full Admin Analytics & SLA Breakdown Section */}
       <AdminAnalyticsBreakdown
         selectedDepartmentId={selectedDeptId}
         onDepartmentFilterChange={(deptId) => setSelectedDeptId(deptId)}
       />
 
-      {/* Service Requests Operations Table */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>

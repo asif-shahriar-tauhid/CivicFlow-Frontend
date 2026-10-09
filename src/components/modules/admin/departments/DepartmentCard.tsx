@@ -49,7 +49,6 @@ export function DepartmentCard({
           : "border-border/70 bg-card/70 backdrop-blur-md hover:border-primary/40 hover:-translate-y-0.5"
       }`}
     >
-      {/* Top Banner Accent */}
       <div
         className={`h-1 w-full rounded-t-2xl ${
           isArchived
@@ -59,7 +58,6 @@ export function DepartmentCard({
       />
 
       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-        {/* Header: Icon, Name & Status Badge */}
         <div>
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -82,7 +80,6 @@ export function DepartmentCard({
               </div>
             </div>
 
-            {/* Status Pill */}
             {isArchived ? (
               <Badge
                 variant="outline"
@@ -101,7 +98,6 @@ export function DepartmentCard({
             )}
           </div>
 
-          {/* Description */}
           <p className="mt-3 text-xs text-muted-foreground leading-relaxed line-clamp-3 min-h-[48px]">
             {department.description || (
               <span className="italic text-muted-foreground/60">
@@ -111,7 +107,6 @@ export function DepartmentCard({
           </p>
         </div>
 
-        {/* Operational Metrics Grid */}
         <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/40">
           <div className="flex items-center gap-2 rounded-xl bg-muted/40 p-2 border border-border/30">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
@@ -142,7 +137,6 @@ export function DepartmentCard({
           </div>
         </div>
 
-        {/* Footer Meta & Action Buttons */}
         <div className="flex items-center justify-between pt-3 border-t border-border/40">
           <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <Clock className="h-3 w-3" />

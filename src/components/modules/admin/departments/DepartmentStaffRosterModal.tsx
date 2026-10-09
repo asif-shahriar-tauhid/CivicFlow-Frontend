@@ -37,7 +37,6 @@ export function DepartmentStaffRosterModal({
   const [searchStaffTerm, setSearchStaffTerm] = useState("");
   const [activeTab, setActiveTab] = useState<"roster" | "available">("roster");
 
-  // Query all STAFF users
   const { data: usersResponse, isLoading: usersLoading } = useGetAllUsers({
     role: "STAFF",
     limit: 100,
@@ -50,7 +49,6 @@ export function DepartmentStaffRosterModal({
   const { mutateAsync: assignStaffMutate, isPending } =
     useAssignStaffDepartment();
 
-  // Active roster for this department
   const currentRoster = useMemo(() => {
     if (!department) return [];
     return staffUsers.filter(
@@ -59,7 +57,6 @@ export function DepartmentStaffRosterModal({
     );
   }, [staffUsers, department]);
 
-  // Other staff (unassigned or in other depts)
   const availableStaff = useMemo(() => {
     if (!department) return [];
     return staffUsers.filter(
@@ -68,7 +65,6 @@ export function DepartmentStaffRosterModal({
     );
   }, [staffUsers, department]);
 
-  // Filtered available staff based on search query
   const filteredAvailableStaff = useMemo(() => {
     if (!searchStaffTerm.trim()) return availableStaff;
     const q = searchStaffTerm.toLowerCase().trim();
@@ -90,7 +86,6 @@ export function DepartmentStaffRosterModal({
       });
       onSuccess?.();
     } catch {
-      // Error handled by hook toast
     }
   };
 
@@ -102,7 +97,6 @@ export function DepartmentStaffRosterModal({
       });
       onSuccess?.();
     } catch {
-      // Handled by hook toast
     }
   };
 
@@ -123,10 +117,8 @@ export function DepartmentStaffRosterModal({
         aria-modal="true"
         aria-labelledby="roster-modal-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-emerald-500 via-primary to-indigo-500" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60 shrink-0">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -163,7 +155,6 @@ export function DepartmentStaffRosterModal({
           </button>
         </div>
 
-        {/* Navigation Tabs */}
         <div className="flex items-center border-b border-border/60 px-6 bg-muted/20 shrink-0">
           <button
             type="button"
@@ -198,7 +189,6 @@ export function DepartmentStaffRosterModal({
           </button>
         </div>
 
-        {/* Content Area */}
         <div className="p-6 overflow-y-auto space-y-4 flex-1">
           {usersLoading ? (
             <div className="flex flex-col items-center justify-center p-12">
@@ -208,7 +198,6 @@ export function DepartmentStaffRosterModal({
               </p>
             </div>
           ) : activeTab === "roster" ? (
-            /* Current Division Roster */
             <div className="space-y-3">
               {currentRoster.length === 0 ? (
                 <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-dashed border-border/80 bg-muted/20">
@@ -280,9 +269,7 @@ export function DepartmentStaffRosterModal({
               )}
             </div>
           ) : (
-            /* Available Staff Pool Picker */
             <div className="space-y-3">
-              {/* Search Bar */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
@@ -372,7 +359,6 @@ export function DepartmentStaffRosterModal({
           )}
         </div>
 
-        {/* Modal Footer */}
         <div className="p-4 px-6 border-t border-border/60 bg-muted/20 flex items-center justify-between text-xs text-muted-foreground shrink-0">
           <div className="flex items-center gap-2">
             <Shield className="h-3.5 w-3.5 text-primary" />

@@ -68,7 +68,6 @@ export function DashboardSidebar({
     return pathname === item.href;
   };
 
-  // On mobile drawer, never show collapsed mode
   const effectiveCollapsed = isMobile ? false : isCollapsed;
 
   return (
@@ -77,7 +76,6 @@ export function DashboardSidebar({
         effectiveCollapsed ? "w-20" : "w-64"
       }`}
     >
-      {/* 1. Header / Brand Bar */}
       <div
         className={`flex h-16 items-center ${
           effectiveCollapsed ? "justify-center px-2" : "justify-between px-4"
@@ -124,7 +122,6 @@ export function DashboardSidebar({
           )}
         </Link>
 
-        {/* Mobile Close Button */}
         {isMobile && onCloseMobile && (
           <Button
             variant="ghost"
@@ -137,7 +134,6 @@ export function DashboardSidebar({
           </Button>
         )}
 
-        {/* Desktop Collapse Toggle (shown only when expanded; header button toggles expansion when minimized) */}
         {!isMobile && onToggleCollapse && !effectiveCollapsed && (
           <Button
             variant="ghost"
@@ -152,7 +148,6 @@ export function DashboardSidebar({
         )}
       </div>
 
-      {/* 2. Optional Role Quick Action Button (e.g. + Report Grievance for Citizen) */}
       {quickAction && (
         <div className="p-3 border-b border-sidebar-border/60 shrink-0">
           <Link
@@ -173,7 +168,6 @@ export function DashboardSidebar({
         </div>
       )}
 
-      {/* 3. Navigation Links (Scrollable area) */}
       <div className="flex-1 overflow-y-auto overflow-x-hidden p-3 space-y-5 scrollbar-thin">
         {navGroups.map((group, groupIdx) => (
           <div key={group.title || groupIdx} className="space-y-1">
@@ -202,7 +196,6 @@ export function DashboardSidebar({
                       : "text-muted-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/70"
                   }`}
                 >
-                  {/* Active Indicator Bar (when expanded) */}
                   {active && !effectiveCollapsed && (
                     <span className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-primary" />
                   )}
@@ -229,7 +222,6 @@ export function DashboardSidebar({
                     </div>
                   )}
 
-                  {/* Active Dot when collapsed */}
                   {active && effectiveCollapsed && (
                     <span className="absolute right-1.5 top-1.5 size-1.5 rounded-full bg-primary" />
                   )}
@@ -239,7 +231,6 @@ export function DashboardSidebar({
           </div>
         ))}
 
-        {/* Secondary Portal Utilities */}
         <div className="pt-2 border-t border-sidebar-border/60 space-y-1">
           {!effectiveCollapsed && (
             <div className="px-3 pb-1.5 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
@@ -264,9 +255,7 @@ export function DashboardSidebar({
         </div>
       </div>
 
-      {/* 4. Footer & User Account Strip */}
       <div className="p-3 border-t border-sidebar-border bg-sidebar-accent/20 shrink-0 space-y-2">
-        {/* User Card */}
         <div
           className={`flex items-center gap-2.5 rounded-xl border border-sidebar-border/80 bg-background/60 p-2 ${
             effectiveCollapsed ? "justify-center" : "justify-between"
@@ -316,7 +305,6 @@ export function DashboardSidebar({
           )}
         </div>
 
-        {/* Collapsed quick logout */}
         {effectiveCollapsed && (
           <div className="flex justify-center">
             <Button
@@ -332,7 +320,6 @@ export function DashboardSidebar({
           </div>
         )}
 
-        {/* Operational Pulse */}
         {!effectiveCollapsed && (
           <div className="flex items-center justify-between px-1 text-[10px] text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">

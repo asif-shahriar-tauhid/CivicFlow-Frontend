@@ -45,11 +45,9 @@ export function FeedbackDetailModal({
         aria-modal="true"
         aria-labelledby="feedback-modal-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-amber-500 via-emerald-500 to-primary" />
 
         <div className="p-6 space-y-4">
-          {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 shrink-0">
@@ -84,7 +82,6 @@ export function FeedbackDetailModal({
             </button>
           </div>
 
-          {/* Citizen Comment Callout */}
           <div className="relative rounded-2xl border border-border/70 bg-muted/30 p-4 space-y-2">
             <Quote className="h-6 w-6 text-muted-foreground/30 absolute top-3 right-3 pointer-events-none" />
             <span className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
@@ -97,7 +94,6 @@ export function FeedbackDetailModal({
             </p>
           </div>
 
-          {/* Service Request & Citizen Metadata Grid */}
           <div className="space-y-2.5 text-xs">
             {feedback.request && (
               <div className="rounded-xl border border-border/60 bg-card p-3 space-y-1.5">
@@ -127,7 +123,6 @@ export function FeedbackDetailModal({
               </div>
             )}
 
-            {/* Citizen Profile */}
             <div className="rounded-xl border border-border/60 bg-muted/20 p-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0 font-bold text-xs">
@@ -155,7 +150,6 @@ export function FeedbackDetailModal({
             </div>
           </div>
 
-          {/* Footer */}
           <div className="flex items-center justify-end pt-2">
             <Button type="button" variant="outline" size="sm" onClick={onClose}>
               Dismiss

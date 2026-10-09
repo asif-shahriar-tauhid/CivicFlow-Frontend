@@ -28,14 +28,10 @@ export function DashboardShell({
   const { user } = useAuth();
   const { mutate: logoutMutate, isPending: logoutPending } = useLogout();
 
-  // Desktop sidebar collapse preference
   const [isCollapsed, setIsCollapsed] = useState(false);
-  // Mobile drawer open state
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  // Profile settings modal
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // Restore collapsed preference from localStorage
   useEffect(() => {
     try {
       const saved = localStorage.getItem("cf_sidebar_collapsed");
@@ -47,12 +43,10 @@ export function DashboardShell({
     }
   }, []);
 
-  // Close mobile drawer on route navigation
   useEffect(() => {
     setIsMobileOpen(false);
   }, []);
 
-  // Handle ESC key to close mobile drawer
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -63,7 +57,6 @@ export function DashboardShell({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Lock body scroll when mobile drawer is visible
   useEffect(() => {
     if (isMobileOpen) {
       document.body.style.overflow = "hidden";
@@ -101,7 +94,6 @@ export function DashboardShell({
   return (
     <RoleGuard allowedRoles={allowedRoles || [userRole]}>
       <div className="min-h-screen bg-background flex flex-row">
-        {/* 1. Desktop Persistent Sidebar */}
         <div className="hidden lg:block shrink-0 sticky top-0 h-screen z-40">
           <DashboardSidebar
             userRole={userRole}
@@ -119,7 +111,6 @@ export function DashboardShell({
           />
         </div>
 
-        {/* 2. Mobile Responsive Off-Canvas Drawer */}
         {isMobileOpen && (
           <div
             className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs lg:hidden transition-opacity"
@@ -153,9 +144,7 @@ export function DashboardShell({
           />
         </div>
 
-        {/* 3. Main Content Column */}
         <div className="flex-1 flex flex-col min-w-0 min-h-screen">
-          {/* Sticky Header */}
           <DashboardHeader
             userRole={userRole}
             roleTitle={roleTitle}
@@ -171,12 +160,10 @@ export function DashboardShell({
             quickAction={quickAction}
           />
 
-          {/* Page Content Body */}
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             {children}
           </main>
 
-          {/* Municipal Portal Footer */}
           <footer className="border-t border-border py-4 text-center text-xs text-muted-foreground bg-card/20 shrink-0">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
               <span>
@@ -191,7 +178,6 @@ export function DashboardShell({
           </footer>
         </div>
 
-        {/* 4. Global Profile & Avatar Settings Modal */}
         <ProfileSettingsModal
           user={user}
           isOpen={isProfileOpen}

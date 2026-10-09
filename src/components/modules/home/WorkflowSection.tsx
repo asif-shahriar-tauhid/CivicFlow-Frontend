@@ -42,7 +42,6 @@ export default function WorkflowSection() {
       className="w-full py-16 lg:py-24 border-t border-border"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="text-xs font-semibold uppercase tracking-wider text-primary">
             Accountable Architecture
@@ -57,7 +56,6 @@ export default function WorkflowSection() {
           </p>
         </div>
 
-        {/* 4 Steps Journey */}
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4 relative">
           {steps.map((step, _idx) => {
             const Icon = step.icon;
@@ -66,7 +64,6 @@ export default function WorkflowSection() {
                 key={step.step}
                 className="relative flex flex-col rounded-xl border border-border bg-card p-6 shadow-xs"
               >
-                {/* Step badge */}
                 <div className="flex items-center justify-between mb-4">
                   <span className="font-mono text-xs font-bold text-primary">
                     STAGE {step.step}
@@ -90,7 +87,6 @@ export default function WorkflowSection() {
           })}
         </div>
 
-        {/* Bottom SLA Assurance Banner */}
         <div className="mt-12 rounded-xl border border-border bg-muted/30 p-5 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex items-center gap-3">
             <ShieldCheck className="size-6 text-primary shrink-0" />

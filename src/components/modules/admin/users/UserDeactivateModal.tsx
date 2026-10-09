@@ -55,11 +55,9 @@ export function UserDeactivateModal({
         aria-describedby="deactivate-user-description"
         aria-modal="true"
       >
-        {/* Warning Accent */}
         <div className="h-1.5 w-full bg-linear-to-r from-destructive via-red-500 to-amber-500" />
 
         <div className="p-6 space-y-4">
-          {/* Header */}
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="flex size-11 items-center justify-center rounded-full bg-destructive/10 text-destructive shrink-0">
@@ -89,7 +87,6 @@ export function UserDeactivateModal({
             </button>
           </div>
 
-          {/* User Preview */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 space-y-2 text-xs">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-foreground">{user.name}</span>
@@ -129,7 +126,6 @@ export function UserDeactivateModal({
           </p>
         </div>
 
-        {/* Footer */}
         <div className="border-t border-border px-6 py-3.5 bg-muted/20 flex items-center justify-end gap-2.5">
           <Button
             type="button"

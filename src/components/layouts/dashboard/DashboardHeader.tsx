@@ -89,7 +89,6 @@ export function DashboardHeader({
   const displayedNotifications =
     activeTab === "unread" ? unreadNotifications : notifications;
 
-  // Click outside to dismiss notifications popover
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
       if (
@@ -104,7 +103,6 @@ export function DashboardHeader({
     return () => document.removeEventListener("pointerdown", handlePointerDown);
   }, []);
 
-  // Close notifications popover on Escape key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isNotificationsOpen) {
@@ -115,7 +113,6 @@ export function DashboardHeader({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isNotificationsOpen]);
 
-  // Navigate according to notification payload and user role
   const handleNotificationClick = (notification: Notification) => {
     if (!notification.readAt) {
       markNotificationRead(notification.id);
@@ -188,7 +185,6 @@ export function DashboardHeader({
     markAllRead(unreadIds);
   };
 
-  // Determine current section title based on pathname
   const getContextTitle = () => {
     if (pathname === "/admin") return "Overview & Triage";
     if (pathname?.startsWith("/admin/users"))
@@ -223,9 +219,7 @@ export function DashboardHeader({
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-border bg-background/85 backdrop-blur-md shrink-0">
       <div className="flex h-full items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Left Section: Mobile Menu Trigger + Desktop Toggle + Breadcrumbs */}
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Mobile hamburger button */}
           <Button
             variant="ghost"
             size="icon-sm"
@@ -236,7 +230,6 @@ export function DashboardHeader({
             <Menu className="size-5" />
           </Button>
 
-          {/* Desktop collapse toggle */}
           <Button
             variant="ghost"
             size="icon-sm"
@@ -252,7 +245,6 @@ export function DashboardHeader({
             )}
           </Button>
 
-          {/* Breadcrumb Context */}
           <div className="flex items-center gap-2 text-xs">
             <span className="font-semibold text-muted-foreground hidden sm:inline">
               {roleTitle}
@@ -264,12 +256,9 @@ export function DashboardHeader({
           </div>
         </div>
 
-        {/* Right Section: Notifications, Actions, Profile Trigger, Logout */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Custom page topBarActions if passed */}
           {topBarActions}
 
-          {/* Notification Bell Dropdown */}
           <div className="relative" ref={notificationPanelRef}>
             <Button
               variant="ghost"
@@ -294,7 +283,6 @@ export function DashboardHeader({
                 aria-label="Notifications Panel"
                 className="absolute right-0 top-full z-50 mt-2 w-[min(24rem,calc(100vw-1.5rem))] overflow-hidden rounded-xl border border-border bg-card shadow-[0_4px_20px_-2px_rgba(0,0,0,0.08),0_2px_6px_-1px_rgba(0,0,0,0.04)] animate-in fade-in slide-in-from-top-1 duration-150"
               >
-                {/* Popover Header */}
                 <div className="flex items-center justify-between border-b border-border px-4 py-3 bg-card">
                   <div className="flex items-center gap-2">
                     <h2 className="text-sm font-semibold text-foreground">
@@ -326,7 +314,6 @@ export function DashboardHeader({
                   </Button>
                 </div>
 
-                {/* Filter Tabs */}
                 <div className="flex items-center gap-1 border-b border-border bg-muted/30 px-3 py-1.5 text-xs">
                   <button
                     type="button"
@@ -352,7 +339,6 @@ export function DashboardHeader({
                   </button>
                 </div>
 
-                {/* Notification List Container */}
                 <div className="max-h-[min(24rem,60vh)] overflow-y-auto divide-y divide-border/60">
                   {notificationsLoading ? (
                     <div className="flex flex-col items-center justify-center gap-2 px-4 py-10 text-xs text-muted-foreground">
@@ -397,7 +383,6 @@ export function DashboardHeader({
                               : "border-l-2 border-l-transparent opacity-85 hover:opacity-100"
                           }`}
                         >
-                          {/* Event Icon */}
                           <div
                             className={`mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full ${getNotificationIconColor(
                               notification.eventKey,
@@ -406,7 +391,6 @@ export function DashboardHeader({
                             <Icon className="size-4" />
                           </div>
 
-                          {/* Notification Content */}
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-1.5">
                               <span
@@ -419,7 +403,6 @@ export function DashboardHeader({
                                 {notification.title}
                               </span>
 
-                              {/* Per-item dismiss/mark as read button */}
                               {isUnread && (
                                 <button
                                   type="button"
@@ -442,7 +425,6 @@ export function DashboardHeader({
                               {notification.message}
                             </p>
 
-                            {/* Telemetry metadata & timestamp */}
                             <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px]">
                               {Boolean(
                                 notification.metadata?.requestNumber,
@@ -467,7 +449,6 @@ export function DashboardHeader({
                   )}
                 </div>
 
-                {/* Popover Footer */}
                 <div className="border-t border-border bg-card/60 px-4 py-2 text-[10px] text-muted-foreground flex items-center justify-between">
                   <span className="font-medium">
                     {userRole === "CITIZEN"
@@ -484,7 +465,6 @@ export function DashboardHeader({
             )}
           </div>
 
-          {/* Citizen Quick Report CTA (if not already on report page) */}
           {userRole === "CITIZEN" && !isCitizenReportPage && (
             <Button
               variant="default"
@@ -497,7 +477,6 @@ export function DashboardHeader({
             </Button>
           )}
 
-          {/* User Profile Trigger Button */}
           <button
             type="button"
             onClick={onOpenProfile}
@@ -515,7 +494,6 @@ export function DashboardHeader({
             </span>
           </button>
 
-          {/* Sign Out Button */}
           <Button
             variant="outline"
             size="icon-sm"

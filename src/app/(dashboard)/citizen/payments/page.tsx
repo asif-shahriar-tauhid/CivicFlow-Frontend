@@ -20,14 +20,11 @@ export default function CitizenPaymentsPage() {
 
   const allPayments = paymentsData?.data || [];
 
-  // Filter client-side for immediate responsiveness
   const filteredPayments = allPayments.filter((p) => {
-    // Status filter
     if (statusFilter !== "ALL" && p.status !== statusFilter) {
       return false;
     }
 
-    // Search filter
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       const invoiceMatch = p.merchantInvoiceNumber
@@ -51,7 +48,6 @@ export default function CitizenPaymentsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-200">
-      {/* Page Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
         <div>
           <div className="flex items-center gap-2">
@@ -84,12 +80,9 @@ export default function CitizenPaymentsPage() {
         </div>
       </div>
 
-      {/* KPI Metric Strip */}
       <PaymentKpiStrip payments={allPayments} />
 
-      {/* Filters and Search Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        {/* Search Input */}
         <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
           <Input
@@ -100,7 +93,6 @@ export default function CitizenPaymentsPage() {
           />
         </div>
 
-        {/* Status Filter Chips */}
         <div className="flex flex-wrap items-center gap-1.5">
           {(
             [
@@ -129,7 +121,6 @@ export default function CitizenPaymentsPage() {
         </div>
       </div>
 
-      {/* Main Transactions Table */}
       <PaymentsTable
         payments={filteredPayments}
         isLoading={isLoading}

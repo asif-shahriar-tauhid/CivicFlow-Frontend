@@ -104,7 +104,6 @@ export function SlaOverdueTable({
                       : "hover:bg-muted/30"
                   }`}
                 >
-                  {/* 1. Ticket Number & Title */}
                   <td className="py-3.5 px-4">
                     <div className="flex items-start gap-2.5">
                       <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10 text-destructive border border-destructive/20 shrink-0 mt-0.5">
@@ -126,7 +125,6 @@ export function SlaOverdueTable({
                     </div>
                   </td>
 
-                  {/* 2. Department & Category */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-1">
                       <div className="flex items-center gap-1.5 text-foreground font-medium">
@@ -146,7 +144,6 @@ export function SlaOverdueTable({
                     </div>
                   </td>
 
-                  {/* 3. Operational Status */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <Badge
                       variant="outline"
@@ -156,7 +153,6 @@ export function SlaOverdueTable({
                     </Badge>
                   </td>
 
-                  {/* 4. Overdue Elapsed & Deadline */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-1">
                       <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-[11px] font-semibold border border-destructive/20">
@@ -169,7 +165,6 @@ export function SlaOverdueTable({
                     </div>
                   </td>
 
-                  {/* 5. Escalation State */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     {isEscalated ? (
                       <Badge
@@ -198,7 +193,6 @@ export function SlaOverdueTable({
                     )}
                   </td>
 
-                  {/* 6. Actions */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <div className="flex items-center justify-end gap-1.5">
                       {!isEscalated && (

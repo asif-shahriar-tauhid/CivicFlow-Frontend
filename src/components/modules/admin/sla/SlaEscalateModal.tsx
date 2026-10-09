@@ -29,7 +29,6 @@ export function SlaEscalateModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook gooeyToast
     }
   };
 
@@ -59,11 +58,9 @@ export function SlaEscalateModal({
         aria-modal="true"
         aria-labelledby="escalate-modal-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-amber-500 via-rose-500 to-purple-600" />
 
         <div className="p-6 space-y-4">
-          {/* Header */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-destructive/10 text-destructive border border-destructive/20 shrink-0">
@@ -92,7 +89,6 @@ export function SlaEscalateModal({
             </button>
           </div>
 
-          {/* Incident Preview Card */}
           <div className="rounded-xl border border-border/70 bg-muted/30 p-3.5 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-mono text-xs font-bold text-foreground">
@@ -118,7 +114,6 @@ export function SlaEscalateModal({
             </div>
           </div>
 
-          {/* Warning Advisory */}
           <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-amber-800 dark:text-amber-300 space-y-1">
             <div className="flex items-center gap-1.5 font-semibold">
               <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -132,7 +127,6 @@ export function SlaEscalateModal({
             </p>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center justify-end gap-2.5 pt-2">
             <Button
               type="button"

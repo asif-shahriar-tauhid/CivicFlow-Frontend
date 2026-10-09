@@ -5,7 +5,6 @@ import Logo from "@/asset/svg/Logo";
 const Footer = () => {
   return (
     <footer className="w-full border-t border-border bg-card text-foreground">
-      {/* Upper Footer Notice */}
       <div className="border-b border-border bg-muted/30 py-3 text-xs text-muted-foreground">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2">
@@ -23,10 +22,8 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4 lg:gap-12">
-          {/* Brand Col */}
           <div className="flex flex-col gap-4 md:col-span-1">
             <div className="flex items-center gap-2.5">
               <Logo />
@@ -45,7 +42,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Citizen Services */}
           <div className="flex flex-col gap-3">
             <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Citizen Services
@@ -86,7 +82,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Governance & SLA */}
           <div className="flex flex-col gap-3">
             <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Accountability
@@ -128,7 +123,6 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* City Administration */}
           <div className="flex flex-col gap-3">
             <h4 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
               Municipal Portal
@@ -162,7 +156,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground sm:flex-row">
           <p>© 2026 CivicFlow. Municipal Service & Complaint Engine.</p>
           <div className="flex items-center gap-6">

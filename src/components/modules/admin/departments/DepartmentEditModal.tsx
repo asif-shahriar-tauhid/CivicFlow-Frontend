@@ -88,7 +88,6 @@ export function DepartmentEditModal({
       onSuccess?.();
       onClose();
     } catch {
-      // Handled by hook gooeyToast
     }
   };
 
@@ -113,10 +112,8 @@ export function DepartmentEditModal({
         aria-modal="true"
         aria-labelledby="edit-dept-title"
       >
-        {/* Accent Bar */}
         <div className="h-1.5 w-full bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500" />
 
-        {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border/60">
           <div className="flex items-center gap-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 shrink-0">
@@ -162,9 +159,7 @@ export function DepartmentEditModal({
           </button>
         </div>
 
-        {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
-          {/* Reference Stats Pill */}
           <div className="grid grid-cols-3 gap-2 p-3 rounded-xl bg-muted/40 border border-border/50 text-center">
             <div className="flex flex-col items-center">
               <span className="text-[10px] uppercase font-semibold text-muted-foreground flex items-center gap-1">
@@ -192,7 +187,6 @@ export function DepartmentEditModal({
             </div>
           </div>
 
-          {/* Department Name */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label
@@ -230,7 +224,6 @@ export function DepartmentEditModal({
             )}
           </div>
 
-          {/* Department Description */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label
@@ -269,7 +262,6 @@ export function DepartmentEditModal({
             )}
           </div>
 
-          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-3 border-t border-border/60">
             <Button
               type="button"

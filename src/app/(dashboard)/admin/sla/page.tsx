@@ -31,7 +31,6 @@ import {
 import type { SlaOverdueRequest } from "@/types/sla.types";
 
 export default function AdminSlaOverduePage() {
-  // Query & Filter states
   const [page, setPage] = useState<number>(1);
   const [limit] = useState<number>(25);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
@@ -40,14 +39,12 @@ export default function AdminSlaOverduePage() {
     "ALL" | "ESCALATED" | "BREACHED" | "NONE"
   >("ALL");
 
-  // Modals state
   const [escalatingRequest, setEscalatingRequest] =
     useState<SlaOverdueRequest | null>(null);
   const [isBatchModalOpen, setIsBatchModalOpen] = useState<boolean>(false);
   const [isCategorySlaModalOpen, setIsCategorySlaModalOpen] =
     useState<boolean>(false);
 
-  // Queries
   const {
     data: overdueResponse,
     isLoading,
@@ -72,10 +69,8 @@ export default function AdminSlaOverduePage() {
 
   const { isPending: isBatchRunning } = useProcessSlaBreaches();
 
-  // Client-side filtering for search & escalation tabs
   const filteredRequests = useMemo(() => {
     return rawOverdueRequests.filter((req) => {
-      // 1. Escalation tab filter
       if (statusTab === "ESCALATED" && req.slaEscalationState !== "ESCALATED") {
         return false;
       }
@@ -94,7 +89,6 @@ export default function AdminSlaOverduePage() {
         return false;
       }
 
-      // 2. Search filter
       if (searchTerm.trim()) {
         const q = searchTerm.toLowerCase().trim();
         const matchesNum = req.requestNumber?.toLowerCase().includes(q);
@@ -110,7 +104,6 @@ export default function AdminSlaOverduePage() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Header & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -141,7 +134,6 @@ export default function AdminSlaOverduePage() {
           </div>
         </div>
 
-        {/* Action Controls */}
         <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
           <Button
             type="button"
@@ -183,7 +175,6 @@ export default function AdminSlaOverduePage() {
         </div>
       </div>
 
-      {/* 2. Telemetry Strip */}
       <SlaTelemetryStrip
         overdueRequests={rawOverdueRequests}
         totalOverdue={meta.total || rawOverdueRequests.length}
@@ -192,10 +183,8 @@ export default function AdminSlaOverduePage() {
         isProcessingBatch={isBatchRunning}
       />
 
-      {/* 3. Toolbar & Filters */}
       <div className="rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Status Tabs */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/50 text-xs self-start md:self-auto overflow-x-auto max-w-full">
             <button
               type="button"
@@ -273,9 +262,7 @@ export default function AdminSlaOverduePage() {
             </button>
           </div>
 
-          {/* Department Filter & Search */}
           <div className="flex items-center gap-2.5 flex-1 md:max-w-md md:justify-end">
-            {/* Department Dropdown */}
             <div className="relative shrink-0">
               <select
                 value={selectedDepartmentId}
@@ -296,7 +283,6 @@ export default function AdminSlaOverduePage() {
               <Building2 className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none text-muted-foreground" />
             </div>
 
-            {/* Keyword Search */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
@@ -318,7 +304,6 @@ export default function AdminSlaOverduePage() {
           </div>
         </div>
 
-        {/* Filter Summary Banner */}
         {(searchTerm || selectedDepartmentId || statusTab !== "ALL") && (
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
             <div>
@@ -343,7 +328,6 @@ export default function AdminSlaOverduePage() {
         )}
       </div>
 
-      {/* 4. Table Content */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
           <Spinner className="h-8 w-8 text-primary" />
@@ -359,7 +343,6 @@ export default function AdminSlaOverduePage() {
             isLoading={isLoading}
           />
 
-          {/* Pagination Controls */}
           {meta.totalPages > 1 && (
             <div className="flex items-center justify-between px-2 pt-2 text-xs text-muted-foreground">
               <span>
@@ -394,7 +377,6 @@ export default function AdminSlaOverduePage() {
         </div>
       )}
 
-      {/* 5. Modals */}
       <CategorySlaModal
         isOpen={isCategorySlaModalOpen}
         onClose={() => setIsCategorySlaModalOpen(false)}

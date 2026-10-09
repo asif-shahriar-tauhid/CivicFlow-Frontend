@@ -52,7 +52,6 @@ export default function AdminAuditLogsPage() {
     totalPages: 1,
   };
 
-  // Client search filter across current view for instant matching
   const filteredLogs = useMemo(() => {
     if (!searchTerm.trim()) return rawLogs;
     const q = searchTerm.toLowerCase().trim();
@@ -70,7 +69,6 @@ export default function AdminAuditLogsPage() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Header & Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -99,7 +97,6 @@ export default function AdminAuditLogsPage() {
           </div>
         </div>
 
-        {/* Sync Controls */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             type="button"
@@ -120,17 +117,14 @@ export default function AdminAuditLogsPage() {
         </div>
       </div>
 
-      {/* 2. Telemetry Strip */}
       <AuditLogTelemetryStrip
         logs={rawLogs}
         totalLogs={meta.total || rawLogs.length}
         isLoading={isLoading}
       />
 
-      {/* 3. Toolbar & Filters */}
       <div className="rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-3">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          {/* Entity Filter Dropdown */}
           <div className="flex items-center gap-2 self-start md:self-auto">
             <div className="relative">
               <select
@@ -152,7 +146,6 @@ export default function AdminAuditLogsPage() {
               <Activity className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none text-muted-foreground" />
             </div>
 
-            {/* Sort Order Button */}
             <Button
               type="button"
               variant="outline"
@@ -171,7 +164,6 @@ export default function AdminAuditLogsPage() {
             </Button>
           </div>
 
-          {/* Keyword Search */}
           <div className="relative flex-1 md:max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
             <Input
@@ -192,7 +184,6 @@ export default function AdminAuditLogsPage() {
           </div>
         </div>
 
-        {/* Filter Summary Banner */}
         {(searchTerm || selectedEntity) && (
           <div className="flex items-center justify-between text-xs text-muted-foreground pt-2 border-t border-border/40">
             <div>
@@ -214,7 +205,6 @@ export default function AdminAuditLogsPage() {
         )}
       </div>
 
-      {/* 4. Table Content */}
       {isLoading ? (
         <div className="flex flex-col items-center justify-center p-16 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
           <Spinner className="h-8 w-8 text-primary" />
@@ -230,7 +220,6 @@ export default function AdminAuditLogsPage() {
             isLoading={isLoading}
           />
 
-          {/* Pagination Controls */}
           {meta.totalPages > 1 && (
             <div className="flex items-center justify-between px-2 pt-2 text-xs text-muted-foreground">
               <span>
@@ -266,7 +255,6 @@ export default function AdminAuditLogsPage() {
         </div>
       )}
 
-      {/* 5. Detail Inspection Modal */}
       <AuditLogDetailModal
         log={inspectingLog}
         isOpen={Boolean(inspectingLog)}

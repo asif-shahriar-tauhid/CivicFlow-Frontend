@@ -99,14 +99,12 @@ export function AuditLogsTable({
                   key={log.id}
                   className="group hover:bg-muted/30 transition-colors"
                 >
-                  {/* 1. Timestamp */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <span className="font-mono text-[11px] text-muted-foreground">
                       {formattedDate}
                     </span>
                   </td>
 
-                  {/* 2. Actor */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="flex items-center gap-2">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0 text-[10px] font-bold">
@@ -127,7 +125,6 @@ export function AuditLogsTable({
                     </div>
                   </td>
 
-                  {/* 3. Action */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <Badge
                       variant="outline"
@@ -137,7 +134,6 @@ export function AuditLogsTable({
                     </Badge>
                   </td>
 
-                  {/* 4. Entity */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-0.5">
                       <span className="font-semibold text-foreground">
@@ -149,7 +145,6 @@ export function AuditLogsTable({
                     </div>
                   </td>
 
-                  {/* 5. Route & IP */}
                   <td className="py-3.5 px-4 whitespace-nowrap">
                     <div className="space-y-0.5 max-w-[180px]">
                       <div
@@ -166,7 +161,6 @@ export function AuditLogsTable({
                     </div>
                   </td>
 
-                  {/* 6. Inspect Button */}
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
                     <Button
                       type="button"

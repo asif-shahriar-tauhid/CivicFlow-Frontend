@@ -32,7 +32,6 @@ import { MUNICIPAL_CATEGORIES } from "@/lib/constants/categories";
 import type { CategoryRoutingRule } from "@/types/routingRule.types";
 
 export default function AdminRoutingRulesPage() {
-  // Filters & View State
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<
     "ALL" | "ACTIVE" | "ARCHIVED"
@@ -42,7 +41,6 @@ export default function AdminRoutingRulesPage() {
   const [selectedDeptFilter, setSelectedDeptFilter] = useState<string>("ALL");
   const [viewMode, setViewMode] = useState<"table" | "grid">("table");
 
-  // Modals State
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
   const [editingRule, setEditingRule] = useState<CategoryRoutingRule | null>(
     null,
@@ -52,7 +50,6 @@ export default function AdminRoutingRulesPage() {
   const [restoringRule, setRestoringRule] =
     useState<CategoryRoutingRule | null>(null);
 
-  // Data fetching
   const {
     data: rulesResponse,
     isLoading: rulesLoading,
@@ -70,15 +67,12 @@ export default function AdminRoutingRulesPage() {
     return MUNICIPAL_CATEGORIES.map((c) => ({ id: c.id, name: c.name }));
   }, [catData]);
 
-  // Filtered rules
   const filteredRules = useMemo(() => {
     return rules.filter((rule) => {
-      // 1. Status Filter
       const isArchived = Boolean(rule.isArchived || !rule.isActive);
       if (statusFilter === "ACTIVE" && isArchived) return false;
       if (statusFilter === "ARCHIVED" && !isArchived) return false;
 
-      // 2. Category Filter
       if (
         selectedCategoryFilter !== "ALL" &&
         rule.categoryId !== selectedCategoryFilter
@@ -86,7 +80,6 @@ export default function AdminRoutingRulesPage() {
         return false;
       }
 
-      // 3. Department Filter
       if (
         selectedDeptFilter !== "ALL" &&
         rule.departmentId !== selectedDeptFilter
@@ -94,7 +87,6 @@ export default function AdminRoutingRulesPage() {
         return false;
       }
 
-      // 4. Search Filter
       if (searchTerm.trim()) {
         const query = searchTerm.toLowerCase().trim();
         const catMatch =
@@ -116,7 +108,6 @@ export default function AdminRoutingRulesPage() {
     searchTerm,
   ]);
 
-  // Counts for tabs
   const totalCount = rules.length;
   const activeCount = useMemo(
     () => rules.filter((r) => !r.isArchived && r.isActive).length,
@@ -136,7 +127,6 @@ export default function AdminRoutingRulesPage() {
 
   return (
     <div className="space-y-8">
-      {/* 1. Header & Quick Actions */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -165,7 +155,6 @@ export default function AdminRoutingRulesPage() {
           </div>
         </div>
 
-        {/* Action Controls */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
           <Button
             type="button"
@@ -195,13 +184,10 @@ export default function AdminRoutingRulesPage() {
         </div>
       </div>
 
-      {/* 2. Telemetry Header */}
       <RoutingRuleTelemetryHeader rules={rules} isLoading={rulesLoading} />
 
-      {/* 3. Controls & Filter Toolbar */}
       <div className="rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md p-4 shadow-sm space-y-3">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-          {/* Status Tabs */}
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-muted/60 border border-border/50 text-xs self-start lg:self-auto overflow-x-auto max-w-full">
             <button
               type="button"
@@ -252,9 +238,7 @@ export default function AdminRoutingRulesPage() {
             </button>
           </div>
 
-          {/* Search & Select Filters */}
           <div className="flex flex-wrap items-center gap-2.5 flex-1 lg:max-w-xl lg:justify-end">
-            {/* Category Filter Dropdown */}
             <select
               value={selectedCategoryFilter}
               onChange={(e) => setSelectedCategoryFilter(e.target.value)}
@@ -269,7 +253,6 @@ export default function AdminRoutingRulesPage() {
               ))}
             </select>
 
-            {/* Department Filter Dropdown */}
             <select
               value={selectedDeptFilter}
               onChange={(e) => setSelectedDeptFilter(e.target.value)}
@@ -284,7 +267,6 @@ export default function AdminRoutingRulesPage() {
               ))}
             </select>
 
-            {/* Search Input */}
             <div className="relative min-w-[180px] flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
@@ -304,7 +286,6 @@ export default function AdminRoutingRulesPage() {
               )}
             </div>
 
-            {/* View Mode Switcher */}
             <div className="flex items-center gap-1 p-1 rounded-xl bg-muted/60 border border-border/50">
               <button
                 type="button"
@@ -334,7 +315,6 @@ export default function AdminRoutingRulesPage() {
           </div>
         </div>
 
-        {/* Filter State Banner */}
         {(searchTerm ||
           statusFilter !== "ALL" ||
           selectedCategoryFilter !== "ALL" ||
@@ -358,7 +338,6 @@ export default function AdminRoutingRulesPage() {
         )}
       </div>
 
-      {/* 4. Content Area */}
       {rulesLoading ? (
         <div className="flex flex-col items-center justify-center p-16 rounded-2xl border border-border/70 bg-card/60 backdrop-blur-md">
           <Spinner className="h-8 w-8 text-primary" />
@@ -429,7 +408,6 @@ export default function AdminRoutingRulesPage() {
         </div>
       )}
 
-      {/* 5. Modals */}
       <RoutingRuleCreateModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}

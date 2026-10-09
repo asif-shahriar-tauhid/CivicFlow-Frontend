@@ -27,9 +27,7 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="grid min-h-screen lg:grid-cols-12 bg-background">
-      {/* Left: Form Viewport */}
       <div className="flex flex-col justify-between p-6 sm:p-8 lg:col-span-6 xl:col-span-5 lg:p-12">
-        {/* Top Header */}
         <div className="flex items-center justify-between">
           <Link
             href="/"
@@ -55,7 +53,6 @@ export default function AuthLayout({
           </Link>
         </div>
 
-        {/* Center: Auth Form Container */}
         <div className="mx-auto my-auto w-full max-w-md py-8">
           <div className="mb-6 flex flex-col gap-1.5">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -69,7 +66,6 @@ export default function AuthLayout({
           {children}
         </div>
 
-        {/* Bottom Security / Privacy Note */}
         <div className="flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1">
             <ShieldCheck className="size-3.5 text-primary" />
@@ -79,9 +75,7 @@ export default function AuthLayout({
         </div>
       </div>
 
-      {/* Right: Architectural Civic Showcase Panel */}
       <div className="relative hidden lg:flex flex-col justify-between overflow-hidden border-l border-border bg-muted/20 p-12 lg:col-span-6 xl:col-span-7">
-        {/* Real Civic Skyline WebP Image Backdrop */}
         <div className="absolute inset-0 pointer-events-none">
           <Image
             src="/images/auth-skyline.webp"
@@ -94,7 +88,6 @@ export default function AuthLayout({
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/40" />
         </div>
 
-        {/* Subtle geometric background grid */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
           style={{
@@ -103,7 +96,6 @@ export default function AuthLayout({
           }}
         />
 
-        {/* Top telemetry badge */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3 py-1 text-xs font-medium text-foreground backdrop-blur-xs">
             <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -122,9 +114,7 @@ export default function AuthLayout({
           </span>
         </div>
 
-        {/* Center: Miniature Telemetry & Flow Showcase Card */}
         <div className="relative z-10 my-auto flex flex-col gap-6 max-w-lg mx-auto w-full">
-          {/* Main Statement */}
           <div>
             <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl leading-tight">
               A single, transparent conduit for urban governance.
@@ -136,7 +126,6 @@ export default function AuthLayout({
             </p>
           </div>
 
-          {/* Interactive Miniature Ticket Simulation */}
           <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col gap-3.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -169,7 +158,6 @@ export default function AuthLayout({
             </div>
           </div>
 
-          {/* Micro Stat Highlights */}
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-xl border border-border bg-card/60 p-4">
               <span className="font-mono text-2xl font-bold tracking-tight text-foreground tabular-nums">
@@ -190,7 +178,6 @@ export default function AuthLayout({
           </div>
         </div>
 
-        {/* Bottom quotation */}
         <div className="relative z-10 flex items-center justify-between text-xs text-muted-foreground">
           <span>Municipal Ordinance No. 2026-CF</span>
           <span>Verified Citizen Protection</span>

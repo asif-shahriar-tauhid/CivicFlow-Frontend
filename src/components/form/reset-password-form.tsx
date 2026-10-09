@@ -164,7 +164,6 @@ function ResetPasswordFormInner() {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Information Header Card */}
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 text-xs text-muted-foreground flex items-start gap-3">
         <ShieldCheck className="size-4 text-primary shrink-0 mt-0.5" />
         <div>
@@ -183,7 +182,6 @@ function ResetPasswordFormInner() {
         }}
       >
         <FieldGroup>
-          {/* Email Address */}
           <form.Field name="email">
             {(field) => {
               const isInvalid =
@@ -216,7 +214,6 @@ function ResetPasswordFormInner() {
             }}
           </form.Field>
 
-          {/* 6-Digit OTP Code with Resend trigger */}
           <form.Field name="otp">
             {(field) => {
               const isInvalid =
@@ -265,7 +262,6 @@ function ResetPasswordFormInner() {
             }}
           </form.Field>
 
-          {/* New Password */}
           <form.Field name="newPassword">
             {(field) => {
               const isInvalid =
@@ -308,7 +304,6 @@ function ResetPasswordFormInner() {
             }}
           </form.Field>
 
-          {/* Confirm Password */}
           <form.Field name="confirmPassword">
             {(field) => {
               const isInvalid =
@@ -353,7 +348,6 @@ function ResetPasswordFormInner() {
             }}
           </form.Field>
 
-          {/* Live Password Requirements Checklist */}
           {pwd.length > 0 && (
             <div className="rounded-xl border border-border bg-muted/30 p-3 text-xs flex flex-col gap-1.5 animate-in fade-in duration-150">
               <span className="font-semibold text-muted-foreground">
@@ -431,7 +425,6 @@ function ResetPasswordFormInner() {
         </FieldGroup>
       </form>
 
-      {/* Navigation Footer */}
       <div className="pt-2 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
         <Link
           href="/login"

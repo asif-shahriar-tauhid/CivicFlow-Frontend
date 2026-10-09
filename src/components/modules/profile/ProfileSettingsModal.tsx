@@ -135,7 +135,6 @@ export function ProfileSettingsModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
       <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card shadow-2xl animate-in zoom-in-95 duration-150 flex flex-col max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-6 py-4.5 bg-muted/20">
           <div className="flex items-center gap-2.5">
             <div className="flex size-8.5 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -161,9 +160,7 @@ export function ProfileSettingsModal({
           </button>
         </div>
 
-        {/* Content Body */}
         <div className="p-6 space-y-6 overflow-y-auto">
-          {/* Identity Card */}
           <div className="rounded-xl border border-border bg-muted/20 p-4.5 flex items-start gap-4">
             <div className="relative group shrink-0">
               <UserAvatar user={user} size="xl" showBadge />
@@ -219,7 +216,6 @@ export function ProfileSettingsModal({
             </div>
           </div>
 
-          {/* Avatar Upload Dropzone Station */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label
@@ -233,7 +229,6 @@ export function ProfileSettingsModal({
               </span>
             </div>
 
-            {/* Hidden Input */}
             <input
               id="profile-photo-input"
               ref={fileInputRef}
@@ -243,7 +238,6 @@ export function ProfileSettingsModal({
               className="hidden"
             />
 
-            {/* Preview Box or Dropzone */}
             {previewUrl ? (
               <div className="rounded-xl border border-primary/25 bg-primary/5 p-4 space-y-3.5">
                 <div className="flex items-center gap-3.5">
@@ -335,7 +329,6 @@ export function ProfileSettingsModal({
               </button>
             )}
 
-            {/* Error Banner */}
             {errorMsg && (
               <p className="text-xs text-destructive font-medium animate-in fade-in">
                 {errorMsg}
@@ -344,7 +337,6 @@ export function ProfileSettingsModal({
           </div>
         </div>
 
-        {/* Footer */}
         <div className="border-t border-border px-6 py-3.5 bg-muted/20 flex items-center justify-between">
           <span className="text-[11px] text-muted-foreground font-mono">
             Encrypted session • Role: {user.role}

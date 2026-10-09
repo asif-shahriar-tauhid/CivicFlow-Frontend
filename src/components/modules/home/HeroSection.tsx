@@ -30,7 +30,6 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
 
   return (
     <section className="relative overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-24">
-      {/* Background radial accent glow */}
       <div
         className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-96 w-[700px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
         style={{
@@ -41,7 +40,6 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
-          {/* Live Operational Status Pill */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/80 px-3.5 py-1 text-xs font-medium text-foreground shadow-xs backdrop-blur-sm">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
@@ -52,23 +50,19 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
             <span className="text-muted-foreground">24/7 Operations</span>
           </div>
 
-          {/* Main Headline */}
           <h1 className="max-w-4xl text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl lg:leading-[1.12]">
             Your City, In Real Time. <br className="hidden sm:inline" />
             <span className="text-primary">Report, Track, and Resolve</span>{" "}
             Municipal Issues.
           </h1>
 
-          {/* Subheading */}
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
             Fast geo-tagged civic complaint intake, automated ward routing, and
             guaranteed SLA resolution for roads, lighting, water, and
             sanitation.
           </p>
 
-          {/* Dual Action Container */}
           <div className="mt-8 flex w-full max-w-2xl flex-col items-center justify-center gap-4 sm:flex-row">
-            {/* Quick Ticket Tracking Input */}
             <form
               onSubmit={handleTrackSubmit}
               className="flex w-full sm:flex-1 items-center rounded-full border border-input bg-card p-1 shadow-xs transition-all focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/20"
@@ -93,7 +87,6 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
               </Button>
             </form>
 
-            {/* Primary Action Button */}
             <Button
               variant="default"
               size="default"
@@ -106,7 +99,6 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
             </Button>
           </div>
 
-          {/* Supporting Micro-Proof Cues */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle2 className="size-3.5 text-primary" />
@@ -122,7 +114,6 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
             </span>
           </div>
 
-          {/* Real-time Municipal Operations Showcase */}
           <div className="mt-12 relative w-full max-w-4xl overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
             <div className="relative aspect-16/9 sm:aspect-21/9 w-full overflow-hidden">
               <Image
@@ -133,10 +124,8 @@ export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
                 className="object-cover object-center"
                 sizes="(max-width: 1024px) 100vw, 896px"
               />
-              {/* Gradient Scrim for contrast */}
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
-              {/* Floating Live Telemetry Badge */}
               <div className="absolute bottom-4 left-4 right-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border/70 bg-card/85 p-3.5 backdrop-blur-md">
                 <div className="flex items-center gap-3">
                   <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">

@@ -126,11 +126,9 @@ export default function AboutUsPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* 1. Hero Section: The Public Mandate */}
       <section className="relative overflow-hidden pt-12 pb-16 lg:pt-16 lg:pb-24 border-b border-border bg-gradient-to-b from-primary/5 via-background to-background">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            {/* Mission Eyebrow Pill */}
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3.5 py-1 text-xs font-medium text-foreground shadow-xs mb-6">
               <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
               <span>Municipal Governance Charter</span>
@@ -180,7 +178,6 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* 2. Four Core Civic Commitments */}
       <section className="py-16 lg:py-24 border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
@@ -228,7 +225,6 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* 3. The Deterministic State Machine Journey */}
       <section className="py-16 lg:py-24 border-b border-border bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
@@ -278,7 +274,6 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* 4. Municipal Jurisdictions Breakdown */}
       <section className="py-16 lg:py-24 border-b border-border bg-card">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl mb-12">
@@ -339,12 +334,10 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* 5. Public Authority Contact & Emergency Hotlines */}
       <section className="py-16 border-b border-border bg-muted/20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-8 lg:p-10 shadow-xs">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left Column */}
               <div className="lg:col-span-1">
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                   Official Channels
@@ -359,7 +352,6 @@ export default function AboutUsPage() {
                 </p>
               </div>
 
-              {/* Right Columns: Hotlines & Addresses */}
               <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-xl border border-border bg-background p-4 flex items-start gap-3">
                   <Phone className="size-5 text-primary shrink-0 mt-0.5" />
@@ -432,7 +424,6 @@ export default function AboutUsPage() {
         </div>
       </section>
 
-      {/* 6. Bottom Call to Action */}
       <section className="py-16 bg-gradient-to-t from-primary/10 via-background to-background text-center">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-4xl">
