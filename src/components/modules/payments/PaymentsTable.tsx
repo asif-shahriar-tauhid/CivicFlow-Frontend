@@ -107,7 +107,7 @@ export function PaymentsTable({
                     {req ? (
                       <div className="max-w-[220px]">
                         <Link
-                          href={`/citizen/requests/${req.id}`}
+                          href={`${isAdmin ? "/admin" : "/citizen"}/requests/${req.id}`}
                           className="font-mono text-[11px] font-semibold text-primary hover:underline"
                         >
                           {req.requestNumber}

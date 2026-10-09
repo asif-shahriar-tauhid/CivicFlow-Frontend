@@ -1,28 +1,25 @@
 "use client";
 
 import {
-  AlertOctagon,
-  AlertTriangle,
   Building2,
   ChevronLeft,
   ChevronRight,
+  Clock,
   ClockAlert,
-  Filter,
   RefreshCw,
   Search,
-  ShieldAlert,
   X,
   Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
+  CategorySlaModal,
   SlaBatchProcessModal,
   SlaEscalateModal,
   SlaOverdueTable,
   SlaTelemetryStrip,
 } from "@/components/modules/admin/sla";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -47,6 +44,8 @@ export default function AdminSlaOverduePage() {
   const [escalatingRequest, setEscalatingRequest] =
     useState<SlaOverdueRequest | null>(null);
   const [isBatchModalOpen, setIsBatchModalOpen] = useState<boolean>(false);
+  const [isCategorySlaModalOpen, setIsCategorySlaModalOpen] =
+    useState<boolean>(false);
 
   // Queries
   const {
@@ -143,7 +142,18 @@ export default function AdminSlaOverduePage() {
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-2 self-start sm:self-auto">
+        <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setIsCategorySlaModalOpen(true)}
+            className="h-9 px-3 gap-1.5 border-border/80 shadow-xs hover:bg-accent text-xs font-semibold"
+          >
+            <Clock className="h-4 w-4 text-primary" />
+            <span>Category SLA Timers</span>
+          </Button>
+
           <Button
             type="button"
             variant="outline"
@@ -385,6 +395,12 @@ export default function AdminSlaOverduePage() {
       )}
 
       {/* 5. Modals */}
+      <CategorySlaModal
+        isOpen={isCategorySlaModalOpen}
+        onClose={() => setIsCategorySlaModalOpen(false)}
+        onSuccess={() => refetch()}
+      />
+
       <SlaEscalateModal
         request={escalatingRequest}
         isOpen={Boolean(escalatingRequest)}

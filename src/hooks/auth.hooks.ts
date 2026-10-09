@@ -32,6 +32,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: userLogin,
     onSuccess: async () => {
+      queryClient.clear();
       try {
         const me = await getMe();
         queryClient.setQueryData(["user"], me);
@@ -54,6 +55,7 @@ export const useVerifyEmail = () => {
   return useMutation({
     mutationFn: verifyEmail,
     onSuccess: async (res) => {
+      queryClient.clear();
       if (res?.data?.user) {
         queryClient.setQueryData(["user"], {
           success: true,
@@ -84,6 +86,7 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: userLogout,
     onSuccess: () => {
+      queryClient.clear();
       queryClient.setQueryData(["user"], null);
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },

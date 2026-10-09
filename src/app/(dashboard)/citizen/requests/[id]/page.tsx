@@ -11,6 +11,7 @@ import {
   ExternalLink,
   FileCheck2,
   FileText,
+  HardHat,
   HelpCircle,
   History,
   Info,
@@ -24,6 +25,7 @@ import {
   Star,
   Trash2,
   User,
+  UserCheck,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -32,8 +34,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { RequestFeePanel } from "@/components/modules/payments";
 import {
+  AssignStaffModal,
   DeleteTicketModal,
   EditTicketModal,
+  InvestigationNotesCard,
+  ResolveTicketModal,
+  StatusTransitionControl,
 } from "@/components/modules/requests";
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -152,6 +158,8 @@ export default function RequestDossierPage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isReopenModalOpen, setIsReopenModalOpen] = useState(false);
+  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [reopenReason, setReopenReason] = useState("");
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState("");
@@ -288,11 +296,23 @@ export default function RequestDossierPage() {
       {/* Top Breadcrumb */}
       <div>
         <Link
-          href="/citizen"
+          href={
+            role === "ADMIN"
+              ? "/admin"
+              : role === "STAFF"
+                ? "/staff"
+                : "/citizen"
+          }
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-3"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Back to All Tickets</span>
+          <span>
+            {role === "ADMIN"
+              ? "Back to Admin Desk"
+              : role === "STAFF"
+                ? "Back to Staff Queue"
+                : "Back to All Tickets"}
+          </span>
         </Link>
 
         {/* Dossier Header Card */}
@@ -325,6 +345,46 @@ export default function RequestDossierPage() {
               </div>
 
               <div className="flex items-center gap-2">
+                {(role === "STAFF" || role === "ADMIN") && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="gap-1.5 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    title={
+                      ticket.assignedTo
+                        ? "Reassign field technician"
+                        : "Assign field technician"
+                    }
+                  >
+                    <UserCheck className="size-3.5" />
+                    <span>
+                      {ticket.assignedTo ? "Reassign" : "Assign Staff"}
+                    </span>
+                  </Button>
+                )}
+
+                {(role === "STAFF" || role === "ADMIN") &&
+                  ticket.status === "IN_PROGRESS" && (
+                    <Button
+                      size="sm"
+                      onClick={() => setIsResolveModalOpen(true)}
+                      className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs text-xs font-semibold h-8 px-3.5"
+                      title="Mark field work as resolved with mandatory summary"
+                    >
+                      <CheckCircle2 className="size-3.5" />
+                      <span>Mark Resolved</span>
+                    </Button>
+                  )}
+
+                {(role === "STAFF" || role === "ADMIN") && (
+                  <StatusTransitionControl
+                    ticket={ticket}
+                    mode="dropdown"
+                    onTransitionSuccess={() => refetch()}
+                  />
+                )}
+
                 {role === "ADMIN" && (
                   <Button
                     variant="outline"
@@ -348,33 +408,34 @@ export default function RequestDossierPage() {
                   </Button>
                 )}
 
-                {ticket.status === "SUBMITTED" && (
-                  <>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditModalOpen(true)}
-                      className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-                    >
-                      <Edit3 className="size-3.5" />
-                      <span>Edit</span>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsDeleteModalOpen(true)}
-                      className="gap-1.5 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-                    >
-                      <Trash2 className="size-3.5" />
-                      <span>Cancel Ticket</span>
-                    </Button>
-                  </>
-                )}
+                {ticket.status === "SUBMITTED" &&
+                  (role === "CITIZEN" || !role) && (
+                    <>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsEditModalOpen(true)}
+                        className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                      >
+                        <Edit3 className="size-3.5" />
+                        <span>Edit</span>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsDeleteModalOpen(true)}
+                        className="gap-1.5 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                      >
+                        <Trash2 className="size-3.5" />
+                        <span>Cancel Ticket</span>
+                      </Button>
+                    </>
+                  )}
               </div>
             </div>
           </div>
 
-          {/* Department & Meta pill tags */}
+          {/* Department, Assignee & Meta pill tags */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
             {ticket.department && (
               <span className="rounded-4xl border border-border bg-muted/30 px-3 py-1 font-medium text-foreground">
@@ -387,6 +448,35 @@ export default function RequestDossierPage() {
                 {ticket.category.slaMinutes / 60}h SLA)
               </span>
             )}
+            {ticket.assignedTo ? (
+              <span className="rounded-4xl border border-blue-500/30 bg-blue-500/10 px-3 py-1 font-medium text-blue-700 dark:text-blue-300 inline-flex items-center gap-1.5">
+                <UserCheck className="size-3.5" />
+                <span>Assigned: {ticket.assignedTo.name}</span>
+                {(role === "STAFF" || role === "ADMIN") && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="underline hover:text-foreground text-[10px] ml-1 cursor-pointer"
+                  >
+                    Change
+                  </button>
+                )}
+              </span>
+            ) : (
+              <span className="rounded-4xl border border-amber-500/30 bg-amber-500/10 px-3 py-1 font-medium text-amber-700 dark:text-amber-400 inline-flex items-center gap-1.5">
+                <HardHat className="size-3.5" />
+                <span>Unassigned</span>
+                {(role === "STAFF" || role === "ADMIN") && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="underline hover:text-foreground text-[10px] ml-1 cursor-pointer font-bold"
+                  >
+                    Assign Now
+                  </button>
+                )}
+              </span>
+            )}
             <span className="rounded-4xl border border-border bg-muted/30 px-3 py-1 text-muted-foreground font-mono text-[11px]">
               Type: {ticket.caseType}
             </span>
@@ -394,8 +484,17 @@ export default function RequestDossierPage() {
         </div>
       </div>
 
+      {/* STAFF & ADMIN MUNICIPAL STATE MACHINE FIELD OPERATIONS DECK */}
+      {(role === "STAFF" || role === "ADMIN") && (
+        <StatusTransitionControl
+          ticket={ticket}
+          mode="panel"
+          onTransitionSuccess={() => refetch()}
+        />
+      )}
+
       {/* CITIZEN SUBMITTED TRIAGE BANNER */}
-      {ticket.status === "SUBMITTED" && (
+      {ticket.status === "SUBMITTED" && (role === "CITIZEN" || !role) && (
         <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
             <div className="flex size-9 items-center justify-center rounded-full bg-sky-600 text-white shrink-0 mt-0.5">
@@ -617,36 +716,11 @@ export default function RequestDossierPage() {
             </div>
           </div>
 
-          {/* Field Investigation Notes */}
-          {ticket.investigationNotes &&
-            ticket.investigationNotes.length > 0 && (
-              <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
-                <h2 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <MessageSquare className="size-4 text-primary" />
-                  <span>Field Crew Investigation Logs</span>
-                </h2>
-                <div className="flex flex-col gap-3">
-                  {ticket.investigationNotes.map((note) => (
-                    <div
-                      key={note.id}
-                      className="rounded-lg border border-border bg-muted/20 p-3 text-xs"
-                    >
-                      <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-                        <span className="font-semibold text-foreground">
-                          {note.actor?.name || "Technician"}
-                        </span>
-                        <span className="font-mono">
-                          {new Date(note.createdAt).toLocaleString()}
-                        </span>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {note.note}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          {/* Field Crew Investigation Notes & Staff Entry Form */}
+          <InvestigationNotesCard
+            ticket={ticket}
+            onNoteAdded={() => refetch()}
+          />
 
           {/* Evidence Attachments */}
           {ticket.attachments && ticket.attachments.length > 0 && (
@@ -844,6 +918,22 @@ export default function RequestDossierPage() {
           </div>
         </div>
       )}
+
+      {/* RESOLVE TICKET MODAL */}
+      <ResolveTicketModal
+        ticket={ticket}
+        isOpen={isResolveModalOpen}
+        onClose={() => setIsResolveModalOpen(false)}
+        onSuccess={() => refetch()}
+      />
+
+      {/* ASSIGN / REASSIGN STAFF MODAL */}
+      <AssignStaffModal
+        ticket={ticket}
+        isOpen={isAssignModalOpen}
+        onClose={() => setIsAssignModalOpen(false)}
+        onSuccess={() => refetch()}
+      />
 
       {/* EDIT TICKET MODAL */}
       <EditTicketModal
