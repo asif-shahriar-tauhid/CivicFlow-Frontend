@@ -23,6 +23,24 @@ export const getServiceRequests = async (
   });
 };
 
+export const getMyQueue = async (
+  params?: RequestFilterParams,
+): Promise<ApiResponse<ServiceRequest[]>> => {
+  return apiClient("/requests/queue/me", {
+    method: "GET",
+    query: params as Record<string, any>,
+  });
+};
+
+export const getDepartmentQueue = async (
+  params?: RequestFilterParams,
+): Promise<ApiResponse<ServiceRequest[]>> => {
+  return apiClient("/requests/queue/department", {
+    method: "GET",
+    query: params as Record<string, any>,
+  });
+};
+
 export const getServiceRequestById = async (
   requestId: string,
 ): Promise<ApiResponse<ServiceRequest>> => {

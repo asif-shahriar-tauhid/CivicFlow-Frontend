@@ -288,11 +288,23 @@ export default function RequestDossierPage() {
       {/* Top Breadcrumb */}
       <div>
         <Link
-          href="/citizen"
+          href={
+            role === "ADMIN"
+              ? "/admin"
+              : role === "STAFF"
+                ? "/staff"
+                : "/citizen"
+          }
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-3"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Back to All Tickets</span>
+          <span>
+            {role === "ADMIN"
+              ? "Back to Admin Desk"
+              : role === "STAFF"
+                ? "Back to Staff Queue"
+                : "Back to All Tickets"}
+          </span>
         </Link>
 
         {/* Dossier Header Card */}

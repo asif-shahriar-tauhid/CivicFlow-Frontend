@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import {
   Activity,
   ArrowRight,
@@ -17,7 +18,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { AdminAnalyticsBreakdown } from "@/components/modules/admin";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetPublicStats } from "@/hooks/dashboard.hooks";
@@ -295,66 +296,6 @@ export default function AdminDashboardPage() {
         onDepartmentFilterChange={(deptId) => setSelectedDeptId(deptId)}
       />
 
-      {/* Admin Modules Quick Grid */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Building2 className="size-4 text-primary" />
-              <span>Department Routing Engine</span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Define category routing rules, assign department leaders, and
-              configure ward dispatch protocols.
-            </p>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <span>Automated rule matching</span>
-            <Badge variant="secondary" className="text-[10px]">
-              Active
-            </Badge>
-          </div>
-        </div>
-
-        <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Clock className="size-4 text-amber-500" />
-              <span>SLA Escalation Engine</span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Batch audit overdue requests, trigger automated supervisor
-              escalation, and monitor breach timelines.
-            </p>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <span>Deterministic state timers</span>
-            <Badge variant="secondary" className="text-[10px]">
-              Monitored
-            </Badge>
-          </div>
-        </div>
-
-        <div className="flex flex-col justify-between rounded-2xl border border-border bg-card p-5">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Shield className="size-4 text-primary" />
-              <span>System Audit Logs</span>
-            </div>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Immutable audit trail recording state transitions, staff
-              reassignments, and administrative operations.
-            </p>
-          </div>
-          <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
-            <span>Prisma tamper-resistant logs</span>
-            <Badge variant="secondary" className="text-[10px]">
-              Enabled
-            </Badge>
-          </div>
-        </div>
-      </div>
-
       {/* Service Requests Operations Table */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -565,18 +506,16 @@ export default function AdminDashboardPage() {
                             )}
                           </Button>
 
-                          <Button
-                            variant="ghost"
-                            size="xs"
-                            render={
-                              <Link href={`/citizen/requests/${request.id}`} />
-                            }
-                            nativeButton={false}
-                            className="gap-1 text-muted-foreground hover:text-foreground h-7 px-2"
+                          <Link
+                            href={`/admin/requests/${request.id}`}
+                            className={cn(
+                              buttonVariants({ variant: "ghost", size: "xs" }),
+                              "gap-1 text-muted-foreground hover:text-foreground h-7 px-2 cursor-pointer",
+                            )}
                           >
                             <span>Review</span>
                             <ArrowRight className="size-3" />
-                          </Button>
+                          </Link>
                         </div>
                       </td>
                     </tr>

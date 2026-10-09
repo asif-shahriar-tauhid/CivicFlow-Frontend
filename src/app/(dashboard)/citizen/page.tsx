@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import {
   AlertCircle,
   ArrowRight,
@@ -26,7 +27,7 @@ import {
   EditTicketModal,
 } from "@/components/modules/requests";
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetServiceRequests } from "@/hooks/request.hooks";
@@ -498,27 +499,27 @@ export default function CitizenPortalPage() {
                   )}
 
                   {isResolved ? (
-                    <Button
-                      variant="default"
-                      size="sm"
-                      render={<Link href={`/citizen/requests/${ticket.id}`} />}
-                      nativeButton={false}
-                      className="w-full md:w-auto gap-1.5 rounded-4xl bg-emerald-600 hover:bg-emerald-700 text-white"
+                    <Link
+                      href={`/citizen/requests/${ticket.id}`}
+                      className={cn(
+                        buttonVariants({ variant: "default", size: "sm" }),
+                        "w-full md:w-auto gap-1.5 rounded-4xl bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer",
+                      )}
                     >
                       <CheckCircle2 className="size-3.5" />
                       <span>Verify & Confirm</span>
-                    </Button>
+                    </Link>
                   ) : (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      render={<Link href={`/citizen/requests/${ticket.id}`} />}
-                      nativeButton={false}
-                      className="w-full md:w-auto gap-1.5 rounded-4xl"
+                    <Link
+                      href={`/citizen/requests/${ticket.id}`}
+                      className={cn(
+                        buttonVariants({ variant: "outline", size: "sm" }),
+                        "w-full md:w-auto gap-1.5 rounded-4xl cursor-pointer",
+                      )}
                     >
                       <span>View Dossier</span>
                       <ArrowRight className="size-3.5" />
-                    </Button>
+                    </Link>
                   )}
                 </div>
               </div>

@@ -1,15 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { submitRequestFeedback } from "@/api/feedback.api";
 import {
   confirmServiceRequest,
   createServiceRequest,
   deleteServiceRequest,
+  getDepartmentQueue,
+  getMyQueue,
   getServiceRequestById,
   getServiceRequests,
   reopenServiceRequest,
   routeServiceRequest,
   updateServiceRequest,
 } from "@/api/request.api";
-import { submitRequestFeedback } from "@/api/feedback.api";
 import type { RequestFilterParams } from "@/types/request.types";
 
 export const useCreateServiceRequest = () => {
@@ -26,6 +28,22 @@ export const useGetServiceRequests = (params?: RequestFilterParams) => {
   return useQuery({
     queryKey: ["service-requests", params],
     queryFn: () => getServiceRequests(params),
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useGetMyQueue = (params?: RequestFilterParams) => {
+  return useQuery({
+    queryKey: ["service-requests", "my-queue", params],
+    queryFn: () => getMyQueue(params),
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useGetDepartmentQueue = (params?: RequestFilterParams) => {
+  return useQuery({
+    queryKey: ["service-requests", "department-queue", params],
+    queryFn: () => getDepartmentQueue(params),
     staleTime: 30 * 1000,
   });
 };

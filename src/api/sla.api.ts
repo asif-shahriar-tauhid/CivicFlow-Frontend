@@ -55,3 +55,14 @@ export const configureCategorySla = async (
     body: payload,
   });
 };
+
+/**
+ * Fetch active request categories and their SLA duration configurations
+ */
+export const getCategorySlaConfigs = async (): Promise<
+  ApiResponse<RequestCategory[]>
+> => {
+  return apiClient("/departments/categories", {
+    method: "GET",
+  });
+};

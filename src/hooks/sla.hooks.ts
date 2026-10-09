@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   configureCategorySla,
   escalateSlaRequest,
+  getCategorySlaConfigs,
   getOverdueRequests,
   processSlaBreaches,
 } from "@/api/sla.api";
@@ -38,11 +39,12 @@ export const useEscalateSlaRequest = () => {
         description: `Request ${response.data.requestNumber || "ticket"} has been escalated to supervisory review.`,
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { data?: { message?: string }; message?: string };
       gooeyToast.error("Escalation Failed", {
         description:
-          error?.data?.message ||
-          error?.message ||
+          err?.data?.message ||
+          err?.message ||
           "Could not escalate incident. Please verify permissions.",
       });
     },
@@ -66,14 +68,26 @@ export const useProcessSlaBreaches = () => {
           "Municipal queue scanned and SLA breach timestamps updated.",
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { data?: { message?: string }; message?: string };
       gooeyToast.error("SLA Batch Run Failed", {
         description:
-          error?.data?.message ||
-          error?.message ||
+          err?.data?.message ||
+          err?.message ||
           "An error occurred while running the SLA breach batch process.",
       });
     },
+  });
+};
+
+/**
+ * Hook to retrieve municipal request categories and their SLA configurations
+ */
+export const useGetCategorySlaConfigs = () => {
+  return useQuery({
+    queryKey: ["request-categories"],
+    queryFn: () => getCategorySlaConfigs(),
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -94,16 +108,18 @@ export const useConfigureCategorySla = () => {
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["sla-overdue"] });
       queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: ["request-categories"] });
       queryClient.invalidateQueries({ queryKey: ["routing-rules"] });
       gooeyToast.success("Category SLA Configured", {
         description: `Target SLA for "${response.data.name}" set to ${response.data.slaMinutes} minutes.`,
       });
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
+      const err = error as { data?: { message?: string }; message?: string };
       gooeyToast.error("SLA Configuration Failed", {
         description:
-          error?.data?.message ||
-          error?.message ||
+          err?.data?.message ||
+          err?.message ||
           "Failed to update category SLA target.",
       });
     },

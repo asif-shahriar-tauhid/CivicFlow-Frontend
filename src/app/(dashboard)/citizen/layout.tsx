@@ -8,6 +8,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
   return (
     <DashboardShell
       userRole="CITIZEN"
+      allowedRoles={["CITIZEN", "ADMIN", "STAFF"]}
       roleTitle="Citizen Portal"
       roleBadge="Resident"
       roleBadgeClassName="border-primary/30 bg-primary/10 text-primary"
