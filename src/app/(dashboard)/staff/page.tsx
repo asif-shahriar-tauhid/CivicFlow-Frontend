@@ -31,7 +31,8 @@ import { useGetDepartmentQueue, useGetMyQueue } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
 export default function StaffQueuePage() {
-  const { user } = useCurrentUser();
+  const { user, role } = useCurrentUser();
+  const isAdmin = role === "ADMIN";
   const [queueScope, setQueueScope] = useState<"personal" | "department">(
     "personal",
   );
@@ -647,36 +648,59 @@ export default function StaffQueuePage() {
 
                         {/* Assignee */}
                         <td className="px-4 py-3 whitespace-nowrap">
-                          <button
-                            type="button"
-                            onClick={() => setSelectedTicketForAssign(request)}
-                            className="group/assignee inline-flex items-center gap-1.5 text-left rounded-lg p-1 -m-1 hover:bg-muted/60 transition-colors cursor-pointer"
-                            title={
-                              request.assignedTo
-                                ? "Click to reassign officer"
-                                : "Click to assign officer"
-                            }
-                          >
-                            {isAssignedToMe ? (
-                              <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-medium group-hover/assignee:border-primary/40">
-                                Assigned to You
-                              </Badge>
-                            ) : request.assignedTo ? (
-                              <div className="flex items-center gap-1 text-muted-foreground group-hover/assignee:text-foreground">
+                          {isAdmin ? (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSelectedTicketForAssign(request)
+                              }
+                              className="group/assignee inline-flex items-center gap-1.5 text-left rounded-lg p-1 -m-1 hover:bg-muted/60 transition-colors cursor-pointer"
+                              title={
+                                request.assignedTo
+                                  ? "Click to reassign officer"
+                                  : "Click to assign officer"
+                              }
+                            >
+                              {isAssignedToMe ? (
+                                <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-medium group-hover/assignee:border-primary/40">
+                                  Assigned to You
+                                </Badge>
+                              ) : request.assignedTo ? (
+                                <div className="flex items-center gap-1 text-muted-foreground group-hover/assignee:text-foreground">
+                                  <span className="text-[11px] font-medium text-foreground truncate max-w-[120px]">
+                                    {request.assignedTo.name}
+                                  </span>
+                                  <UserCheck className="size-3 text-muted-foreground opacity-0 group-hover/assignee:opacity-100 transition-opacity" />
+                                </div>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] group-hover/assignee:bg-amber-500/20"
+                                >
+                                  + Assign
+                                </Badge>
+                              )}
+                            </button>
+                          ) : (
+                            <div className="inline-flex items-center gap-1.5 text-left">
+                              {isAssignedToMe ? (
+                                <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-medium">
+                                  Assigned to You
+                                </Badge>
+                              ) : request.assignedTo ? (
                                 <span className="text-[11px] font-medium text-foreground truncate max-w-[120px]">
                                   {request.assignedTo.name}
                                 </span>
-                                <UserCheck className="size-3 text-muted-foreground opacity-0 group-hover/assignee:opacity-100 transition-opacity" />
-                              </div>
-                            ) : (
-                              <Badge
-                                variant="outline"
-                                className="border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] group-hover/assignee:bg-amber-500/20"
-                              >
-                                + Assign
-                              </Badge>
-                            )}
-                          </button>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="border-muted bg-muted/30 text-muted-foreground text-[10px]"
+                                >
+                                  Unassigned
+                                </Badge>
+                              )}
+                            </div>
+                          )}
                         </td>
 
                         {/* Status */}
@@ -734,25 +758,27 @@ export default function StaffQueuePage() {
                         {/* Action */}
                         <td className="px-4 py-3 text-right whitespace-nowrap">
                           <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="outline"
-                              size="xs"
-                              onClick={() =>
-                                setSelectedTicketForAssign(request)
-                              }
-                              className="gap-1 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-7 px-2.5"
-                              title={
-                                request.assignedTo
-                                  ? "Reassign field technician"
-                                  : "Assign field technician"
-                              }
-                            >
-                              <UserCheck className="size-3" />
-                              <span>
-                                {request.assignedTo ? "Reassign" : "Assign"}
-                              </span>
-                            </Button>
-                            {request.status === "IN_PROGRESS" && (
+                            {isAdmin && (
+                              <Button
+                                variant="outline"
+                                size="xs"
+                                onClick={() =>
+                                  setSelectedTicketForAssign(request)
+                                }
+                                className="gap-1 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-7 px-2.5"
+                                title={
+                                  request.assignedTo
+                                    ? "Reassign field technician"
+                                    : "Assign field technician"
+                                }
+                              >
+                                <UserCheck className="size-3" />
+                                <span>
+                                  {request.assignedTo ? "Reassign" : "Assign"}
+                                </span>
+                              </Button>
+                            )}
+                            {isAdmin && request.status === "IN_PROGRESS" && (
                               <Button
                                 variant="outline"
                                 size="xs"

@@ -2,7 +2,6 @@ import {
   ArrowRight,
   CreditCard,
   History,
-  Lock,
   RotateCcw,
   ShieldCheck,
 } from "lucide-react";

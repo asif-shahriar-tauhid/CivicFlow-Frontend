@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Building2,
-  CheckCircle2,
-  GitBranch,
-  Layers,
-  MapPin,
-  Shield,
-  Zap,
-} from "lucide-react";
+import { GitBranch, Layers, MapPin, Shield, Zap } from "lucide-react";
 import type { CategoryRoutingRule } from "@/types/routingRule.types";
 
 interface RoutingRuleTelemetryHeaderProps {

@@ -4,7 +4,7 @@ import type { AdminAnalyticsParams } from "@/types/dashboard.types";
 
 export const useGetPublicStats = () => {
   return useQuery({
-    queryKey: ["publicStats"],
+    queryKey: ["public-stats"],
     queryFn: getPublicStats,
     staleTime: 60 * 1000, // 1 minute
   });
@@ -12,7 +12,7 @@ export const useGetPublicStats = () => {
 
 export const useGetAdminAnalytics = (params?: AdminAnalyticsParams) => {
   return useQuery({
-    queryKey: ["adminAnalytics", params],
+    queryKey: ["admin-analytics", params],
     queryFn: () => getAdminAnalytics(params),
     staleTime: 30 * 1000, // 30 seconds
   });

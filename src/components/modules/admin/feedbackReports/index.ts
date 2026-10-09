@@ -1,4 +1,4 @@
 export { FeedbackDetailModal } from "./FeedbackDetailModal";
-export { FeedbackReportTelemetryStrip } from "./FeedbackReportTelemetryStrip";
 export { FeedbackReportsTable } from "./FeedbackReportsTable";
+export { FeedbackReportTelemetryStrip } from "./FeedbackReportTelemetryStrip";
 export { FeedbackStarRating } from "./FeedbackStarRating";

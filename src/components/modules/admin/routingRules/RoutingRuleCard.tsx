@@ -1,20 +1,15 @@
 "use client";
 
 import {
-  AlertTriangle,
   Archive,
   ArrowRight,
   Building2,
-  Calendar,
-  CheckCircle2,
   Clock,
   Edit3,
-  GitBranch,
   Globe,
   Layers,
   MapPin,
   RotateCcw,
-  Zap,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

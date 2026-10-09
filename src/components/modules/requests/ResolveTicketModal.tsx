@@ -51,7 +51,7 @@ export function ResolveTicketModal({
   onClose,
   onSuccess,
 }: ResolveTicketModalProps) {
-  const { role, user } = useCurrentUser();
+  const { role } = useCurrentUser();
   const [resolutionSummary, setResolutionSummary] = useState("");
   const [isWorkVerified, setIsWorkVerified] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -70,13 +70,8 @@ export function ResolveTicketModal({
 
   const hasAssignee = Boolean(ticket.assignedToId || ticket.assignedTo?.id);
 
-  // Department check for staff
-  const isAuthorized =
-    role === "ADMIN" ||
-    (role === "STAFF" &&
-      (!ticket.departmentId ||
-        !user?.departmentId ||
-        ticket.departmentId === user.departmentId));
+  // Resolution is an executive decision restricted strictly to municipal administrators
+  const isAuthorized = role === "ADMIN";
 
   const handleApplyTemplate = (text: string) => {
     setResolutionSummary(text);
@@ -157,7 +152,7 @@ export function ResolveTicketModal({
                   Mark Grievance as Resolved
                 </h2>
                 <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold uppercase tracking-wider">
-                  Field Completion
+                  Admin Authority
                 </span>
               </div>
               <p className="text-xs text-muted-foreground font-mono mt-0.5">
@@ -179,6 +174,20 @@ export function ResolveTicketModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Unauthorized Alert if non-admin */}
+          {!isAuthorized && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 flex items-start gap-3 text-xs text-destructive">
+              <AlertCircle className="size-5 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Executive Authority Restricted</p>
+                <p className="mt-0.5 text-[11px] leading-relaxed opacity-90">
+                  Resolving service requests is strictly restricted to Municipal
+                  Administrators. Field technicians must submit field
+                  investigation notes for administrative review.
+                </p>
+              </div>
+            </div>
+          )}
           {/* Ticket Context Pill Row */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">

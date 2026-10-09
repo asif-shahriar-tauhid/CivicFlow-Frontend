@@ -4,24 +4,16 @@ import {
   ArrowRight,
   CheckCircle2,
   Clock,
-  Compass,
   Droplets,
   FileCheck2,
   GitFork,
-  HelpCircle,
   Lightbulb,
-  Lock,
   Mail,
   MapPin,
   Phone,
   RotateCcw,
-  Scale,
-  Shield,
-  ShieldAlert,
   ShieldCheck,
-  Sparkles,
   Trash2,
-  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -253,7 +245,7 @@ export default function AboutUsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-            {lifecycleStages.map((stage, idx) => (
+            {lifecycleStages.map((stage, _idx) => (
               <div
                 key={stage.number}
                 className="relative rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col justify-between"

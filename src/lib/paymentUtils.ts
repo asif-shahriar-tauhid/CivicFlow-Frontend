@@ -85,7 +85,6 @@ export function getPaymentStatusConfig(
         description: "Funds returned to the citizen bKash account.",
         isTerminal: true,
       };
-    case "UNPAID":
     default:
       return {
         label: "Payment Due",

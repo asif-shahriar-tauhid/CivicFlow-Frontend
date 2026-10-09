@@ -1,30 +1,20 @@
 "use client";
 
 import {
-  AlertCircle,
-  AlertTriangle,
   ArrowLeft,
-  Calendar,
   CheckCircle2,
   Clock,
   Edit3,
   ExternalLink,
-  FileCheck2,
   FileText,
   HardHat,
-  HelpCircle,
   History,
   Info,
   MapPin,
-  MessageSquare,
   RotateCcw,
   Route,
-  Shield,
-  ShieldAlert,
-  ShieldCheck,
   Star,
   Trash2,
-  User,
   UserCheck,
   X,
 } from "lucide-react";
@@ -44,7 +34,6 @@ import {
 import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
-import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/auth.hooks";
@@ -286,7 +275,7 @@ export default function RequestDossierPage() {
 
   const isResolved = ticket.status === "RESOLVED";
   const isClosed = ticket.status === "CLOSED";
-  const hasFee =
+  const _hasFee =
     ticket.caseType === "SERVICE_REQUEST" &&
     ticket.category &&
     ticket.category.feeAmount > 0;
@@ -345,7 +334,7 @@ export default function RequestDossierPage() {
               </div>
 
               <div className="flex items-center gap-2">
-                {(role === "STAFF" || role === "ADMIN") && (
+                {role === "ADMIN" && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -364,18 +353,17 @@ export default function RequestDossierPage() {
                   </Button>
                 )}
 
-                {(role === "STAFF" || role === "ADMIN") &&
-                  ticket.status === "IN_PROGRESS" && (
-                    <Button
-                      size="sm"
-                      onClick={() => setIsResolveModalOpen(true)}
-                      className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs text-xs font-semibold h-8 px-3.5"
-                      title="Mark field work as resolved with mandatory summary"
-                    >
-                      <CheckCircle2 className="size-3.5" />
-                      <span>Mark Resolved</span>
-                    </Button>
-                  )}
+                {role === "ADMIN" && ticket.status === "IN_PROGRESS" && (
+                  <Button
+                    size="sm"
+                    onClick={() => setIsResolveModalOpen(true)}
+                    className="gap-1.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs text-xs font-semibold h-8 px-3.5"
+                    title="Mark field work as resolved with mandatory summary"
+                  >
+                    <CheckCircle2 className="size-3.5" />
+                    <span>Mark Resolved</span>
+                  </Button>
+                )}
 
                 {(role === "STAFF" || role === "ADMIN") && (
                   <StatusTransitionControl
@@ -789,7 +777,7 @@ export default function RequestDossierPage() {
             {/* Stages Flow */}
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
               {ticket.statusHistory && ticket.statusHistory.length > 0 ? (
-                ticket.statusHistory.map((item, idx) => (
+                ticket.statusHistory.map((item, _idx) => (
                   <div key={item.id} className="relative">
                     {/* Dot */}
                     <div className="absolute -left-6 top-0.5 size-3 rounded-full border-2 border-background bg-primary ring-2 ring-primary/20" />

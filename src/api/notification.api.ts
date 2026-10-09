@@ -38,4 +38,3 @@ export const markAllNotificationsRead = async (): Promise<
     method: "PATCH",
   });
 };
-

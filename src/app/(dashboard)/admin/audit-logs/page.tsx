@@ -6,11 +6,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Database,
-  Filter,
-  Lock,
   RefreshCw,
   Search,
-  Shield,
   X,
 } from "lucide-react";
 import Link from "next/link";
@@ -20,7 +17,6 @@ import {
   AuditLogsTable,
   AuditLogTelemetryStrip,
 } from "@/components/modules/admin/auditLogs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";

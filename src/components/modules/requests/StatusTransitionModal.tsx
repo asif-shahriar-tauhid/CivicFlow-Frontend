@@ -25,6 +25,7 @@ import {
   STATUS_METADATA,
   type StatusMeta,
 } from "@/constants/transition.constants";
+import { useCurrentUser } from "@/hooks/auth.hooks";
 import {
   useResolveServiceRequest,
   useTransitionServiceRequest,
@@ -46,6 +47,7 @@ export function StatusTransitionModal({
   onClose,
   onSuccess,
 }: StatusTransitionModalProps) {
+  const { role } = useCurrentUser();
   const [activeTarget, setActiveTarget] = useState<RequestStatus | null>(
     initialTargetStatus || null,
   );
@@ -64,11 +66,16 @@ export function StatusTransitionModal({
   const availableOptions = useMemo(() => {
     if (!ticket) return [];
     const transitions = [...(STATE_MACHINE_TRANSITIONS[ticket.status] || [])];
-    if (ticket.status === "IN_PROGRESS" && !transitions.includes("RESOLVED")) {
+    // Resolving a grievance is an executive decision restricted strictly to ADMIN
+    if (
+      role === "ADMIN" &&
+      ticket.status === "IN_PROGRESS" &&
+      !transitions.includes("RESOLVED")
+    ) {
       transitions.push("RESOLVED");
     }
     return transitions;
-  }, [ticket]);
+  }, [ticket, role]);
 
   // Reset or initialize target status when modal opens or ticket changes
   useEffect(() => {
@@ -159,6 +166,13 @@ export function StatusTransitionModal({
     }
 
     if (isResolution) {
+      if (role !== "ADMIN") {
+        setErrorMsg(
+          "Only municipal administrators possess executive authority to mark grievances as resolved.",
+        );
+        return;
+      }
+
       resolveRequest(
         { requestId: ticket.id, reason: reason.trim() },
         {

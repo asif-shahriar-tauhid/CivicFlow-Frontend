@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  AlertOctagon,
-  AlertTriangle,
-  Building2,
-  ClockAlert,
-  ShieldAlert,
-  X,
-} from "lucide-react";
+import { AlertOctagon, AlertTriangle, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useEscalateSlaRequest } from "@/hooks/sla.hooks";

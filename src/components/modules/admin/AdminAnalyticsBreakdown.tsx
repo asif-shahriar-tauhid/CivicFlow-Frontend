@@ -1,8 +1,7 @@
 "use client";
 
-import { BarChart3, Filter, RefreshCw, Sparkles } from "lucide-react";
+import { BarChart3, Filter, RefreshCw } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetAdminAnalytics } from "@/hooks/dashboard.hooks";

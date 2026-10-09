@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  Building2,
-  Calendar,
-  ExternalLink,
-  Eye,
-  MessageSquare,
-  Star,
-  User,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { Building2, Eye, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FeedbackStarRating } from "./FeedbackStarRating";
 import type { RequestFeedbackItem } from "@/types/feedback.types";
+import { FeedbackStarRating } from "./FeedbackStarRating";
 
 interface FeedbackReportsTableProps {
   feedbacks: RequestFeedbackItem[];

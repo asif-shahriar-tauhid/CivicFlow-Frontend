@@ -1,14 +1,11 @@
 "use client";
 
 import {
-  AlertCircle,
   Building2,
-  Filter,
   LayoutGrid,
   Plus,
   RefreshCw,
   Search,
-  Sparkles,
   Table as TableIcon,
   X,
 } from "lucide-react";
@@ -24,7 +21,6 @@ import {
   DepartmentsTable,
   DepartmentTelemetryHeader,
 } from "@/components/modules/admin/departments";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";

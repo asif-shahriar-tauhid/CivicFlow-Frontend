@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, Clock, FileCheck2, ShieldCheck } from "lucide-react";
+import { Activity, Clock, ShieldCheck } from "lucide-react";
 import { useGetPublicStats } from "@/hooks";
 
 export default function TelemetryBanner() {

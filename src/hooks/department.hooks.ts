@@ -150,7 +150,12 @@ export const useAssignStaffDepartment = () => {
       departmentId: string | null;
     }) => assignStaffDepartment(userId, departmentId),
     onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      if (variables.userId) {
+        queryClient.invalidateQueries({
+          queryKey: ["user-detail", variables.userId],
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["departments"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
 

@@ -106,7 +106,6 @@ export function StatusBadge({
           Rejected
         </Badge>
       );
-    case "SUBMITTED":
     default:
       return (
         <Badge variant="outline" dotColor="bg-slate-400" className={className}>
@@ -146,7 +145,6 @@ export function PriorityBadge({
           Low
         </Badge>
       );
-    case "NORMAL":
     default:
       return (
         <Badge variant="default" dotColor="bg-sky-400" className={className}>

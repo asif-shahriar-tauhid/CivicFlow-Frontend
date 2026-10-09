@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Activity,
-  Database,
-  FileSpreadsheet,
-  Lock,
-  ShieldCheck,
-  UserCheck,
-} from "lucide-react";
+import { Activity, Database, Lock, UserCheck } from "lucide-react";
 import type { AuditLog } from "@/types/auditLog.types";
 
 interface AuditLogTelemetryStripProps {

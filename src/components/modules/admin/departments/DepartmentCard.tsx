@@ -1,17 +1,13 @@
 "use client";
 
 import {
-  AlertTriangle,
   Archive,
   Building2,
-  Calendar,
-  CheckCircle2,
   Clock,
   Edit3,
   GitBranch,
   Inbox,
   RotateCcw,
-  Sparkles,
   Users,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";

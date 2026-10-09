@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  AlertOctagon,
-  AlertTriangle,
-  ClockAlert,
-  ShieldAlert,
-  Zap,
-} from "lucide-react";
+import { AlertOctagon, ClockAlert, ShieldAlert, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SlaOverdueRequest } from "@/types/sla.types";
 
@@ -33,7 +27,7 @@ export function SlaTelemetryStrip({
     (r) => Boolean(r.slaBreachedAt) || r.slaEscalationState === "BREACHED",
   ).length;
 
-  const urgentPendingCount = overdueRequests.filter(
+  const _urgentPendingCount = overdueRequests.filter(
     (r) => r.slaEscalationState === "NONE" || !r.slaEscalationState,
   ).length;
 

@@ -36,10 +36,7 @@ import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Spinner } from "@/components/ui/spinner";
 import { useCurrentUser } from "@/hooks/auth.hooks";
-import {
-  useAssignServiceRequest,
-  useGetServiceRequestById,
-} from "@/hooks/request.hooks";
+import { useGetServiceRequestById } from "@/hooks/request.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
 // Fallback mock detail for offline/preview mode
@@ -121,7 +118,8 @@ export default function StaffRequestDetailsPage() {
   const params = useParams();
   const requestId = (params?.id as string) || "";
 
-  const { user: currentUser } = useCurrentUser();
+  const { user: currentUser, role } = useCurrentUser();
+  const isAdmin = role === "ADMIN";
 
   // Queries
   const {
@@ -135,10 +133,6 @@ export default function StaffRequestDetailsPage() {
   // Modal states
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
-
-  // Mutations
-  const { mutate: assignSelf, isPending: isClaiming } =
-    useAssignServiceRequest();
 
   const hasAssignee = Boolean(ticket.assignedToId || ticket.assignedTo?.id);
   const isAssignedToMe =
@@ -161,26 +155,6 @@ export default function StaffRequestDetailsPage() {
     gooeyToast.success("Copied to Clipboard", {
       description: `Tracking ID ${ticket.requestNumber} copied.`,
     });
-  };
-
-  const handleClaimTicket = () => {
-    if (!currentUser?.id || !ticket.id) return;
-    assignSelf(
-      { requestId: ticket.id, assignedToId: currentUser.id },
-      {
-        onSuccess: () => {
-          gooeyToast.success("Ticket Claimed", {
-            description: `You are now the designated technician for ${ticket.requestNumber}.`,
-          });
-          refetch();
-        },
-        onError: (err: any) => {
-          gooeyToast.error("Claim Failed", {
-            description: err?.message || "Could not assign ticket to yourself.",
-          });
-        },
-      },
-    );
   };
 
   if (isLoading) {
@@ -243,9 +217,9 @@ export default function StaffRequestDetailsPage() {
       </div>
 
       {/* 2. COMMAND HEADER HERO CARD */}
-      <div className="rounded-2xl border border-border bg-card p-6 shadow-xs relative overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card p-6 shadow-xs relative z-20">
         {/* Subtle top gradient accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-blue-600 via-primary to-emerald-500" />
+        <div className="absolute top-0 left-0 right-0 h-1 rounded-t-2xl bg-linear-to-r from-blue-600 via-primary to-emerald-500" />
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 border-b border-border/70 pb-5 mb-5">
           <div className="space-y-2">
@@ -289,24 +263,28 @@ export default function StaffRequestDetailsPage() {
 
           {/* Quick Action Header Controls */}
           <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            {/* Assign / Reassign Button */}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsAssignModalOpen(true)}
-              className="gap-1.5 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-              title={
-                hasAssignee
-                  ? "Reassign designated field technician"
-                  : "Assign designated field technician"
-              }
-            >
-              <UserCheck className="size-3.5" />
-              <span>{hasAssignee ? "Reassign Officer" : "Assign Officer"}</span>
-            </Button>
+            {/* Assign / Reassign Button (Admin Authority Only) */}
+            {isAdmin && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsAssignModalOpen(true)}
+                className="gap-1.5 rounded-full border-blue-500/30 text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                title={
+                  hasAssignee
+                    ? "Reassign designated field technician"
+                    : "Assign designated field technician"
+                }
+              >
+                <UserCheck className="size-3.5" />
+                <span>
+                  {hasAssignee ? "Reassign Officer" : "Assign Officer"}
+                </span>
+              </Button>
+            )}
 
-            {/* Mark as Resolved (when IN_PROGRESS) */}
-            {ticket.status === "IN_PROGRESS" && (
+            {/* Mark as Resolved (when IN_PROGRESS and Admin Authority Only) */}
+            {isAdmin && ticket.status === "IN_PROGRESS" && (
               <Button
                 size="sm"
                 onClick={() => setIsResolveModalOpen(true)}
@@ -342,15 +320,20 @@ export default function StaffRequestDetailsPage() {
             ) : (
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400 font-medium">
                 <AlertTriangle className="size-3.5" />
-                <span>Unassigned — Technician Required</span>
-                <button
-                  type="button"
-                  onClick={handleClaimTicket}
-                  disabled={isClaiming}
-                  className="underline hover:text-foreground ml-1 font-bold cursor-pointer"
-                >
-                  {isClaiming ? "Claiming..." : "Claim Now"}
-                </button>
+                <span>
+                  {isAdmin
+                    ? "Unassigned — Technician Required"
+                    : "Unassigned — Pending Administrator Assignment"}
+                </span>
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="underline hover:text-foreground ml-1 font-bold cursor-pointer"
+                  >
+                    Assign Now
+                  </button>
+                )}
               </div>
             )}
 
@@ -408,23 +391,20 @@ export default function StaffRequestDetailsPage() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="xs"
-              onClick={handleClaimTicket}
-              disabled={isClaiming}
-              className="rounded-full text-xs gap-1 bg-amber-600 hover:bg-amber-700 text-white"
-            >
-              <UserPlus className="size-3" />
-              <span>Claim Ticket (Self-Assign)</span>
-            </Button>
-            <Button
-              variant="outline"
-              size="xs"
-              onClick={() => setIsAssignModalOpen(true)}
-              className="rounded-full text-xs gap-1 border-amber-600/30 text-amber-800 dark:text-amber-300"
-            >
-              <span>Assign Other Officer</span>
-            </Button>
+            {isAdmin ? (
+              <Button
+                size="xs"
+                onClick={() => setIsAssignModalOpen(true)}
+                className="rounded-full text-xs gap-1 bg-amber-600 hover:bg-amber-700 text-white"
+              >
+                <UserCheck className="size-3" />
+                <span>Assign Field Technician</span>
+              </Button>
+            ) : (
+              <span className="text-[11px] font-medium text-amber-800 dark:text-amber-300 bg-amber-500/10 px-3 py-1.5 rounded-full border border-amber-500/20">
+                Pending Administrator Assignment
+              </span>
+            )}
           </div>
         </div>
       )}
@@ -709,7 +689,7 @@ export default function StaffRequestDetailsPage() {
                     <CheckCircle2 className="size-3.5" />
                     <span>You are assigned to this grievance.</span>
                   </div>
-                ) : (
+                ) : isAdmin ? (
                   <Button
                     variant="outline"
                     size="xs"
@@ -718,7 +698,7 @@ export default function StaffRequestDetailsPage() {
                   >
                     Transfer to Another Officer
                   </Button>
-                )}
+                ) : null}
               </div>
             ) : (
               <div className="text-center py-2 space-y-3">
@@ -730,28 +710,28 @@ export default function StaffRequestDetailsPage() {
                     No Technician Assigned
                   </p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    Field work cannot be started until assigned.
+                    Field work cannot be started until assigned by municipal
+                    administration.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 pt-1">
-                  <Button
-                    size="xs"
-                    onClick={handleClaimTicket}
-                    disabled={isClaiming}
-                    className="rounded-full text-xs gap-1 bg-primary text-primary-foreground"
-                  >
-                    <HardHat className="size-3" />
-                    <span>Claim Ticket</span>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="xs"
-                    onClick={() => setIsAssignModalOpen(true)}
-                    className="rounded-full text-xs"
-                  >
-                    Select Department Staff
-                  </Button>
-                </div>
+                {isAdmin ? (
+                  <div className="flex flex-col gap-2 pt-1">
+                    <Button
+                      size="xs"
+                      onClick={() => setIsAssignModalOpen(true)}
+                      className="rounded-full text-xs gap-1 bg-primary text-primary-foreground"
+                    >
+                      <UserCheck className="size-3" />
+                      <span>Assign Field Technician</span>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="pt-1">
+                    <span className="text-[11px] text-muted-foreground italic">
+                      Awaiting Administrator Assignment
+                    </span>
+                  </div>
+                )}
               </div>
             )}
           </div>
