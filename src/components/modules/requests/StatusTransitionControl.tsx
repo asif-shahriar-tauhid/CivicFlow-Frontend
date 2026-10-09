@@ -64,9 +64,10 @@ export function StatusTransitionControl({
   // Allowed transitions according to backend state machine
   const allowedTransitions = STATE_MACHINE_TRANSITIONS[ticket.status] || [];
 
-  // Special case: When IN_PROGRESS, allow both transition to AWAITING_CITIZEN / ON_HOLD, plus RESOLVED
-  const canResolve = ticket.status === "IN_PROGRESS";
+  // Resolving a grievance is an executive decision restricted strictly to municipal administrators
+  const canResolve = role === "ADMIN" && ticket.status === "IN_PROGRESS";
   const hasAssignee = Boolean(ticket.assignedToId || ticket.assignedTo?.id);
+  const isAdmin = role === "ADMIN";
 
   // Department authorization check
   const isAuthorizedStaff =
@@ -139,7 +140,7 @@ export function StatusTransitionControl({
         </Button>
 
         {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-64 origin-top-right rounded-xl border border-border bg-card/95 backdrop-blur-md p-1.5 shadow-xl z-50 animate-in fade-in zoom-in-95 duration-150">
+          <div className="absolute right-0 mt-2 w-72 sm:w-80 origin-top-right rounded-xl border border-border bg-card p-1.5 shadow-2xl z-50 animate-in fade-in zoom-in-95 duration-150 max-h-[min(520px,85vh)] overflow-y-auto">
             <div className="px-2.5 py-1.5 border-b border-border/60 mb-1">
               <span className="text-[10px] uppercase font-mono font-bold tracking-wider text-muted-foreground block">
                 Allowed Next States
@@ -211,8 +212,8 @@ export function StatusTransitionControl({
                 </button>
               )}
 
-              {/* Quick Assign / Reassign Option */}
-              {isAuthorizedStaff && (
+              {/* Quick Assign / Reassign Option (Admin Authority Only) */}
+              {isAdmin && (
                 <button
                   type="button"
                   onClick={() => {
@@ -324,17 +325,25 @@ export function StatusTransitionControl({
               <span className="font-medium text-foreground">
                 Available Lifecycle Transitions:
               </span>
-              {!hasAssignee && (
-                <button
-                  type="button"
-                  onClick={() => setIsAssignModalOpen(true)}
-                  className="text-[11px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 hover:underline cursor-pointer"
-                  title="Assign a field technician to enable active work"
-                >
-                  <AlertTriangle className="size-3" />
-                  <span>No technician assigned yet — Assign</span>
-                </button>
-              )}
+              {!hasAssignee &&
+                (isAdmin ? (
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="text-[11px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1 hover:underline cursor-pointer"
+                    title="Assign a field technician to enable active work"
+                  >
+                    <AlertTriangle className="size-3" />
+                    <span>No technician assigned yet — Assign</span>
+                  </button>
+                ) : (
+                  <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium flex items-center gap-1">
+                    <AlertTriangle className="size-3" />
+                    <span>
+                      No technician assigned (Pending Admin assignment)
+                    </span>
+                  </span>
+                ))}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">

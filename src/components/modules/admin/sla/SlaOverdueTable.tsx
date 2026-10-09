@@ -2,7 +2,6 @@
 
 import {
   AlertOctagon,
-  AlertTriangle,
   Building2,
   ClockAlert,
   ExternalLink,

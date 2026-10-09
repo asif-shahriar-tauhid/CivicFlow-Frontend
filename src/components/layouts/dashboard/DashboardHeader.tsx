@@ -77,10 +77,8 @@ export function DashboardHeader({
   );
 
   const { mutate: markNotificationRead } = useMarkNotificationRead();
-  const {
-    mutate: markAllRead,
-    isPending: isMarkingAllRead,
-  } = useMarkAllNotificationsRead();
+  const { mutate: markAllRead, isPending: isMarkingAllRead } =
+    useMarkAllNotificationsRead();
 
   const notifications = notificationsResponse?.data || [];
   const unreadCount = unreadCountResponse?.data?.count || 0;
@@ -198,7 +196,8 @@ export function DashboardHeader({
       return "Municipal Departments";
     if (pathname?.startsWith("/admin/routing-rules"))
       return "Automated Routing Rules";
-    if (pathname?.startsWith("/admin/sla")) return "SLA Breach & Escalation Desk";
+    if (pathname?.startsWith("/admin/sla"))
+      return "SLA Breach & Escalation Desk";
     if (pathname?.startsWith("/admin/payments"))
       return "Municipal Revenue & Ledger";
     if (pathname?.startsWith("/admin/audit-logs")) return "Audit Trail Ledger";
@@ -444,7 +443,9 @@ export function DashboardHeader({
 
                             {/* Telemetry metadata & timestamp */}
                             <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[10px]">
-                              {Boolean(notification.metadata?.requestNumber) && (
+                              {Boolean(
+                                notification.metadata?.requestNumber,
+                              ) && (
                                 <span className="font-mono tabular-nums px-1.5 py-0.5 rounded bg-muted font-medium text-foreground text-[10px]">
                                   {String(notification.metadata?.requestNumber)}
                                 </span>
@@ -601,7 +602,8 @@ function formatRelativeTime(dateString: string) {
   if (diffInSeconds < 60) return "Just now";
   if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
   if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  if (diffInSeconds < 604800)
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
 
   return date.toLocaleDateString(undefined, {
     month: "short",

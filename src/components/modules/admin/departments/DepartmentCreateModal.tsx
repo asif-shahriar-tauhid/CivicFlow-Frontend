@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  AlertCircle,
-  Building2,
-  FileText,
-  Info,
-  Sparkles,
-  X,
-} from "lucide-react";
+import { AlertCircle, Building2, Info, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

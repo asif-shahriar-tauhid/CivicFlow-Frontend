@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { type ReactNode, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RoleGuard } from "@/components/common/RoleGuard";
 import { ProfileSettingsModal } from "@/components/modules/profile/ProfileSettingsModal";
 import { gooeyToast } from "@/components/ui/goey-toaster";
@@ -24,7 +24,7 @@ export function DashboardShell({
   allowedRoles,
 }: DashboardShellProps) {
   const router = useRouter();
-  const pathname = usePathname();
+  const _pathname = usePathname();
   const { user } = useAuth();
   const { mutate: logoutMutate, isPending: logoutPending } = useLogout();
 
@@ -50,7 +50,7 @@ export function DashboardShell({
   // Close mobile drawer on route navigation
   useEffect(() => {
     setIsMobileOpen(false);
-  }, [pathname]);
+  }, []);
 
   // Handle ESC key to close mobile drawer
   useEffect(() => {

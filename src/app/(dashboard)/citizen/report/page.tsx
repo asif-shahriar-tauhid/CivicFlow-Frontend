@@ -2,7 +2,6 @@
 
 import { useForm } from "@tanstack/react-form";
 import {
-  AlertCircle,
   ArrowLeft,
   Camera,
   CheckCircle2,
@@ -13,7 +12,6 @@ import {
   Layers,
   MapPin,
   Send,
-  Trash2,
   Upload,
   X,
 } from "lucide-react";

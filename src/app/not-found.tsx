@@ -4,10 +4,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Compass,
-  FileQuestion,
-  HelpCircle,
   Home,
-  MapPin,
   Search,
   ShieldAlert,
 } from "lucide-react";

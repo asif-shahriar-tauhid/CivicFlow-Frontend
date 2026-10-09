@@ -51,4 +51,3 @@ export interface NotificationQueryParams {
 export interface NotificationUnreadCount {
   count: number;
 }
-

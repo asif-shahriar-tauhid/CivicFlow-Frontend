@@ -1,19 +1,13 @@
 "use client";
 
 import {
-  AlertCircle,
-  Building2,
-  Filter,
   GitBranch,
-  Layers,
   LayoutGrid,
   Plus,
   RefreshCw,
   Search,
-  Sparkles,
   Table as TableIcon,
   X,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -26,7 +20,6 @@ import {
   RoutingRulesTable,
   RoutingRuleTelemetryHeader,
 } from "@/components/modules/admin/routingRules";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";

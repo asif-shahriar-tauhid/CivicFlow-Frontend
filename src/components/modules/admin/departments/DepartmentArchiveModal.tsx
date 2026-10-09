@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, Archive, Building2, GitBranch, X } from "lucide-react";
+import { AlertTriangle, Archive, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";

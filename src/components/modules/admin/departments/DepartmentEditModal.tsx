@@ -2,9 +2,7 @@
 
 import {
   AlertCircle,
-  Building2,
   Calendar,
-  CheckCircle2,
   Edit3,
   GitBranch,
   Inbox,

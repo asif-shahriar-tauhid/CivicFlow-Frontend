@@ -1,21 +1,11 @@
 "use client";
 
-import {
-  Building2,
-  Calendar,
-  ExternalLink,
-  MessageSquare,
-  Quote,
-  Star,
-  Tag,
-  User,
-  X,
-} from "lucide-react";
+import { Building2, ExternalLink, Quote, Star, Tag, X } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FeedbackStarRating } from "./FeedbackStarRating";
 import type { RequestFeedbackItem } from "@/types/feedback.types";
+import { FeedbackStarRating } from "./FeedbackStarRating";
 
 interface FeedbackDetailModalProps {
   feedback: RequestFeedbackItem | null;

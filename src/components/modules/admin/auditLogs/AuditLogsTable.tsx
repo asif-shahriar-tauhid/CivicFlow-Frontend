@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  Activity,
-  ArrowRight,
-  Database,
-  ExternalLink,
-  Eye,
-  Lock,
-  Route,
-  Shield,
-  User,
-} from "lucide-react";
+import { Database, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AuditLog } from "@/types/auditLog.types";

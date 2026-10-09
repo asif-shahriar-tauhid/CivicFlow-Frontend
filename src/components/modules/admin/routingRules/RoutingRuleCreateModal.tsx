@@ -3,13 +3,9 @@
 import {
   AlertCircle,
   ArrowRight,
-  Building2,
-  CheckCircle2,
   GitBranch,
   Globe,
-  Info,
   MapPin,
-  Shield,
   Sparkles,
   X,
   Zap,

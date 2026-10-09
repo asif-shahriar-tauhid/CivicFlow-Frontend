@@ -1,15 +1,8 @@
 "use client";
 
-import {
-  AlertTriangle,
-  Award,
-  HeartHandshake,
-  MessageSquare,
-  Sparkles,
-  Star,
-} from "lucide-react";
-import { FeedbackStarRating } from "./FeedbackStarRating";
+import { AlertTriangle, Award, MessageSquare, Star } from "lucide-react";
 import type { RequestFeedbackItem } from "@/types/feedback.types";
+import { FeedbackStarRating } from "./FeedbackStarRating";
 
 interface FeedbackReportTelemetryStripProps {
   feedbacks: RequestFeedbackItem[];

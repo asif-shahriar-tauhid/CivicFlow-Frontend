@@ -4,22 +4,16 @@ import { cn } from "cn";
 import {
   AlertCircle,
   ArrowRight,
-  Camera,
   CheckCircle2,
   Clock,
-  Compass,
   Edit3,
   FilePlus2,
-  Filter,
   MapPin,
   RefreshCw,
   Search,
-  ShieldAlert,
   ShieldCheck,
-  Sparkles,
   Trash2,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
@@ -31,10 +25,10 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetServiceRequests } from "@/hooks/request.hooks";
-import type { RequestStatus, ServiceRequest } from "@/types/request.types";
+import type { ServiceRequest } from "@/types/request.types";
 
 // Mock fallbacks ensuring high visual feedback when backend is offline or empty
-const DEMO_CITIZEN_TICKETS: Partial<ServiceRequest>[] = [
+const _DEMO_CITIZEN_TICKETS: Partial<ServiceRequest>[] = [
   {
     id: "demo-1",
     requestNumber: "CF-2026-0941",
@@ -132,13 +126,12 @@ export default function CitizenPortalPage() {
 
   const { data: response, isLoading, refetch } = useGetServiceRequests();
 
-  // Pick API data if available, fallback to realistic pre-seeded data if empty
+  // Pick API data if available, or empty list
   const rawTickets = useMemo(() => {
-    const apiData = response?.data;
-    if (Array.isArray(apiData) && apiData.length > 0) {
-      return apiData;
+    if (Array.isArray(response?.data)) {
+      return response.data;
     }
-    return DEMO_CITIZEN_TICKETS as ServiceRequest[];
+    return [];
   }, [response]);
 
   // Filter & Search

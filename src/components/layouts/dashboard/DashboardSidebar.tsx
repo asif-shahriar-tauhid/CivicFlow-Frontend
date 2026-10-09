@@ -1,14 +1,11 @@
 "use client";
 
 import {
-  ChevronLeft,
-  ChevronRight,
   Globe,
   LogOut,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
-  Sparkles,
   X,
 } from "lucide-react";
 import Link from "next/link";

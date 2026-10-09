@@ -1,8 +1,4 @@
-import type {
-  RequestCategory,
-  RequestStatus,
-  SlaEscalationState,
-} from "./request.types";
+import type { RequestStatus, SlaEscalationState } from "./request.types";
 
 export interface SlaOverdueRequest {
   id: string;

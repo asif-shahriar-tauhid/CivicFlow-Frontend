@@ -1,13 +1,9 @@
 "use client";
 
 import {
-  AlertCircle,
   ArrowRight,
-  Building2,
   Calendar,
-  CheckCircle2,
   Edit3,
-  GitBranch,
   Globe,
   MapPin,
   Save,
@@ -45,7 +41,7 @@ export function RoutingRuleEditModal({
   const [departmentId, setDepartmentId] = useState("");
   const [location, setLocation] = useState("");
   const [priority, setPriority] = useState<number>(0);
-  const [errors, setErrors] = useState<{
+  const [_errors, setErrors] = useState<{
     categoryId?: string;
     departmentId?: string;
     location?: string;

@@ -2,7 +2,6 @@
 
 import {
   Activity,
-  ArrowRight,
   CheckCircle2,
   FileSearch,
   MapPin,
@@ -21,7 +20,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onSearchTicket }: HeroSectionProps) {
   const [ticketInput, setTicketInput] = useState("");
-  const router = useRouter();
+  const _router = useRouter();
 
   const handleTrackSubmit = (e: React.FormEvent) => {
     e.preventDefault();

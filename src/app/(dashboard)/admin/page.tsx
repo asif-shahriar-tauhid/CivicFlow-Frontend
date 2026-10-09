@@ -11,7 +11,6 @@ import {
   Layers,
   RefreshCw,
   Route,
-  Shield,
   Users,
 } from "lucide-react";
 import Link from "next/link";

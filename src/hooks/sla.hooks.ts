@@ -33,7 +33,8 @@ export const useEscalateSlaRequest = () => {
     mutationFn: (requestId: string) => escalateSlaRequest(requestId),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["sla-overdue"] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["service-request"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       gooeyToast.warning("Incident Escalated", {
         description: `Request ${response.data.requestNumber || "ticket"} has been escalated to supervisory review.`,
@@ -61,7 +62,8 @@ export const useProcessSlaBreaches = () => {
     mutationFn: (limit?: number) => processSlaBreaches(limit),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sla-overdue"] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["service-request"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       gooeyToast.success("SLA Batch Scan Completed", {
         description:

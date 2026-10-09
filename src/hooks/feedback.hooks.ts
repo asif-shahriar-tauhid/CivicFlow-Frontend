@@ -46,12 +46,15 @@ export const useSubmitRequestFeedback = () => {
       requestId: string;
       payload: CreateFeedbackPayload;
     }) => submitRequestFeedback(requestId, payload),
-    onSuccess: (response, variables) => {
+    onSuccess: (_response, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["request-feedback", variables.requestId],
       });
       queryClient.invalidateQueries({ queryKey: ["feedback-reports"] });
-      queryClient.invalidateQueries({ queryKey: ["requests"] });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       gooeyToast.success("Feedback Submitted", {
         description: "Thank you for rating your municipal service experience!",

@@ -1,6 +1,7 @@
 import apiClient from "@/lib/apiClient";
 import type { ApiResponse } from "@/types/dashboard.types";
 import type {
+  RequestAttachment,
   RequestFilterParams,
   RequestInvestigationNote,
   RequestStatus,
@@ -147,6 +148,25 @@ export const reassignServiceRequest = async (
   return apiClient(`/requests/${requestId}/reassign`, {
     method: "POST",
     body: { assignedToId },
+  });
+};
+
+export const uploadRequestAttachment = async (
+  requestId: string,
+  formData: FormData,
+): Promise<ApiResponse<RequestAttachment>> => {
+  return apiClient(`/requests/${requestId}/attachments`, {
+    method: "POST",
+    body: formData,
+  });
+};
+
+export const deleteRequestAttachment = async (
+  requestId: string,
+  attachmentId: string,
+): Promise<ApiResponse<{ message: string }>> => {
+  return apiClient(`/requests/${requestId}/attachments/${attachmentId}`, {
+    method: "DELETE",
   });
 };
 

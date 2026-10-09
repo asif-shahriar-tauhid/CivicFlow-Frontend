@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  AlertCircle,
-  ArrowRight,
   CheckCircle2,
   Clock,
   ExternalLink,
@@ -126,7 +124,7 @@ export default function QuickTrackModal({
           <Button
             variant="default"
             size="sm"
-            render={<Link href={`/login?redirect=/citizen/requests`} />}
+            render={<Link href="/login?redirect=/citizen" />}
             nativeButton={false}
             className="w-full sm:w-auto gap-1.5"
           >

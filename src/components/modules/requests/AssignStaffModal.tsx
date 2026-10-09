@@ -74,6 +74,8 @@ export function AssignStaffModal({
 
   const isPending = isAssigning || isReassigning;
 
+  const isAuthorized = currentUser?.role === "ADMIN";
+
   // Initialize or reset selections
   useEffect(() => {
     if (isOpen && ticket) {
@@ -84,14 +86,11 @@ export function AssignStaffModal({
       // Pre-select current assignee if reassignment
       if (ticket.assignedToId || ticket.assignedTo?.id) {
         setSelectedStaffId(ticket.assignedToId || ticket.assignedTo?.id || "");
-      } else if (currentUser?.role === "STAFF") {
-        // Pre-select current staff user for quick dispatch
-        setSelectedStaffId(currentUser.id);
       } else {
         setSelectedStaffId("");
       }
     }
-  }, [isOpen, ticket, currentUser]);
+  }, [isOpen, ticket]);
 
   // Consolidate staff candidates from:
   // 1. API users response (admin / authorized)
@@ -127,7 +126,7 @@ export function AssignStaffModal({
 
     // 2. From candidate props
     for (const c of candidateStaffList) {
-      if (c && c.id && !map.has(c.id)) {
+      if (c?.id && !map.has(c.id)) {
         map.set(c.id, {
           id: c.id,
           name: c.name,
@@ -185,6 +184,13 @@ export function AssignStaffModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
+
+    if (!isAuthorized) {
+      setErrorMsg(
+        "Only municipal administrators have authority to assign or reassign staff.",
+      );
+      return;
+    }
 
     const targetId = showManualInput
       ? manualIdInput.trim()
@@ -280,7 +286,7 @@ export function AssignStaffModal({
                     : "Assign Field Technician"}
                 </h2>
                 <span className="font-mono text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 font-semibold uppercase tracking-wider">
-                  {isReassignment ? "Ownership Transfer" : "Dispatch"}
+                  {isReassignment ? "Admin Reassignment" : "Admin Dispatch"}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground font-mono mt-0.5">
@@ -302,6 +308,19 @@ export function AssignStaffModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Unauthorized Alert if non-admin */}
+          {!isAuthorized && (
+            <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3.5 flex items-start gap-3 text-xs text-destructive">
+              <AlertCircle className="size-5 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold">Executive Authority Restricted</p>
+                <p className="mt-0.5 text-[11px] leading-relaxed opacity-90">
+                  Assigning and reassigning field technicians is strictly
+                  restricted to Municipal Administrators.
+                </p>
+              </div>
+            </div>
+          )}
           {/* Ticket Context Pill Row */}
           <div className="rounded-xl border border-border bg-muted/30 p-3.5 flex flex-wrap items-center justify-between gap-2 text-xs">
             <div className="flex items-center gap-2">
@@ -576,6 +595,7 @@ export function AssignStaffModal({
               size="sm"
               disabled={
                 isPending ||
+                !isAuthorized ||
                 (showManualInput ? !manualIdInput.trim() : !selectedStaffId) ||
                 (isReassignment &&
                   (showManualInput

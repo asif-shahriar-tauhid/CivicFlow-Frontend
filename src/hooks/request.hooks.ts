@@ -5,6 +5,7 @@ import {
   assignServiceRequest,
   confirmServiceRequest,
   createServiceRequest,
+  deleteRequestAttachment,
   deleteServiceRequest,
   getDepartmentQueue,
   getMyQueue,
@@ -17,6 +18,7 @@ import {
   type TransitionRequestInput,
   transitionServiceRequest,
   updateServiceRequest,
+  uploadRequestAttachment,
 } from "@/api/request.api";
 import type { RequestFilterParams } from "@/types/request.types";
 
@@ -252,6 +254,44 @@ export const useReassignServiceRequest = () => {
       });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
+    },
+  });
+};
+
+export const useUploadRequestAttachment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      formData,
+    }: {
+      requestId: string;
+      formData: FormData;
+    }) => uploadRequestAttachment(requestId, formData),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+    },
+  });
+};
+
+export const useDeleteRequestAttachment = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      requestId,
+      attachmentId,
+    }: {
+      requestId: string;
+      attachmentId: string;
+    }) => deleteRequestAttachment(requestId, attachmentId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["service-requests"] });
     },
   });
 };

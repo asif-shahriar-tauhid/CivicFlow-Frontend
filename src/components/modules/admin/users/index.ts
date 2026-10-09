@@ -1,2 +1,2 @@
-export * from "./UserEditModal";
 export * from "./UserDeactivateModal";
+export * from "./UserEditModal";
