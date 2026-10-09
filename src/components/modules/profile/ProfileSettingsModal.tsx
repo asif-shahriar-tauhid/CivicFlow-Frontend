@@ -215,10 +215,6 @@ export function ProfileSettingsModal({
                   <CheckCircle2 className="size-3" />
                   Account Active
                 </span>
-                <span>•</span>
-                <span className="font-mono">
-                  ID: {user.id.slice(0, 8).toUpperCase()}
-                </span>
               </div>
             </div>
           </div>

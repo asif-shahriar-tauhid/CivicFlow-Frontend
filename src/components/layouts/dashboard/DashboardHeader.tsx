@@ -81,10 +81,10 @@ export function DashboardHeader({
     useMarkAllNotificationsRead();
 
   const notifications = notificationsResponse?.data || [];
-  const unreadCount = unreadCountResponse?.data?.count || 0;
   const unreadNotifications = notifications.filter(
     (notification) => !notification.readAt,
   );
+  const effectiveUnreadCount = unreadNotifications.length;
 
   const displayedNotifications =
     activeTab === "unread" ? unreadNotifications : notifications;
@@ -184,7 +184,8 @@ export function DashboardHeader({
   };
 
   const handleMarkAllRead = () => {
-    markAllRead();
+    const unreadIds = unreadNotifications.map((n) => n.id);
+    markAllRead(unreadIds);
   };
 
   // Determine current section title based on pathname
@@ -274,15 +275,15 @@ export function DashboardHeader({
               variant="ghost"
               size="icon-sm"
               onClick={() => setIsNotificationsOpen((open) => !open)}
-              aria-label={`Notifications${unreadCount ? `, ${unreadCount} unread` : ""}`}
+              aria-label={`Notifications${effectiveUnreadCount ? `, ${effectiveUnreadCount} unread` : ""}`}
               aria-expanded={isNotificationsOpen}
               aria-haspopup="dialog"
               className="relative rounded-4xl text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
             >
               <Bell className="size-4" />
-              {unreadCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex min-w-4 h-4 items-center justify-center rounded-full bg-destructive px-1 font-mono text-[9px] font-bold tabular-nums leading-none text-destructive-foreground ring-2 ring-background animate-in fade-in zoom-in-75">
-                  {unreadCount > 99 ? "99+" : unreadCount}
+              {effectiveUnreadCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex min-w-4 h-4 items-center justify-center rounded-full bg-red-600 px-1 font-mono text-[9px] font-bold tabular-nums leading-none text-white ring-2 ring-background animate-in fade-in zoom-in-75">
+                  {effectiveUnreadCount > 99 ? "99+" : effectiveUnreadCount}
                 </span>
               )}
             </Button>
@@ -299,9 +300,9 @@ export function DashboardHeader({
                     <h2 className="text-sm font-semibold text-foreground">
                       Notifications
                     </h2>
-                    {unreadCount > 0 ? (
+                    {effectiveUnreadCount > 0 ? (
                       <span className="rounded-full bg-destructive/10 px-2 py-0.5 font-mono text-[10px] font-semibold text-destructive tabular-nums">
-                        {unreadCount} unread
+                        {effectiveUnreadCount} unread
                       </span>
                     ) : (
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary">
@@ -313,11 +314,11 @@ export function DashboardHeader({
                     variant="ghost"
                     size="xs"
                     onClick={handleMarkAllRead}
-                    disabled={unreadCount === 0 || isMarkingAllRead}
+                    disabled={effectiveUnreadCount === 0 || isMarkingAllRead}
                     className="gap-1 text-[11px] text-primary hover:text-primary hover:bg-primary/10 rounded-full px-2"
                   >
                     {isMarkingAllRead ? (
-                      <LoaderCircle className="size-3 animate-spin" />
+                       <LoaderCircle className="size-3 animate-spin" />
                     ) : (
                       <CheckCheck className="size-3" />
                     )}
@@ -347,7 +348,7 @@ export function DashboardHeader({
                         : "text-muted-foreground hover:text-foreground"
                     }`}
                   >
-                    Unread ({unreadCount})
+                    Unread ({effectiveUnreadCount})
                   </button>
                 </div>
 
@@ -475,8 +476,8 @@ export function DashboardHeader({
                         ? "Department Dispatch Queue"
                         : "Governance & Operations"}
                   </span>
-                  <span className="font-mono text-[9px] text-muted-foreground/60">
-                    UUID: {user?.id?.slice(0, 8)}...
+                  <span className="text-[10px] text-muted-foreground/60 font-medium">
+                    Municipal Alerts
                   </span>
                 </div>
               </div>

@@ -72,8 +72,8 @@ export function UserDeactivateModal({
                 >
                   Suspend User Account?
                 </h3>
-                <span className="text-xs text-muted-foreground font-mono">
-                  ID: {user.id.slice(0, 8)}...
+                <span className="text-xs text-muted-foreground truncate block">
+                  {user.email}
                 </span>
               </div>
             </div>

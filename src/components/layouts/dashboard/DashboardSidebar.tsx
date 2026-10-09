@@ -4,7 +4,6 @@ import {
   Globe,
   LogOut,
   PanelLeftClose,
-  PanelLeftOpen,
   Settings,
   X,
 } from "lucide-react";
@@ -79,7 +78,11 @@ export function DashboardSidebar({
       }`}
     >
       {/* 1. Header / Brand Bar */}
-      <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-4 shrink-0">
+      <div
+        className={`flex h-16 items-center ${
+          effectiveCollapsed ? "justify-center px-2" : "justify-between px-4"
+        } border-b border-sidebar-border shrink-0`}
+      >
         <Link
           href={
             userRole === "ADMIN"
@@ -89,11 +92,15 @@ export function DashboardSidebar({
                 : "/citizen"
           }
           onClick={handleLinkClick}
-          className="flex items-center gap-3 overflow-hidden group focus-visible:outline-none"
+          className={`flex items-center ${
+            effectiveCollapsed
+              ? "justify-center w-full"
+              : "gap-3 overflow-hidden"
+          } group focus-visible:outline-none`}
           title={`CivicFlow ${roleTitle}`}
         >
           <Logo
-            size={effectiveCollapsed ? 32 : 36}
+            size={effectiveCollapsed ? 36 : 36}
             className="shrink-0 transition-transform group-hover:scale-105"
           />
           {!effectiveCollapsed && (
@@ -130,25 +137,17 @@ export function DashboardSidebar({
           </Button>
         )}
 
-        {/* Desktop Collapse Toggle */}
-        {!isMobile && onToggleCollapse && (
+        {/* Desktop Collapse Toggle (shown only when expanded; header button toggles expansion when minimized) */}
+        {!isMobile && onToggleCollapse && !effectiveCollapsed && (
           <Button
             variant="ghost"
             size="icon-xs"
             onClick={onToggleCollapse}
-            className={`hidden lg:inline-flex text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors ${
-              effectiveCollapsed ? "mx-auto mt-0" : ""
-            }`}
-            title={effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            aria-label={
-              effectiveCollapsed ? "Expand sidebar" : "Collapse sidebar"
-            }
+            className="hidden lg:inline-flex text-muted-foreground hover:text-foreground hover:bg-sidebar-accent transition-colors"
+            title="Collapse sidebar"
+            aria-label="Collapse sidebar"
           >
-            {effectiveCollapsed ? (
-              <PanelLeftOpen className="size-4" />
-            ) : (
-              <PanelLeftClose className="size-4" />
-            )}
+            <PanelLeftClose className="size-4" />
           </Button>
         )}
       </div>
