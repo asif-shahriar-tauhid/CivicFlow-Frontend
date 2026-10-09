@@ -18,7 +18,11 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useResendOtp, useVerifyEmail } from "@/hooks/auth.hooks";
-import { decodeJwtPayload, resolvePostAuthUrl } from "@/lib/authUtils";
+import {
+  decodeJwtPayload,
+  resolvePostAuthUrl,
+  syncClientAuthCookie,
+} from "@/lib/authUtils";
 import type { AuthSuccessResponse } from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 import { emailVerificationZodSchema } from "@/validation";
@@ -64,6 +68,9 @@ function VerifyEmailFormInner() {
             });
 
             const token = res?.data?.accessToken;
+            if (token) {
+              syncClientAuthCookie(token);
+            }
             let role =
               res?.data?.user?.role ||
               decodeJwtPayload(token)?.role ||

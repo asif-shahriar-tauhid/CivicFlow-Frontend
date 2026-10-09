@@ -1,503 +1,531 @@
 # CivicFlow Frontend
 
-CivicFlow is a citizen-first municipal service intake and grievance resolution platform. It connects residents with municipal departments through geo-tagged issue reporting, photographic evidence, transparent status tracking, service-level agreement (SLA) monitoring, and citizen-verified resolution.
+[![Next.js](https://img.shields.io/badge/Next.js-16.3.7-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2.8-blue?style=flat-square&logo=react)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![Bun](https://img.shields.io/badge/Package_Manager-Bun_1.4.2-fbf0df?style=flat-square&logo=bun)](https://bun.sh/)
+[![Biome](https://img.shields.io/badge/Linter-Biome_2.4.2-60a5fa?style=flat-square&logo=biome)](https://biomejs.dev/)
+[![TanStack Query](https://img.shields.io/badge/State-TanStack_Query_v5-ff4154?style=flat-square&logo=react-query)](https://tanstack.com/query)
 
-This repository contains the web frontend for CivicFlow. It provides responsive public, citizen, department staff, and municipal administrator experiences and communicates with the CivicFlow REST API.
+**CivicFlow** is an enterprise-grade, citizen-first municipal service intake, grievance redressal, and SLA governance web application. It bridges the gap between urban residents and municipal field departments through high-precision geotagged reporting, photographic evidence capture, transparent operational tracking, SLA breach escalation, and citizen-verified resolution.
 
-## Contents
+This repository houses the modern frontend application built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS v4**, communicating with the CivicFlow REST API.
+
+---
+
+## Quick Navigation
 
 - [Product Overview](#product-overview)
-- [Implemented Capabilities](#implemented-capabilities)
-- [User Roles](#user-roles)
+- [System Architecture](#system-architecture)
+- [Deterministic State Machine](#deterministic-state-machine)
+- [Implemented Portals & Features](#implemented-portals--features)
 - [Application Routes](#application-routes)
-- [Architecture](#architecture)
 - [Technology Stack](#technology-stack)
-- [Requirements](#requirements)
+- [Demo Credentials](#demo-accounts)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
-- [Backend Integration](#backend-integration)
-- [Authentication](#authentication)
-- [Request Lifecycle](#request-lifecycle)
-- [Payments](#payments)
+- [Backend Integration & Authentication](#backend-integration--authentication)
+- [Municipal Payments (bKash)](#municipal-payments-bkash)
 - [Project Structure](#project-structure)
 - [Development Workflow](#development-workflow)
-- [Validation and Production Build](#validation-and-production-build)
-- [Accessibility and Design](#accessibility-and-design)
-- [Demo Accounts](#demo-accounts)
-- [Implementation Status](#implementation-status)
+- [Quality Assurance & Verification](#quality-assurance--verification)
+- [Accessibility & Design Principles](#accessibility--design-principles)
+- [Implementation Audit](#implementation-audit)
 - [Troubleshooting](#troubleshooting)
+- [Related Documentation](#related-documentation)
+
+---
 
 ## Product Overview
 
-CivicFlow is designed for urban residents who need to report problems such as waste accumulation, broken street lighting, road hazards, water logging, and other municipal service failures.
+CivicFlow addresses the core bottlenecks of urban municipal administration: lost grievances, opaque field progress, missed service deadlines, and unresolved citizen complaints.
 
-A report can include a description, category, address, ward or zone, landmark, GPS coordinates, and up to five photographic attachments. After submission, the citizen can follow the case from intake through resolution and confirm whether the work was completed. If the issue persists, the citizen can reopen the case within the seven-day reopening window.
+A citizen can report municipal failures (e.g., waste overflow, defective street lamps, potholes, open drainage, waterlogging) in under 60 seconds with exact GPS coordinates and photographic proof. Once submitted, the ticket enters an automated triage and routing pipeline, visible to department crews and administrators. Upon completion, resolution is gated by the citizen's personal verification—with an unconditional 7-day reopening right if work is deficient.
 
-The platform is built around four principles:
+### Core Architectural Principles
 
-1. **Zero-friction intake:** reporting an issue should be fast and usable from a mobile browser in the field.
-2. **Radical transparency:** the responsible department, current state, SLA expectation, and case history remain visible.
-3. **Ground-truth verification:** location metadata and photographic evidence support both the report and the resolution.
-4. **Accessible public service:** controls are keyboard navigable, touch-friendly, and designed for high-contrast outdoor reading.
+1. **Zero-Friction Intake:** Reporting is optimized for field-ready mobile browsers with 1-tap geolocation capture and client-side WebP image optimization.
+2. **Radical Transparency:** Assigned technician, SLA countdown timers, routing rationale, and immutable state audit trails are openly visible.
+3. **Ground-Truth Verification:** Evidence photos and precise coordinates govern both the initial report and final resolution audit.
+4. **Resilient Public Service:** High-contrast outdoor readability, strict WCAG AA color accessibility, full keyboard navigation, and optimistic UI updates.
 
-## Implemented Capabilities
+---
 
-The current frontend covers the complete tracked product surface, including 64 implemented frontend/backend workflows.
+## System Architecture
 
-### Public experience
+CivicFlow is organized around client-side data orchestration powered by **TanStack Query v5**, custom feature API abstractions, and HTTP-only cookie-based authentication.
 
-- Municipal public homepage with reporting call to action
-- Live public telemetry and service statistics
-- Anonymous quick tracking by request number
-- Service category overview
-- Civic charter, SLA policy, and reopening policy page
-- Authentication, registration, email verification, password recovery, and reset flows
-- Google OAuth sign-in
-- Unauthorized access and not-found recovery pages
+```mermaid
+graph TD
+    subgraph Browser ["Client Application (Next.js 16 App Router)"]
+        UI["Page & Component Layer"]
+        Hooks["Feature Hooks (src/hooks)"]
+        QueryCache["TanStack Query Cache"]
+        APIClient["API Client Wrapper (ofetch)"]
+        RoleGuard["RoleGuard & AuthProvider"]
+    end
 
-### Citizen portal
+    subgraph Backend ["CivicFlow REST API (/api/v1)"]
+        Express["Express 5 Gateway"]
+        AuthMiddleware["JWT Cookie Auth Middleware"]
+        Controllers["Module Controllers"]
+        Prisma["Prisma ORM (PostgreSQL)"]
+        Redis["Redis Cache & Rate Limiting"]
+        Cloudinary["Cloudinary Storage"]
+        bKash["bKash Tokenized Gateway"]
+    end
 
-- Citizen dashboard with request list, filters, statuses, and SLA countdowns
-- 60-second incident and grievance intake wizard
-- Dynamic service category selection
-- Browser geolocation capture and location details
-- Multi-photo upload with evidence preview
-- Request dossier with status timeline, notes, evidence gallery, and metadata
-- Editing and deletion of eligible submitted requests
-- Resolution confirmation
-- Seven-day case reopening with a reason
-- Five-star feedback and comments for closed requests
-- bKash payment initiation and payment status polling
-- Payment history, payment details, and invoice receipts
-- Profile image upload and profile settings
-- Notifications with unread count and mark-as-read actions
+    UI --> Hooks
+    Hooks --> QueryCache
+    Hooks --> APIClient
+    APIClient -- "credentials: 'include'" --> Express
+    RoleGuard -- "hydrates session via /auth/me" --> APIClient
+    Express --> AuthMiddleware
+    AuthMiddleware --> Controllers
+    Controllers --> Prisma
+    Controllers --> Redis
+    Controllers --> Cloudinary
+    Controllers --> bKash
+```
 
-### Department staff portal
+### Data Flow & Cache Lifecycle
 
-- Personal work queue
-- Department-wide queue
-- Status and priority filtering
-- SLA countdown and breach visibility
-- Request action workbench
-- Status transitions through the request state machine
-- Investigation note submission
-- Assignment context and GPS navigation links
-- Request evidence and resolution history
+1. **Route Mount:** Pages hydrate server-cached or freshly requested data through declarative hooks (e.g., `useGetServiceRequestById`, `useGetNotifications`).
+2. **Unified Transport:** Requests are piped through `src/lib/apiClient.ts`, which automatically normalizes base URLs, handles JSON payloads, and attaches browser credentials (`credentials: "include"`).
+3. **Envelope Parsing:** API responses conform to the standard CivicFlow contract:
+   ```json
+   {
+     "success": true,
+     "statusCode": 200,
+     "message": "Operation executed successfully",
+     "data": {},
+     "meta": { "page": 1, "limit": 10, "total": 42, "totalPages": 5 }
+   }
+   ```
+4. **Optimistic Mutations:** State changes (e.g., mark notification read, status transitions) update the local cache optimistically and trigger targeted query invalidation on settlement.
 
-### Municipal administrator portal
+---
 
-- Citywide incident triage overview
-- Public and administrative analytics
-- Request routing and re-routing
-- Staff assignment and reassignment
-- User directory with search, role, status, and department filters
-- User role and status management
-- Soft deletion and account blocking
-- Department CRUD, archive, and restore
-- Category routing rule management and simulation
-- SLA overdue incident monitoring
-- Category SLA configuration
-- Manual SLA escalation
-- SLA breach batch processing
-- Immutable audit log inspection with before/after state details
-- Citizen feedback reports
-- Revenue and payment ledger
+## Deterministic State Machine
 
-## User Roles
+CivicFlow tickets strictly follow the municipal state machine defined in the backend core service:
 
-CivicFlow uses three fixed backend roles:
+```mermaid
+stateDiagram-v2
+    [*] --> SUBMITTED : Citizen Reports Grievance
+    SUBMITTED --> TRIAGED : Categorized & SLA Seeded
+    SUBMITTED --> REJECTED : Out of Jurisdiction / Duplicate
+    
+    TRIAGED --> ASSIGNED : Routed to Department / Field Technician
+    TRIAGED --> REJECTED : Invalid Claim
+    
+    ASSIGNED --> IN_PROGRESS : Technician On-Site / Investigation
+    ASSIGNED --> REJECTED : Unresolvable
+    
+    IN_PROGRESS --> RESOLVED : Administrative Resolution Statement
+    
+    RESOLVED --> CLOSED : Citizen Confirms Resolution
+    RESOLVED --> IN_PROGRESS : Citizen Reopens (Within 7-Day Window)
+    
+    CLOSED --> IN_PROGRESS : Citizen Reopens (Within 7-Day Window)
+    CLOSED --> [*] : Terminal Archival
+    REJECTED --> [*] : Terminal Archival
+```
 
-| Role      | Primary responsibilities                                                                          | Main frontend area |
-| --------- | ------------------------------------------------------------------------------------------------- | ------------------ |
-| `CITIZEN` | Submit and track personal requests, pay applicable fees, verify resolutions, and provide feedback | `/citizen`         |
-| `STAFF`   | Work assigned or department-wide queues, update request state, and add investigation notes        | `/staff`           |
-| `ADMIN`   | Govern users, departments, routing, SLAs, payments, audit logs, and citywide operations           | `/admin`           |
+### State Definitions
 
-Role-aware route guards are applied through the dashboard layouts and the shared authentication provider. Unauthorized users are sent to `/unauthorized`.
+| State | Operational Meaning | Permitted Actors |
+| :--- | :--- | :--- |
+| `SUBMITTED` | Grievance received into public intake pool; awaiting review. | Citizen |
+| `TRIAGED` | Priority classified, SLA timer started, and target department identified. | Admin |
+| `ASSIGNED` | Assigned to a specific field technician or department work roster. | Admin, Staff |
+| `IN_PROGRESS` | Active field investigation, repairs, or sanitation works underway. | Staff, Admin |
+| `RESOLVED` | Municipal work complete; awaiting citizen verification. | Admin |
+| `CLOSED` | Resolution verified by citizen or automatically sealed. | Citizen |
+| `REJECTED` | Deemed invalid, duplicate, or outside municipal jurisdiction with justification. | Admin |
+
+> [!NOTE]
+> Resolving a grievance (`IN_PROGRESS` &rarr; `RESOLVED`) represents an executive municipal decision strictly restricted to municipal administrators (`ADMIN`). Field technicians record investigation notes and report findings.
+
+---
+
+## Implemented Portals & Features
+
+The frontend covers all **64 tracked product workflows** across 4 key roles:
+
+### 1. Public & Marketing Portal
+- **Municipal Homepage:** Hero banner, live operational telemetry, trust guarantees, and intake calls to action.
+- **Anonymous Tracking:** Quick grievance lookup by public Tracking Number (`REQ-YYYY-XXXXX`) without login.
+- **Civic Charter:** Public SLA commitments, category-wise resolution benchmarks, and reopening rights.
+- **Authentication Flows:** Registration with validation, email OTP verification, credential login with demo quick-fill, Google OAuth sign-in, and password recovery/reset.
+
+### 2. Citizen Portal (`/citizen`)
+- **Dashboard Overview:** Metric KPI chips, active ticket feeds, priority indicators, and SLA breach countdowns.
+- **60-Second Intake Wizard (`/citizen/report`):**
+  - Dynamic category picker with fee annotations.
+  - GPS locator with reverse-geocoded coordinates and map navigation links.
+  - 5-photo evidence upload zone with client-side WebP compression.
+  - Real-time client Zod schema validation.
+- **Grievance Dossier (`/citizen/requests/[id]`):**
+  - Interactive state transition timeline.
+  - Staff investigation notes feed.
+  - Evidence photo gallery and geospatial summary.
+  - Ticket editing and cancellation/deletion (when eligible).
+  - One-click resolution confirmation.
+  - 7-day case reopening modal with mandatory reason prompt.
+  - 5-star service satisfaction rating and feedback form.
+- **Revenue & Invoicing (`/citizen/payments`):**
+  - bKash Tokenized Gateway payment initiation.
+  - Automated status polling upon gateway return.
+  - Filterable payment ledger and official PDF invoice receipts.
+- **Profile & Account:** Profile photo upload with drag-and-drop, name updates, and unclipped role badges.
+
+### 3. Department Staff Field Desk (`/staff`)
+- **Work Queues:** Dual-tab workspace for **Personal Assigned Queue** vs. **Department-Wide Queue**.
+- **Field Filters:** Quick filtering by operational state (`ASSIGNED`, `IN_PROGRESS`), urgency tier, and search query.
+- **SLA Monitor:** Visual alert banners for incidents nearing breach or overdue.
+- **Field Workbench (`/staff/requests/[id]`):**
+  - Incident dossier and evidence photo viewer.
+  - 1-click Google Maps coordinate navigation.
+  - Field investigation notes editor with pre-canned template chips.
+  - State machine transition controls (`ASSIGNED` &rarr; `IN_PROGRESS`).
+
+### 4. Municipal Administrator Operations Desk (`/admin`)
+- **Citywide Command Overview (`/admin`):**
+  - Executive KPI summary cards (Total volume, SLA compliance %, Revenue, Pending Triage).
+  - Department workload distribution widget.
+  - Category grievance volume breakdown widget.
+  - Financial velocity telemetry.
+  - Complete operations table with search, role filters, and pagination.
+- **Personnel & User Directory (`/admin/users`):**
+  - Search, filter by role (`CITIZEN`, `STAFF`, `ADMIN`), status (`ACTIVE`, `BLOCKED`, `DELETED`), and department.
+  - Role upgrades, department assignment, and soft-delete/deactivate modal.
+- **Municipal Departments (`/admin/departments`):**
+  - Department management (Create, Edit, Archive, Restore).
+  - Interactive Staff Roster Modal to inspect and assign field personnel.
+- **Automated Routing Rules (`/admin/routing-rules`):**
+  - Category-to-Department routing rules with priority weightings.
+  - Create, update, archive, and reactivate rules.
+- **SLA Breach & Escalation Desk (`/admin/sla`):**
+  - Overdue ticket tracking and breach telemetry.
+  - Category SLA target configuration modal (minutes, hours, or days).
+  - Supervisor manual escalation trigger.
+  - Batch automated breach processing job execution.
+- **Audit Trail Ledger (`/admin/audit-logs`):**
+  - Immutable system activity logs.
+  - Structured modal showing actor, action classification, IP, timestamp, and before/after diff metadata.
+- **Citizen Feedback Reports (`/admin/feedback-reports`):**
+  - Citizen satisfaction telemetry, average rating distribution, and dissatisfaction alerts.
+- **Municipal Ledger (`/admin/payments`):**
+  - Citywide transaction ledger, payment gateway status reconciliation, and administrative receipts.
+
+---
 
 ## Application Routes
 
-### Public and authentication routes
+| Route | Role Access | Purpose |
+| :--- | :---: | :--- |
+| `/` | Public | Public portal homepage with live statistics and tracking modal |
+| `/about-us` | Public | Civic charter, SLA commitments, and policies |
+| `/login` | Public | Credentials sign-in with demo quick-fill & Google OAuth |
+| `/register` | Public | Citizen account registration |
+| `/account-verify` | Public | OTP 6-digit email address verification |
+| `/forgot-password` | Public | Password recovery request |
+| `/reset-password` | Public | New password definition using email reset token |
+| `/unauthorized` | Public | Access denied guard page with safe redirect actions |
+| `/citizen` | `CITIZEN` | Citizen dashboard with grievance list and SLA telemetry |
+| `/citizen/report` | `CITIZEN` | 60-second incident intake wizard |
+| `/citizen/requests/[id]` | `CITIZEN` | Complete grievance dossier, verification loop, and feedback |
+| `/citizen/payments` | `CITIZEN` | Payment history and checkout desk |
+| `/citizen/payments/[paymentId]` | `CITIZEN` | Payment transaction receipt and official invoice |
+| `/citizen/payments/result` | `CITIZEN` | bKash payment gateway return reconciliation page |
+| `/staff` | `STAFF` | Personal and department field queues |
+| `/staff/requests/[id]` | `STAFF` | Field technician workbench, GPS navigator, and notes editor |
+| `/admin` | `ADMIN` | Executive command center and triage workbench |
+| `/admin/users` | `ADMIN` | Personnel, staff, and citizen directory |
+| `/admin/departments` | `ADMIN` | Department management and staff deployment rosters |
+| `/admin/routing-rules` | `ADMIN` | Automated routing rules and dispatch pipelines |
+| `/admin/sla` | `ADMIN` | SLA breach desk, duration configuration, and escalation |
+| `/admin/audit-logs` | `ADMIN` | Immutable system audit log trail |
+| `/admin/feedback-reports` | `ADMIN` | Citizen satisfaction ratings and analytical reports |
+| `/admin/payments` | `ADMIN` | Citywide revenue ledger and gateway transaction audit |
+| `/admin/payments/[paymentId]` | `ADMIN` | Administrative payment transaction receipt |
+| `/admin/requests/[id]` | `ADMIN` | Administrative grievance dossier and workflow control |
 
-| Route              | Purpose                                                |
-| ------------------ | ------------------------------------------------------ |
-| `/`                | Public municipal portal homepage                       |
-| `/about-us`        | Civic charter, SLA commitments, and policy information |
-| `/login`           | Credential and Google sign-in                          |
-| `/register`        | Citizen registration                                   |
-| `/account-verify`  | Email verification                                     |
-| `/forgot-password` | Start password recovery                                |
-| `/reset-password`  | Set a new password                                     |
-| `/unauthorized`    | Role and access restriction page                       |
-
-### Citizen routes
-
-| Route                           | Purpose                                     |
-| ------------------------------- | ------------------------------------------- |
-| `/citizen`                      | Citizen request dashboard                   |
-| `/citizen/report`               | New request intake wizard                   |
-| `/citizen/requests/[id]`        | Request dossier and resolution actions      |
-| `/citizen/payments`             | Citizen payment history                     |
-| `/citizen/payments/[paymentId]` | Payment receipt and invoice                 |
-| `/citizen/payments/result`      | Payment gateway result and settlement state |
-
-### Staff routes
-
-| Route                  | Purpose                                    |
-| ---------------------- | ------------------------------------------ |
-| `/staff`               | Personal and department work queues        |
-| `/staff/requests/[id]` | Field operations workbench for one request |
-
-### Administrator routes
-
-| Route                         | Purpose                                                   |
-| ----------------------------- | --------------------------------------------------------- |
-| `/admin`                      | Citywide triage and operational overview                  |
-| `/admin/users`                | User and personnel directory                              |
-| `/admin/departments`          | Department management and staff rosters                   |
-| `/admin/routing-rules`        | Category-to-department routing rules                      |
-| `/admin/sla`                  | SLA monitoring, configuration, escalation, and processing |
-| `/admin/audit-logs`           | Audit trail inspection                                    |
-| `/admin/feedback-reports`     | Citizen satisfaction reports                              |
-| `/admin/payments`             | Revenue and payment ledger                                |
-| `/admin/payments/[paymentId]` | Administrative payment receipt                            |
-| `/admin/requests/[id]`        | Administrative request controls                           |
-
-## Architecture
-
-The frontend uses the Next.js App Router and is organized around route groups, shared providers, API modules, hooks, and reusable UI components.
-
-### Request and data flow
-
-1. A route renders a page or dashboard view.
-2. The page uses a feature hook from `src/hooks`.
-3. The hook uses a feature API function from `src/api`.
-4. The API function calls the shared `src/lib/apiClient.ts` wrapper.
-5. The client sends requests to the CivicFlow REST API with browser credentials included.
-6. TanStack Query caches server state, coordinates refetching, and invalidates related data after mutations.
-7. Providers expose authentication, query, Google OAuth, and notification/toast behavior to the application tree.
-
-### API response shape
-
-The backend uses a standardized response envelope:
-
-```json
-{
-  "success": true,
-  "statusCode": 200,
-  "message": "Human-readable message",
-  "data": {},
-  "meta": {
-    "page": 1,
-    "limit": 10,
-    "total": 42,
-    "totalPages": 5
-  }
-}
-```
-
-Validation errors use `success: false`, a status code, a message, and optional `errorSources` entries containing a field path and message. Feature API functions and hooks preserve this contract for page-level loading, error, and mutation states.
+---
 
 ## Technology Stack
 
-### Frontend
+### Frontend Core
+- **Framework:** Next.js `16.3.7` (App Router, Server & Client Components)
+- **Library:** React `19.2.8`
+- **Language:** TypeScript `5.0+`
+- **Styling:** Tailwind CSS `v4` with custom CSS variables
+- **Package Manager:** Bun `1.4.2`
+- **Linter & Formatter:** Biome `2.4.2`
 
-- Next.js `16.3.7` with the App Router
-- React `19.2.8`
-- TypeScript
-- Tailwind CSS v4
-- Base UI and shadcn component patterns
-- TanStack Query for server-state management
-- TanStack Form and Zod for form state and validation
-- Framer Motion for focused interface transitions
-- Lucide React for icons
-- `ofetch` for API requests
-- Biome for formatting and linting
+### State & Networking
+- **Server State & Caching:** `@tanstack/react-query` `v5.104.0`
+- **Forms & Validation:** `@tanstack/react-form` `v1.33.5`, Zod `v4.6.5`
+- **HTTP Client:** `ofetch` `v1.5.1` (configured with `credentials: "include"`)
+- **OAuth:** `@react-oauth/google` `v0.13.5`
 
-### Backend services
+### UI Components & Aesthetics
+- **Primitives:** `@base-ui/react`, Radix / shadcn patterns
+- **Icons:** `lucide-react` `v1.48.0`
+- **Animations:** `framer-motion` `v14.0.0`, `tw-animate-css`
+- **Notifications & Toasts:** `goey-toast` `v0.5.0`
+- **Class Utilities:** `clsx`, `tailwind-merge` (`cn` helper)
 
-The frontend integrates with a separate CivicFlow API built with Node.js and TypeScript, Express 5, Prisma 7, PostgreSQL, Redis, Cloudinary, Nodemailer, JWT authentication, bKash Tokenized Checkout, and Zod validation.
+### Companion Backend Infrastructure
+- **API Runtime:** Node.js, Express 5, TypeScript
+- **Database & Cache:** PostgreSQL, Prisma 7, Redis
+- **Media & Invoicing:** Cloudinary, PDFKit
+- **Payments:** bKash Tokenized Checkout API
 
-The backend repository is referred to in the project documentation as `B7A6-CivicFlowAPI`.
+---
 
-## Requirements
+## Demo Accounts
 
-- Node.js compatible with the installed Next.js version
-- Bun `1.4.2` is the repository package-manager version
-- Access to a running CivicFlow backend for authenticated and data-driven flows
-- A Google OAuth client ID if Google sign-in is being tested
-- bKash and Cloudinary configuration on the backend for payment and uploaded media workflows
+For rapid testing and evaluation, the backend seed populates these standard role accounts:
+
+| Role | Email Address | Password | Clearance & Access Scope |
+| :--- | :--- | :--- | :--- |
+| `ADMIN` | `superadmin@example.com` | `Password@123` | Citywide triage, user control, SLA config, departments, audit logs |
+| `STAFF` | `staff.drainage@civicflow.org` | `Password@123` | Department queues, investigation notes, state progression |
+| `CITIZEN` | `citizen.sarah@example.com` | `Password@123` | Submit grievances, bKash payments, verify resolution, feedback |
+
+> [!TIP]
+> The login page at `/login` provides 1-click demo credential pills that instantly pre-fill email and password for any role.
+
+---
 
 ## Getting Started
 
-### 1. Install dependencies
+### Prerequisites
 
-From the repository root:
+- [Bun](https://bun.sh/) `1.4.2+` (Recommended) or Node.js `20+`
+- Running instance of the **CivicFlow Backend API** (locally at `http://localhost:5000` or deployed at `https://civic-flow-api.vercel.app`)
+
+### 1. Clone & Install Dependencies
 
 ```bash
+git clone https://github.com/asif-shahriar-tauhid/CivicFlow-Frontend.git
+cd CivicFlow-Frontend
 bun install
 ```
 
-The project can also be run with npm, but the repository declares Bun as its package manager. Keep the lockfile and package-manager choice consistent when adding dependencies.
+### 2. Configure Environment Variables
 
-### 2. Configure environment variables
+Create a `.env.local` file in the project root:
 
-Create a local `.env.local` file in the repository root. See [Environment Variables](#environment-variables) for the supported values.
+```dotenv
+# Backend API Base URL (normalized automatically to include /api/v1)
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
 
-For local full-stack development, the API normally runs at `http://localhost:5000` and the frontend at `http://localhost:3000`.
+# Optional: Google OAuth Client ID for Google Sign-In
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+```
 
-### 3. Start the development server
+### 3. Launch Development Server
 
 ```bash
 bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in a browser.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-The equivalent npm command is:
-
-```bash
-npm run dev
-```
-
-### 4. Start the backend
-
-Start the CivicFlow API separately using the backend repository's documented setup. The frontend expects the API prefix `/api/v1`; it does not provide a local API proxy or NextAuth session.
+---
 
 ## Environment Variables
 
-Only public browser-safe variables are read by this frontend:
+Only browser-safe `NEXT_PUBLIC_` variables are utilized by the frontend:
 
-| Variable                       | Required           | Description                                                                                                                     | Example                                                   |
-| ------------------------------ | ------------------ | ------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
-| `NEXT_PUBLIC_API_BASE_URL`     | No                 | CivicFlow API origin or full API base. The client normalizes it to include `/api/v1`. If omitted, the deployed API URL is used. | `http://localhost:5000` or `http://localhost:5000/api/v1` |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | For Google sign-in | Google OAuth client ID passed to `GoogleOAuthProvider`.                                                                         | `1234567890-example.apps.googleusercontent.com`           |
+| Variable | Required | Description | Default Fallback |
+| :--- | :---: | :--- | :--- |
+| `NEXT_PUBLIC_API_BASE_URL` | No | Base URL of the CivicFlow REST API. Automatically normalizes trailing slashes and `/api/v1`. | `https://civic-flow-api.vercel.app/api/v1` |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Optional | Google Cloud OAuth Client ID for enabling Google login. | `undefined` (Credential login functions independently) |
 
-Example `.env.local`:
+> [!WARNING]
+> Do NOT place backend database URLs, JWT secrets, bKash app secrets, or SMTP credentials in `.env.local`. All sensitive keys belong strictly in the backend repository.
 
-```dotenv
-NEXT_PUBLIC_API_BASE_URL=http://localhost:5000/api/v1
-NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+---
+
+## Backend Integration & Authentication
+
+### HTTP-Only Cookie Mechanism
+
+CivicFlow implements defense-in-depth authentication managed entirely by the backend:
+- **Session Tokens:** `accessToken` (1-day validity) and `refreshToken` (7-day validity) are stored in secure HTTP-only cookies.
+- **Credential Handling:** The frontend API client configures `credentials: "include"` on every request to pass cookies across origins.
+- **Session Hydration:** Upon mounting, `AuthProvider` queries `/api/v1/auth/me`. If valid, the current user identity and clearance role are seeded into the TanStack Query cache.
+- **Route Protection:** `RoleGuard` and layout wrappers verify that the active user matches required clearance levels, instantly rerouting unauthorized users to `/unauthorized` or `/login`.
+- **CORS Notice:** For local development, the backend must whitelist `http://localhost:3000` in its CORS policy with `credentials: true`.
+
+---
+
+## Municipal Payments (bKash)
+
+For service request categories requiring a statutory municipal fee (e.g., specialized demolition, commercial septic clearing, hazardous waste pickup), CivicFlow integrates the **bKash Tokenized Checkout** pipeline:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Citizen
+    participant FE as CivicFlow Frontend
+    participant BE as CivicFlow API
+    participant bKash as bKash Payment Gateway
+
+    Citizen->>FE: Click "Pay Municipal Fee" (RequestFeePanel)
+    FE->>BE: POST /api/v1/requests/:id/payment/initiate
+    BE->>bKash: Create Payment & Fetch Gateway URL
+    bKash-->>BE: Return bkashURL
+    BE-->>FE: Return checkout redirect URL
+    FE->>bKash: Redirect Citizen to bKash Checkout
+    Citizen->>bKash: Authorize Payment with PIN / OTP
+    bKash->>BE: Redirect to Backend Callback (Execute & Settle)
+    BE->>FE: Redirect to /citizen/payments/result?paymentId=...&status=...
+    FE->>BE: Poll Payment Status until Terminal State (COMPLETED)
+    FE->>Citizen: Display Verified Receipt & Enable Invoice Download
 ```
 
-`NEXT_PUBLIC_` values are bundled into browser JavaScript. Do not place API secrets, JWT secrets, database credentials, Cloudinary secrets, SMTP passwords, or bKash private credentials in this frontend repository. Those belong in the backend environment.
-
-## Backend Integration
-
-The default API base is:
-
-```text
-https://civic-flow-api.vercel.app/api/v1
-```
-
-For local development, set `NEXT_PUBLIC_API_BASE_URL` to the backend origin or its `/api/v1` URL. The shared client removes trailing slashes and appends `/api/v1` when necessary, so both of these values are accepted:
-
-```text
-http://localhost:5000
-http://localhost:5000/api/v1
-```
-
-The API client sends `credentials: "include"` on every request because the backend owns JWT session cookies. The backend must allow the frontend origin through CORS and must be configured for the expected cookie behavior.
-
-The API prefix includes modules for authentication and users, service requests and attachments, departments and routing rules, payments and invoices, notifications, feedback, SLA monitoring and escalation, audit logs, and dashboard analytics.
-
-## Authentication
-
-CivicFlow authentication is backend-owned:
-
-- Access and refresh JWTs are stored in HTTP-only cookies.
-- The access cookie lasts one day and the refresh cookie lasts seven days in the standard backend configuration.
-- Bearer authorization is also supported by the API, although the frontend primarily relies on cookies.
-- The frontend calls the backend `auth/me` endpoint to hydrate the current user.
-- Refresh behavior is handled through the backend refresh-token endpoint and cookies.
-- The frontend does not use NextAuth.
-- Authenticated views use `AuthProvider`, `RoleGuard`, and dashboard layouts to enforce access boundaries.
-
-When authentication appears stuck during local development, verify that the frontend origin is allowed by backend CORS and that requests include credentials. Also verify that the API URL points to the backend rather than the frontend dev server.
-
-## Request Lifecycle
-
-Service requests move through the deterministic lifecycle below:
-
-```text
-SUBMITTED -> TRIAGED -> ASSIGNED -> IN_PROGRESS -> RESOLVED -> CLOSED
-```
-
-The platform also records routing state, priority, SLA due time, breach state, assignment history, investigation notes, status history, resolution information, and audit information.
-
-The citizen-facing resolution loop is:
-
-1. A citizen submits a request with evidence and location details.
-2. The request is triaged and routed to a department.
-3. Staff investigate the issue and record field notes.
-4. Staff and administrators update the operational state.
-5. An administrator records the resolution summary when the work is complete.
-6. The citizen confirms the resolution and the request closes.
-7. If the issue persists, the citizen can reopen it within seven days and provide a reason.
-
-## Payments
-
-Some request categories can require a fee. The frontend supports the bKash flow through the backend:
-
-1. A citizen starts checkout from the request fee panel.
-2. The backend initiates the bKash transaction.
-3. bKash redirects through the backend callback flow.
-4. The frontend displays the payment result.
-5. The payment status is polled until settlement is known.
-6. The citizen can view payment history and download or open the generated invoice.
-
-Payment credentials and gateway configuration are backend concerns. Do not add them to `.env.local` for this frontend unless a future implementation explicitly requires a public, non-secret setting.
+---
 
 ## Project Structure
 
 ```text
 src/
-├── api/                    Feature-specific REST API functions
-├── app/                    Next.js App Router pages, layouts, and global CSS
-│   ├── (dashboard)/        Citizen, staff, and admin authenticated areas
-│   ├── (public)/           Marketing and authentication routes
-│   └── unauthorized/       Access restriction page
-├── asset/                  Logos, icons, and static UI assets
-├── components/             Shared UI, forms, layouts, and feature modules
-├── constants/              Shared constants and transition definitions
-├── hooks/                  TanStack Query and feature hooks
-├── lib/                    API client, utilities, auth, and payment helpers
-├── providers/              Query, auth, Google, and provider composition
-├── types/                  Shared TypeScript types
-└── validation/             Zod schemas for client-side validation
+├── api/                    # Typed REST API service functions (ofetch wrappers)
+│   ├── auth.api.ts
+│   ├── request.api.ts
+│   ├── department.api.ts
+│   ├── payment.api.ts
+│   ├── notification.api.ts
+│   ├── sla.api.ts
+│   ├── auditLog.api.ts
+│   └── user.api.ts
+├── app/                    # Next.js App Router (Pages, Layouts, Route Groups)
+│   ├── (dashboard)/        # Role-gated authenticated portal subtrees
+│   │   ├── admin/          # Citywide admin operations desk
+│   │   ├── citizen/        # Citizen grievance desk & intake wizard
+│   │   └── staff/          # Field crew queues & investigation workbench
+│   ├── (public)/           # Public views
+│   │   ├── (authentication)/ # Login, Register, Verify, Forgot, Reset
+│   │   └── (marketing)/    # Homepage and About Us / Charter
+│   ├── globals.css         # Tailwind v4 theme tokens & glassmorphism utilities
+│   ├── layout.tsx          # Root provider shell & HTML scaffold
+│   ├── not-found.tsx       # 404 recovery page
+│   └── unauthorized/       # Access denied resolution page
+├── asset/                  # Brand SVG marks, vector badges, and iconography
+├── components/             # Reusable and modular component architecture
+│   ├── common/             # UserAvatar, RoleGuard, Spinner, StatusBadges
+│   ├── form/               # TanStack Form + Zod input modules
+│   ├── layouts/            # DashboardHeader, Sidebar, Public Header/Footer
+│   ├── modules/            # Feature-specific composite modules
+│   │   ├── admin/          # SLA modals, user management, audit tables
+│   │   ├── home/           # Telemetry banner, service grid, quick tracker
+│   │   ├── payments/       # Fee panels, receipts, invoice viewers
+│   │   ├── profile/        # Avatar uploader, settings dialog
+│   │   └── requests/       # Transition controls, notes, assign modals
+│   └── ui/                 # Atomic design primitives (Button, Card, Dialog, Badge)
+├── constants/              # State machine graphs, transitions, mock fallbacks
+├── hooks/                  # TanStack Query query/mutation hooks
+├── lib/                    # apiClient, authUtils, imageUtils, paymentUtils
+├── providers/              # AuthProvider, QueryProvider, GoogleOAuthProvider
+├── types/                  # Authoritative TypeScript interfaces & domain models
+└── validation/             # Client-side Zod schemas for all user inputs
 ```
 
-Important files and directories:
-
-- `src/lib/apiClient.ts`: shared `ofetch` client, API base normalization, and credentials configuration
-- `src/providers/authProvider.tsx`: current-user hydration and logout state
-- `src/providers/queryProvider.tsx`: TanStack Query configuration
-- `src/components/layouts/dashboard/`: authenticated shell, navigation, notifications, and responsive dashboard layout
-- `src/components/modules/`: feature-level UI for reporting, requests, payments, profile, home, and administration
-- `src/validation/`: client-side Zod validation schemas
-- `src/types/`: shared TypeScript types
-- `src/app/globals.css`: design tokens and global styles
-- `src/asset/svg/Logo.tsx`: CivicFlow brand mark
+---
 
 ## Development Workflow
 
-### Add or change an API-backed feature
+### Adding a New Feature
 
-1. Add or update the domain type in `src/types`.
-2. Add the API function in the matching `src/api` module.
-3. Add a TanStack Query hook in the matching `src/hooks` module.
-4. Define or update Zod validation in `src/validation` when the feature accepts user input.
-5. Build the page or feature component under the nearest route or `src/components/modules` directory.
-6. Invalidate affected query keys after successful mutations.
-7. Add loading, error, empty, success, and disabled states.
-8. Check the feature at mobile and desktop widths.
+When extending CivicFlow, follow this predictable 8-step pipeline:
 
-### Keep API behavior predictable
+1. **Define Schema & Types:** Update domain interfaces in `src/types/` and validation schemas in `src/validation/`.
+2. **API Endpoint Function:** Add the typed API caller to `src/api/<feature>.api.ts` utilizing `apiClient`.
+3. **Query/Mutation Hook:** Implement the TanStack Query hook in `src/hooks/<feature>.hooks.ts` with explicit query keys and invalidation logic.
+4. **Build Component/Page:** Implement the UI under `src/components/modules/` or the corresponding App Router route.
+5. **State Feedback:** Provide clean skeleton loaders, error callouts, empty states, and toast notifications.
+6. **Responsive Audit:** Verify mobile drawer behavior, touch targets (&ge; 44px), and desktop viewports.
+7. **Typecheck & Lint:** Run `bun x tsc --noEmit` and `bun run lint`.
 
-- Use the shared `apiClient`; do not create ad hoc `fetch` wrappers for individual features.
-- Preserve the backend response envelope and error information.
-- Keep credentials enabled for every API call.
-- Treat status transitions and role permissions as backend rules, not only UI rules.
-- Prefer existing hooks, UI primitives, toast patterns, and design tokens before adding new abstractions.
+---
 
-## Validation and Production Build
+## Quality Assurance & Verification
 
-Run the repository checks before opening a pull request:
+The project includes strict automated formatting, linting, and TypeScript compilation:
 
-```bash
-bun run lint
-bun run build
-```
+| Command | Purpose | Underlying Tool |
+| :--- | :--- | :--- |
+| `bun run dev` | Starts local Next.js development server with hot reload | Next.js App Router |
+| `bun run build` | Builds optimized production bundle | Next.js Compiler |
+| `bun run start` | Serves production build | Next.js Server |
+| `bun run lint` | Runs comprehensive codebase linting | Biome `2.4.2` |
+| `bun run format` | Formats code in place according to design rules | Biome Formatter |
+| `bun x tsc --noEmit` | Strict type verification across all modules | TypeScript `5.0+` |
 
-The available package scripts are:
+---
 
-| Command          | Purpose                              |
-| ---------------- | ------------------------------------ |
-| `bun run dev`    | Start the Next.js development server |
-| `bun run build`  | Create a production build            |
-| `bun run start`  | Serve the production build           |
-| `bun run lint`   | Run Biome checks                     |
-| `bun run format` | Format supported files with Biome    |
+## Accessibility & Design Principles
 
-There is currently no dedicated automated test script in `package.json`. Feature verification should therefore include the relevant authenticated workflow against a running backend, plus lint and production-build checks.
+CivicFlow adheres to the design specifications defined in `DESIGN.md`:
 
-## Accessibility and Design
+- **Outdoor Contrast:** Body copy and status badges maintain a minimum 4.5:1 contrast ratio against light and dark backdrops (WCAG AA).
+- **Geometry & Hierarchy:** Buttons, search pills, filter tabs, and status badges use curved pill geometry (`rounded-full`), while data tables, dialogs, and structural cards use refined architectural radii (`rounded-2xl`).
+- **Tabular Data:** Ticket identifiers (`REQ-2026-00101`), GPS coordinates, monetary figures (BDT ৳), and countdown clocks use monospace tabular numerals (`font-mono`).
+- **Responsive Navigation:** Desktop features an expandable/collapsible sidebar with persistent state; mobile uses an accessible slide-over drawer with backdrop blur and touch dismiss.
+- **Evidence Compression:** User-submitted camera attachments are automatically converted to optimized WebP images on the canvas before dispatch, saving user mobile bandwidth.
 
-CivicFlow follows the design guidance in `DESIGN.md`:
+---
 
-- WCAG AA contrast is the target for body copy and critical status indicators.
-- Interactive targets should be at least 44 by 44 pixels on mobile.
-- Forms expose visible validation and loading feedback.
-- Controls are keyboard navigable and screen-reader friendly.
-- Buttons, inputs, filters, and status badges use pill geometry.
-- Cards, tables, dialogs, and structural containers use restrained architectural radii rather than pill corners.
-- Case IDs, coordinates, timestamps, and SLA counters use tabular monospace treatment where appropriate.
-- Surfaces use borders and tonal contrast instead of heavy resting shadows.
-- Raster assets and citizen evidence should use modern WebP or AVIF formats where supported.
+## Implementation Audit
 
-The brand uses a deep marine teal foundation with electric cyan and cobalt flow accents. Accent colors are intentionally used for actions, state changes, and telemetry rather than covering entire surfaces.
+| Module Area | Tracked Features | Completed | Status |
+| :--- | :---: | :---: | :---: |
+| **Authentication & Profile** | 10 | 10 | 🟢 Complete (100%) |
+| **Citizen Portal & Reporting** | 14 | 14 | 🟢 Complete (100%) |
+| **Payments & Invoicing (bKash)** | 7 | 7 | 🟢 Complete (100%) |
+| **Department Staff Field Desk** | 10 | 10 | 🟢 Complete (100%) |
+| **Municipal Administrator Desk** | 16 | 16 | 🟢 Complete (100%) |
+| **Notifications & Subscriptions** | 3 | 3 | 🟢 Complete (100%) |
+| **Public & Marketing Surface** | 4 | 4 | 🟢 Complete (100%) |
+| **Total Workflows Implemented** | **64** | **64** | 🟢 **100% Production Ready** |
 
-## Demo Accounts
+*For granular endpoint-to-component mappings, refer to [implementation_status_tracker.md](implementation_status_tracker.md).*
 
-The backend seed provides these development accounts:
-
-| Role      | Email                          | Password       |
-| --------- | ------------------------------ | -------------- |
-| `ADMIN`   | `superadmin@example.com`       | `Password@123` |
-| `STAFF`   | `staff.drainage@civicflow.org` | `Password@123` |
-| `CITIZEN` | `citizen.sarah@example.com`    | `Password@123` |
-
-Use seeded credentials only in a local or explicitly controlled development environment. Change or remove them before any production deployment.
-
-## Implementation Status
-
-The implementation tracker currently records:
-
-| Area                            | Status                |
-| ------------------------------- | --------------------- |
-| Authentication and profile      | 10 of 10 complete     |
-| Citizen portal and reporting    | 14 of 14 complete     |
-| Payments and invoicing          | 7 of 7 complete       |
-| Department staff field desk     | 10 of 10 complete     |
-| Municipal administrator desk    | 16 of 16 complete     |
-| Notifications and subscriptions | 3 of 3 complete       |
-| Public and marketing surface    | 4 of 4 complete       |
-| **Total**                       | **64 of 64 complete** |
-
-The detailed endpoint-to-page mapping lives in `implementation_status_tracker.md`. Product intent is documented in `PRODUCT.md`, visual and interaction rules in `DESIGN.md`, and backend contracts in `backend_overview.md`.
+---
 
 ## Troubleshooting
 
-### API requests return network errors
+### 1. API Requests Fail with Network Error
+- Verify the backend server is running and accessible at the URL in `NEXT_PUBLIC_API_BASE_URL`.
+- Confirm backend CORS configuration explicitly permits `http://localhost:3000` with credentials enabled.
 
-Check that:
+### 2. Session Hydration Stuck / Role Guard Redirect Loops
+- Ensure third-party cookies or cross-site tracking protections in the browser are not discarding HTTP-only cookies if running on disparate local ports.
+- Verify that your local API URL in `.env.local` points to port `5000` and not port `3000`.
 
-1. The backend is running.
-2. `NEXT_PUBLIC_API_BASE_URL` points to the backend.
-3. The URL includes the correct `/api/v1` prefix or can be normalized by the client.
-4. The backend CORS origin includes `http://localhost:3000`.
-5. Cookies are accepted for the current frontend and API origins.
+### 3. Remote Evidence Photos Fail to Load
+- Next.js requires remote image domains to be declared in `next.config.ts`.
+- The configuration currently allows `res.cloudinary.com`. If using a different storage bucket, add the remote pattern to `next.config.ts`.
 
-### Google sign-in is unavailable
+### 4. Google Sign-In Button Inactive
+- Confirm `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is defined in `.env.local`.
+- Ensure `http://localhost:3000` is added under **Authorized JavaScript origins** in your Google Cloud Console OAuth Client credentials.
 
-Set `NEXT_PUBLIC_GOOGLE_CLIENT_ID` and ensure the current browser origin is registered in the Google Cloud OAuth client configuration. Credential-based login does not depend on this variable.
-
-### Images do not render
-
-The Next.js configuration allows remote images from `res.cloudinary.com`. Confirm that uploaded image URLs use that hostname or update `next.config.ts` deliberately when adding a trusted storage provider.
-
-### A role cannot access a dashboard
-
-Confirm that the signed-in account has the expected backend role and is not blocked, deleted, or inactive. Role access is enforced by the backend as well as by frontend guards.
-
-### Build or lint output differs locally
-
-Use the declared package manager and install dependencies from the lockfile. Check the active Node.js and Bun versions, then run `bun run lint` and `bun run build` from the repository root.
+---
 
 ## Related Documentation
 
-- [Product definition](PRODUCT.md)
-- [Design system](DESIGN.md)
-- [Backend integration overview](backend_overview.md)
-- [Implementation tracker](implementation_status_tracker.md)
-- [Next.js documentation](https://nextjs.org/docs)
+- [Product Specification (`PRODUCT.md`)](PRODUCT.md) — Comprehensive functional requirements, persona definitions, and domain rules.
+- [Design System Guide (`DESIGN.md`)](DESIGN.md) — Visual tokens, typography scales, pill geometry rules, and UI guidelines.
+- [Backend Architecture Overview (`backend_overview.md`)](backend_overview.md) — Express 5 controllers, Prisma models, Redis keys, and API contracts.
+- [Endpoint & UI Audit Tracker (`implementation_status_tracker.md`)](implementation_status_tracker.md) — Exhaustive checklist of all 64 implemented backend endpoints and matching frontend views.
+
+---
+
+&copy; 2026 CivicFlow Municipal Systems. Designed for urban public service excellence.

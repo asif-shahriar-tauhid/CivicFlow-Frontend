@@ -27,7 +27,11 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useLogin } from "@/hooks/auth.hooks";
-import { decodeJwtPayload, resolvePostAuthUrl } from "@/lib/authUtils";
+import {
+  decodeJwtPayload,
+  resolvePostAuthUrl,
+  syncClientAuthCookie,
+} from "@/lib/authUtils";
 import type { AuthTokens } from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 import { LoginZodSchema } from "@/validation";
@@ -93,6 +97,9 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
             });
 
             const token = res?.data?.accessToken;
+            if (token) {
+              syncClientAuthCookie(token);
+            }
             const decodedJwt = decodeJwtPayload(token);
             let tokenRole = decodedJwt?.role;
 

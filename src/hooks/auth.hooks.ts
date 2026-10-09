@@ -10,6 +10,7 @@ import {
   userRegister,
   verifyEmail,
 } from "@/api/auth.api";
+import { clearClientAuthCookie } from "@/lib/authUtils";
 
 export const useGoogleOAuth = () => {
   const queryClient = useQueryClient();
@@ -86,6 +87,7 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: userLogout,
     onSuccess: () => {
+      clearClientAuthCookie();
       queryClient.clear();
       queryClient.setQueryData(["user"], null);
       queryClient.invalidateQueries({ queryKey: ["user"] });

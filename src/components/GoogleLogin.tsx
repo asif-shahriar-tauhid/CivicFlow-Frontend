@@ -7,7 +7,11 @@ import { Suspense } from "react";
 import { getMe } from "@/api/auth.api";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useGoogleOAuth } from "@/hooks";
-import { decodeJwtPayload, resolvePostAuthUrl } from "@/lib/authUtils";
+import {
+  decodeJwtPayload,
+  resolvePostAuthUrl,
+  syncClientAuthCookie,
+} from "@/lib/authUtils";
 import type { AuthTokens } from "@/types/auth.types";
 import type { ApiResponse } from "@/types/dashboard.types";
 
@@ -37,6 +41,9 @@ function GoogleLoginInner() {
           });
 
           const token = res?.data?.accessToken;
+          if (token) {
+            syncClientAuthCookie(token);
+          }
           const decodedJwt = decodeJwtPayload(token);
           let tokenRole = decodedJwt?.role || "CITIZEN";
 

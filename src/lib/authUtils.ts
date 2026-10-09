@@ -7,7 +7,13 @@ export function decodeJwtPayload(token?: string | null): JWTPayload | null {
   if (!token || typeof token !== "string") return null;
 
   try {
-    const parts = token.split(".");
+    let cleanToken = token.trim();
+    try {
+      cleanToken = decodeURIComponent(cleanToken);
+    } catch {
+      // Keep original if not URI-encoded
+    }
+    const parts = cleanToken.split(".");
     if (parts.length < 2) return null;
 
     let base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -31,6 +37,36 @@ export function decodeJwtPayload(token?: string | null): JWTPayload | null {
     return null;
   }
 }
+
+/**
+ * Synchronizes accessToken to document.cookie on the frontend domain.
+ * This ensures Next.js middleware (proxy.ts) detects the authenticated session
+ * across cross-origin or proxy deployments reliably.
+ */
+export function syncClientAuthCookie(token?: string | null) {
+  if (typeof document === "undefined" || !token) return;
+  const isHttps = typeof window !== "undefined" && window.location.protocol === "https:";
+  const secureFlag = isHttps ? "; Secure" : "";
+  document.cookie = `accessToken=${encodeURIComponent(token)}; path=/; max-age=86400; SameSite=Lax${secureFlag}`;
+}
+
+/**
+ * Clears the accessToken cookie from the frontend domain.
+ */
+export function clearClientAuthCookie() {
+  if (typeof document === "undefined") return;
+  document.cookie = "accessToken=; path=/; max-age=0; expires=Thu, 01 Jan 1970 00:00:00 GMT;";
+}
+
+/**
+ * Retrieves the accessToken cookie from document.cookie if available.
+ */
+export function getClientAuthToken(): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(/(?:^|;\s*)accessToken=([^;]*)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 
 /**
  * Returns the designated portal entry point URL for a verified role.
