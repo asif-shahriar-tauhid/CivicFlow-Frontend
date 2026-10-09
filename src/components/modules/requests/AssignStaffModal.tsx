@@ -429,7 +429,7 @@ export function AssignStaffModal({
                 onClick={() => setShowManualInput((prev) => !prev)}
                 className="text-[11px] text-primary hover:underline font-mono"
               >
-                {showManualInput ? "Choose from list" : "Enter UUID manually"}
+                {showManualInput ? "Choose from list" : "Enter Officer ID manually"}
               </button>
             </div>
 
@@ -437,7 +437,7 @@ export function AssignStaffModal({
               <div>
                 <Input
                   id="manual-staff-id-input"
-                  placeholder="Paste User ID (UUID) e.g. 550e8400-e29b-41d4-a716-446655440000"
+                  placeholder="Paste Officer ID e.g. 550e8400-e29b-41d4-a716-446655440000"
                   value={manualIdInput}
                   onChange={(e) => {
                     setManualIdInput(e.target.value);
@@ -486,7 +486,7 @@ export function AssignStaffModal({
                           onClick={() => setShowManualInput(true)}
                           className="rounded-full text-xs"
                         >
-                          Enter Staff UUID Manually
+                          Enter Officer ID Manually
                         </Button>
                       </div>
                     </div>
