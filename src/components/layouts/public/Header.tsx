@@ -3,7 +3,7 @@
 import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import Logo from "@/asset/svg/Logo";
 import { Button } from "@/components/ui/button";
@@ -12,11 +12,32 @@ import { useGetME, useLogout } from "@/hooks";
 
 import { getRoleDashboardUrl } from "@/lib/authUtils";
 
+const NAV_LINKS = [
+  { name: "Services", href: "/#services" },
+  { name: "How It Works", href: "/#how-it-works" },
+  { name: "Telemetry", href: "/#telemetry" },
+  { name: "About Us", href: "/about-us" },
+];
+
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const isHome = pathname === "/";
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const activePath = mounted ? pathname : "";
+
+  const isLinkActive = (href: string) => {
+    if (!activePath) return false;
+    if (href === "/about-us") {
+      return activePath.startsWith("/about-us");
+    }
+    return href === activePath;
+  };
 
   const { data: userData, isLoading } = useGetME();
   const { mutate: logout, isPending: logoutPending } = useLogout();
@@ -48,13 +69,6 @@ const Header = () => {
     });
   };
 
-  const navLinks = [
-    { name: "Services", href: isHome ? "#services" : "/#services" },
-    { name: "How It Works", href: isHome ? "#how-it-works" : "/#how-it-works" },
-    { name: "Telemetry", href: isHome ? "#telemetry" : "/#telemetry" },
-    { name: "About Us", href: "/about-us" },
-  ];
-
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md transition-all">
       <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -78,10 +92,8 @@ const Header = () => {
         </div>
 
         <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 lg:gap-8 md:flex">
-          {navLinks.map((link) => {
-            const isActive =
-              link.href === pathname ||
-              (link.href === "/about-us" && pathname.startsWith("/about-us"));
+          {NAV_LINKS.map((link) => {
+            const isActive = isLinkActive(link.href);
             return (
               <Link
                 key={link.name}
@@ -189,10 +201,8 @@ const Header = () => {
             className="overflow-hidden border-b border-border bg-background px-4 py-5 shadow-lg md:hidden"
           >
             <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => {
-                const isActive =
-                  link.href === pathname ||
-                  (link.href === "/about-us" && pathname.startsWith("/about-us"));
+              {NAV_LINKS.map((link) => {
+                const isActive = isLinkActive(link.href);
                 return (
                   <Link
                     key={link.name}
