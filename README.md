@@ -327,7 +327,7 @@ For rapid testing and evaluation, the backend seed populates these standard role
 | `CITIZEN` | `citizen.sarah@example.com`    | `Password@123` | Submit grievances, bKash payments, verify resolution, feedback     |
 
 > [!TIP]
-> The login page at `/login` provides 1-click demo credential pills that instantly pre-fill email and password for any role.
+> The login page at `/login` features distinct **1-Click Demo Login** buttons that immediately authenticate and direct you into the corresponding role portal (`ADMIN`, `STAFF`, or `CITIZEN`) in a single click.
 
 ---
 
