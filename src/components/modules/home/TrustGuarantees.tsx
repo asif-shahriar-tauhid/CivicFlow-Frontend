@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ArrowRight,
   CreditCard,
@@ -6,6 +8,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
+import { type Variants, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
 const guarantees = [
@@ -35,12 +38,41 @@ const guarantees = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
 export default function TrustGuarantees() {
   return (
-    <section className="w-full py-16 lg:py-24 bg-card border-t border-border">
+    <section className="w-full py-16 lg:py-24 bg-card border-t border-border overflow-hidden">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-5 flex flex-col gap-5">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="lg:col-span-5 flex flex-col gap-5"
+          >
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               Public Accountability
             </span>
@@ -59,7 +91,7 @@ export default function TrustGuarantees() {
                 size="default"
                 render={<Link href="/login?redirect=/citizen/report" />}
                 nativeButton={false}
-                className="gap-2"
+                className="gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <span>Submit Grievance Now</span>
                 <ArrowRight className="size-4" />
@@ -69,33 +101,43 @@ export default function TrustGuarantees() {
                 size="default"
                 render={<Link href="/about-us" />}
                 nativeButton={false}
+                className="transition-transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 Read Citizen Charter
               </Button>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-60px" }}
+            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-5"
+          >
             {guarantees.map((item) => {
               const Icon = item.icon;
               return (
-                <div
+                <motion.div
                   key={item.title}
-                  className="rounded-xl border border-border bg-muted/20 p-5 flex flex-col gap-2.5 transition-colors hover:bg-muted/40"
+                  variants={cardVariants}
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="group rounded-xl border border-border bg-muted/20 p-5 flex flex-col gap-2.5 transition-colors hover:bg-muted/40 hover:border-primary/40 shadow-xs"
                 >
-                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground">
                     <Icon className="size-4.5" />
                   </div>
-                  <h3 className="text-sm font-semibold text-foreground">
+                  <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     {item.title}
                   </h3>
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     {item.description}
                   </p>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
