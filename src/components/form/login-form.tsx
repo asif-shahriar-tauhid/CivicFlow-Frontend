@@ -69,12 +69,69 @@ interface LoginFormProps {
 
 function LoginFormInner({ googleLogin }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const [activeDemoRole, setActiveDemoRole] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectUrl = searchParams.get("redirect");
 
   const queryClient = useQueryClient();
   const { mutate: login, isPending: loginPending } = useLogin();
+
+  const performLogin = (credentials: { email: string; password: string }) => {
+    login(
+      {
+        email: credentials.email.trim(),
+        password: credentials.password,
+      },
+      {
+        onSuccess: async (res: ApiResponse<AuthTokens>) => {
+          gooeyToast.success("Login Successful", {
+            description: "Welcome back to CivicFlow Municipal Portal.",
+          });
+
+          const token = res?.data?.accessToken;
+          if (token) {
+            syncClientAuthCookie(token);
+          }
+          const decodedJwt = decodeJwtPayload(token);
+          let tokenRole = decodedJwt?.role;
+
+          // Pre-hydrate authoritative user profile in query cache immediately
+          try {
+            const meRes = await getMe();
+            queryClient.setQueryData(["user"], meRes);
+            if (meRes?.data?.role) {
+              tokenRole = meRes.data.role;
+            }
+          } catch {
+          }
+          queryClient.invalidateQueries({ queryKey: ["user"] });
+
+          const targetUrl = resolvePostAuthUrl({
+            accessToken: token,
+            userRole: tokenRole,
+            redirectUrl,
+          });
+
+          router.push(targetUrl);
+          router.refresh();
+        },
+        onError: (err: unknown) => {
+          setActiveDemoRole(null);
+          const apiErr = err as {
+            message?: string;
+            data?: { message?: string };
+          };
+          gooeyToast.error("Authentication Failed", {
+            description:
+              apiErr?.data?.message ||
+              apiErr?.message ||
+              "Invalid email or password. Please verify.",
+          });
+        },
+      },
+    );
+  };
 
   const form = useForm({
     defaultValues: {
@@ -85,64 +142,15 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
       onSubmit: LoginZodSchema,
     },
     onSubmit: ({ value }) => {
-      login(
-        {
-          email: value.email.trim(),
-          password: value.password,
-        },
-        {
-          onSuccess: async (res: ApiResponse<AuthTokens>) => {
-            gooeyToast.success("Login Successful", {
-              description: "Welcome back to CivicFlow Municipal Portal.",
-            });
-
-            const token = res?.data?.accessToken;
-            if (token) {
-              syncClientAuthCookie(token);
-            }
-            const decodedJwt = decodeJwtPayload(token);
-            let tokenRole = decodedJwt?.role;
-
-            // Pre-hydrate authoritative user profile in query cache immediately
-            try {
-              const meRes = await getMe();
-              queryClient.setQueryData(["user"], meRes);
-              if (meRes?.data?.role) {
-                tokenRole = meRes.data.role;
-              }
-            } catch {
-            }
-            queryClient.invalidateQueries({ queryKey: ["user"] });
-
-            const targetUrl = resolvePostAuthUrl({
-              accessToken: token,
-              userRole: tokenRole,
-              redirectUrl,
-            });
-
-            router.push(targetUrl);
-            router.refresh();
-          },
-          onError: (err: unknown) => {
-            const apiErr = err as {
-              message?: string;
-              data?: { message?: string };
-            };
-            gooeyToast.error("Authentication Failed", {
-              description:
-                apiErr?.data?.message ||
-                apiErr?.message ||
-                "Invalid email or password. Please verify.",
-            });
-          },
-        },
-      );
+      performLogin({ email: value.email, password: value.password });
     },
   });
 
-  const handleSelectDemo = (email: string, pass: string) => {
+  const handleOneClickDemo = (email: string, pass: string, role: string) => {
     form.setFieldValue("email", email);
     form.setFieldValue("password", pass);
+    setActiveDemoRole(role);
+    performLogin({ email, password: pass });
   };
 
   return (
@@ -150,29 +158,41 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
       <div className="rounded-xl border border-border bg-muted/30 p-3.5">
         <div className="flex items-center justify-between mb-2">
           <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            Quick Demo Access:
+            One-Click Demo Login:
           </span>
-          <span className="font-mono text-xs text-primary">Pre-seeded</span>
+          <span className="font-mono text-xs text-primary font-medium">Instant Sign-In</span>
         </div>
         <form.Subscribe selector={(state) => state.values.email}>
           {(currentEmail) => (
             <div className="grid grid-cols-3 gap-2">
               {DEMO_ACCOUNTS.map((demo) => {
                 const Icon = demo.icon;
+                const isLoggingIn = loginPending && activeDemoRole === demo.role;
                 const isSelected = currentEmail === demo.email;
                 return (
                   <button
                     key={demo.role}
                     type="button"
-                    onClick={() => handleSelectDemo(demo.email, demo.password)}
-                    className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all ${
-                      isSelected
+                    disabled={loginPending}
+                    onClick={() => handleOneClickDemo(demo.email, demo.password, demo.role)}
+                    className={`flex flex-col items-center justify-center p-2 rounded-lg border text-center transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed ${
+                      isSelected || isLoggingIn
                         ? "border-primary bg-primary/10 text-primary font-semibold"
                         : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
+                    title={`Click to log in immediately as ${demo.label}`}
                   >
-                    <Icon className="size-3.5 mb-1" />
-                    <span className="text-xs leading-none">{demo.label}</span>
+                    {isLoggingIn ? (
+                      <Spinner className="size-3.5 mb-1 text-primary" />
+                    ) : (
+                      <Icon className="size-3.5 mb-1" />
+                    )}
+                    <span className="text-xs leading-none">
+                      {isLoggingIn ? "Signing in..." : demo.label}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground/80 mt-1 font-mono">
+                      1-Click
+                    </span>
                   </button>
                 );
               })}
