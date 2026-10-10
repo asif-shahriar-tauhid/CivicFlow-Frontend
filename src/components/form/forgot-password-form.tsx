@@ -30,13 +30,13 @@ const DEMO_RECOVERY_ACCOUNTS = [
   {
     role: "CITIZEN",
     label: "Citizen Demo",
-    email: "citizen.sarah@example.com",
+    email: "citizen@example.com",
     icon: Users,
   },
   {
     role: "STAFF",
     label: "Staff Demo",
-    email: "staff.drainage@civicflow.org",
+    email: "staff.drainage.1@civicflow.org",
     icon: UserCheck,
   },
   {
@@ -60,7 +60,7 @@ function ForgotPasswordFormInner() {
 
   const form = useForm({
     defaultValues: {
-      email: "citizen.sarah@example.com",
+      email: "citizen@example.com",
     },
     validators: {
       onSubmit: forgotPasswordZodSchema,
@@ -163,7 +163,7 @@ function ForgotPasswordFormInner() {
                     id={field.name}
                     name={field.name}
                     type="email"
-                    placeholder="citizen.sarah@example.com"
+                    placeholder="citizen@example.com"
                     autoComplete="email"
                     onChange={(e) => field.handleChange(e.target.value)}
                     aria-invalid={isInvalid}

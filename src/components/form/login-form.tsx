@@ -40,7 +40,8 @@ const DEMO_ACCOUNTS = [
   {
     role: "CITIZEN",
     label: "Citizen Demo",
-    email: "citizen.sarah@example.com",
+    name: "Sarah Khan",
+    email: "citizen@example.com",
     password: "Password@123",
     icon: Users,
     desc: "Report & track issues",
@@ -48,14 +49,16 @@ const DEMO_ACCOUNTS = [
   {
     role: "STAFF",
     label: "Field Staff",
-    email: "staff.drainage@civicflow.org",
+    name: "Engr. Tariqul Islam",
+    email: "staff.drainage.1@civicflow.org",
     password: "Password@123",
     icon: UserCheck,
-    desc: "Department work queues",
+    desc: "Drainage & Sewerage Department",
   },
   {
     role: "ADMIN",
     label: "City Admin",
+    name: "Super Admin",
     email: "superadmin@example.com",
     password: "Password@123",
     icon: Shield,
@@ -135,7 +138,7 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
 
   const form = useForm({
     defaultValues: {
-      email: "citizen.sarah@example.com",
+      email: "citizen@example.com",
       password: "Password@123",
     },
     validators: {
@@ -180,7 +183,7 @@ function LoginFormInner({ googleLogin }: LoginFormProps) {
                         ? "border-primary bg-primary/10 text-primary font-semibold"
                         : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted/50"
                     }`}
-                    title={`Click to log in immediately as ${demo.label}`}
+                    title={`Click to log in immediately as ${demo.label} (${demo.email})`}
                   >
                     {isLoggingIn ? (
                       <Spinner className="size-3.5 mb-1 text-primary" />

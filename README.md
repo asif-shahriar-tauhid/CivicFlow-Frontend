@@ -322,9 +322,9 @@ For rapid testing and evaluation, the backend seed populates these standard role
 
 | Role      | Email Address                  | Password       | Clearance & Access Scope                                           |
 | :-------- | :----------------------------- | :------------- | :----------------------------------------------------------------- |
-| `ADMIN`   | `superadmin@example.com`       | `Password@123` | Citywide triage, user control, SLA config, departments, audit logs |
-| `STAFF`   | `staff.drainage@civicflow.org` | `Password@123` | Department queues, investigation notes, state progression          |
-| `CITIZEN` | `citizen.sarah@example.com`    | `Password@123` | Submit grievances, bKash payments, verify resolution, feedback     |
+| `ADMIN`   | `superadmin@example.com`         | `Password@123` | Citywide triage, user control, SLA config, departments, audit logs |
+| `STAFF`   | `staff.drainage.1@civicflow.org` | `Password@123` | Department queues, investigation notes, state progression          |
+| `CITIZEN` | `citizen@example.com`            | `Password@123` | Submit grievances, bKash payments, verify resolution, feedback     |
 
 > [!TIP]
 > The login page at `/login` features distinct **1-Click Demo Login** buttons that immediately authenticate and direct you into the corresponding role portal (`ADMIN`, `STAFF`, or `CITIZEN`) in a single click.
