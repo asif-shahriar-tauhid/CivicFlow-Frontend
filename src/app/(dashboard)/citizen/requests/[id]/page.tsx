@@ -44,6 +44,7 @@ import {
   useRouteServiceRequest,
   useSubmitFeedback,
 } from "@/hooks/request.hooks";
+import { useGetRequestFeedback } from "@/hooks/feedback.hooks";
 import type { ServiceRequest } from "@/types/request.types";
 
 const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
@@ -160,6 +161,8 @@ export default function RequestDossierPage() {
     useReopenServiceRequest();
   const { mutate: submitFeedback, isPending: isSubmittingFeedback } =
     useSubmitFeedback();
+  const { data: existingFeedbackResponse } = useGetRequestFeedback(ticket?.id);
+  const recordedFeedback = ticket?.feedback || existingFeedbackResponse?.data;
   const { mutateAsync: routeRequest, isPending: isRerouting } =
     useRouteServiceRequest();
 
@@ -249,8 +252,23 @@ export default function RequestDossierPage() {
           refetch();
         },
         onError: (err: any) => {
+          const errMsg =
+            err?.data?.message || err?.message || "Could not submit rating.";
+          if (
+            err?.statusCode === 409 ||
+            err?.status === 409 ||
+            errMsg.includes("already been submitted")
+          ) {
+            setFeedbackSubmitted(true);
+            refetch();
+            gooeyToast.info("Feedback Already Recorded", {
+              description:
+                "Your feedback for this service request was already recorded.",
+            });
+            return;
+          }
           gooeyToast.error("Feedback Error", {
-            description: err.message || "Could not submit rating.",
+            description: errMsg,
           });
         },
       },
@@ -585,11 +603,34 @@ export default function RequestDossierPage() {
             </h2>
           </div>
 
-          {ticket.feedback || feedbackSubmitted ? (
-            <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 p-3 text-xs text-emerald-800 dark:text-emerald-300">
-              <span className="font-semibold">Review recorded:</span> You rated
-              this resolution {ticket.feedback?.rating || rating} / 5 stars.
-              Thank you for helping maintain city standards.
+          {recordedFeedback || feedbackSubmitted ? (
+            <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-500/20 p-3.5 text-xs text-emerald-800 dark:text-emerald-300">
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="font-semibold">Review recorded:</span>
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`size-3.5 ${
+                        star <= (recordedFeedback?.rating || rating)
+                          ? "text-amber-500 fill-amber-500"
+                          : "text-muted-foreground/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="font-mono font-bold">
+                  ({recordedFeedback?.rating || rating} of 5 stars)
+                </span>
+              </div>
+              {recordedFeedback?.comment && (
+                <p className="mt-2 text-foreground/80 bg-background/60 p-2.5 rounded-md border border-border/50 text-xs italic">
+                  &ldquo;{recordedFeedback.comment}&rdquo;
+                </p>
+              )}
+              <p className="mt-2 text-[11px] text-muted-foreground">
+                Thank you for helping maintain city standards.
+              </p>
             </div>
           ) : (
             <form
