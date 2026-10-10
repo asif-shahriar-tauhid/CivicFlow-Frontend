@@ -1,3 +1,5 @@
+"use client";
+
 import {
   AlertTriangle,
   ArrowRight,
@@ -8,6 +10,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { type Variants, motion } from "framer-motion";
 
 const services = [
   {
@@ -56,6 +59,29 @@ const services = [
   },
 ];
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.12,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 28 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.55,
+      ease: "easeOut",
+    },
+  },
+};
+
 export default function ServiceGrid() {
   return (
     <section
@@ -63,7 +89,13 @@ export default function ServiceGrid() {
       className="w-full py-16 bg-muted/20 border-t border-border"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12"
+        >
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-primary">
               Municipal Jurisdiction
@@ -78,20 +110,29 @@ export default function ServiceGrid() {
           </div>
           <Link
             href="/login?redirect=/citizen/report"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            className="group inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
           >
             <span>View all service categories</span>
-            <ArrowRight className="size-4" />
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
           </Link>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {services.map((service) => {
             const Icon = service.icon;
             return (
-              <div
+              <motion.div
                 key={service.id}
-                className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-6 transition-all hover:border-border hover:shadow-md"
+                variants={cardVariants}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+                className="group relative flex flex-col justify-between rounded-xl border border-border bg-card p-6 shadow-xs hover:border-primary/40 hover:shadow-lg transition-colors"
               >
                 <div>
                   <div className="relative mb-4 h-36 w-full overflow-hidden rounded-lg bg-muted">
@@ -99,12 +140,12 @@ export default function ServiceGrid() {
                       src={service.image}
                       alt={service.name}
                       fill
-                      className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
 
-                    <div className="absolute bottom-2.5 left-2.5 flex size-9 items-center justify-center rounded-lg bg-background/90 text-primary shadow-xs backdrop-blur-md">
+                    <div className="absolute bottom-2.5 left-2.5 flex size-9 items-center justify-center rounded-lg bg-background/90 text-primary shadow-xs backdrop-blur-md transition-transform duration-300 group-hover:scale-110">
                       <Icon className="size-4" />
                     </div>
 
@@ -120,7 +161,7 @@ export default function ServiceGrid() {
                     </span>
                   </div>
 
-                  <h3 className="text-base font-semibold text-foreground">
+                  <h3 className="text-base font-semibold text-foreground group-hover:text-primary transition-colors">
                     {service.name}
                   </h3>
                   <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
@@ -148,10 +189,10 @@ export default function ServiceGrid() {
                     <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

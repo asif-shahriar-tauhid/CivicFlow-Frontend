@@ -1,7 +1,55 @@
 "use client";
 
 import { Activity, Clock, ShieldCheck } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { animate, motion, useInView, useMotionValue } from "framer-motion";
 import { useGetPublicStats } from "@/hooks";
+
+function AnimatedNumber({
+  value,
+  decimals = 0,
+  suffix = "",
+}: {
+  value: number;
+  decimals?: number;
+  suffix?: string;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const motionVal = useMotionValue(0);
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
+
+  useEffect(() => {
+    if (isInView) {
+      const controls = animate(motionVal, value, {
+        duration: 1.8,
+        ease: "easeOut",
+      });
+      return controls.stop;
+    }
+  }, [isInView, value, motionVal]);
+
+  useEffect(() => {
+    const unsubscribe = motionVal.on("change", (latest) => {
+      if (ref.current) {
+        ref.current.textContent = `${latest.toLocaleString("en-US", {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals,
+        })}${suffix}`;
+      }
+    });
+    return () => unsubscribe();
+  }, [motionVal, decimals, suffix]);
+
+  return (
+    <span ref={ref}>
+      {value.toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      })}
+      {suffix}
+    </span>
+  );
+}
 
 export default function TelemetryBanner() {
   const { data: statsResponse, isLoading } = useGetPublicStats();
@@ -15,8 +63,26 @@ export default function TelemetryBanner() {
   return (
     <section id="telemetry" className="w-full pb-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs lg:p-8">
-          <div className="absolute top-0 right-0 h-40 w-40 rounded-full bg-primary/5 blur-2xl pointer-events-none" />
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-xs lg:p-8"
+        >
+          {/* Subtle live radar pulse */}
+          <motion.div
+            animate={{
+              scale: [1, 1.3, 1],
+              opacity: [0.08, 0.16, 0.08],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute top-0 right-0 h-48 w-48 rounded-full bg-primary/20 blur-2xl pointer-events-none"
+          />
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-border pb-6">
             <div className="flex items-center gap-2.5">
@@ -45,7 +111,7 @@ export default function TelemetryBanner() {
                   {isLoading ? (
                     <span className="inline-block h-10 w-28 animate-pulse rounded bg-muted" />
                   ) : (
-                    totalResolved.toLocaleString()
+                    <AnimatedNumber value={totalResolved} />
                   )}
                 </span>
                 <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">
@@ -66,7 +132,11 @@ export default function TelemetryBanner() {
                   {isLoading ? (
                     <span className="inline-block h-10 w-24 animate-pulse rounded bg-muted" />
                   ) : (
-                    `${slaCompliance.toFixed(1)}%`
+                    <AnimatedNumber
+                      value={slaCompliance}
+                      decimals={1}
+                      suffix="%"
+                    />
                   )}
                 </span>
                 <ShieldCheck className="size-5 text-primary" />
@@ -85,7 +155,11 @@ export default function TelemetryBanner() {
                   {isLoading ? (
                     <span className="inline-block h-10 w-20 animate-pulse rounded bg-muted" />
                   ) : (
-                    `${avgResponseHours}h`
+                    <AnimatedNumber
+                      value={avgResponseHours}
+                      decimals={1}
+                      suffix="h"
+                    />
                   )}
                 </span>
                 <Clock className="size-5 text-amber-500" />
@@ -105,26 +179,26 @@ export default function TelemetryBanner() {
                 Current Citywide Queue Status:
               </span>
               <div className="flex flex-wrap items-center gap-4">
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 transition-transform hover:scale-105">
                   <span className="size-2 rounded-full bg-slate-400" />
                   <span>Submitted: 42</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 transition-transform hover:scale-105">
                   <span className="size-2 rounded-full bg-amber-500" />
                   <span>In Triage: 28</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 transition-transform hover:scale-105">
                   <span className="size-2 rounded-full bg-sky-500" />
                   <span>In Field Work: 86</span>
                 </span>
-                <span className="inline-flex items-center gap-1.5">
+                <span className="inline-flex items-center gap-1.5 transition-transform hover:scale-105">
                   <span className="size-2 rounded-full bg-emerald-500" />
                   <span>Resolved & Closed: 1,428</span>
                 </span>
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

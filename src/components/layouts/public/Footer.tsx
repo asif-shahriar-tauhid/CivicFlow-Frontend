@@ -15,10 +15,6 @@ const Footer = () => {
               dispatch (999) directly.
             </span>
           </div>
-          <div className="hidden sm:flex items-center gap-1.5 font-mono text-xs">
-            <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
-            <span>Telemetry v1.0 • SLA Monitored</span>
-          </div>
         </div>
       </div>
 
@@ -57,7 +53,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#quick-track"
+                  href="/#track"
                   className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Track Existing Ticket
@@ -65,7 +61,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  href="#services"
+                  href="/#services"
                   className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Department Service Directory
@@ -89,7 +85,7 @@ const Footer = () => {
             <ul className="flex flex-col gap-2.5 text-sm">
               <li>
                 <Link
-                  href="#telemetry"
+                  href="/#telemetry"
                   className="text-muted-foreground transition-colors hover:text-foreground"
                 >
                   Public Transparency Metrics
@@ -171,9 +167,6 @@ const Footer = () => {
             >
               Citizen Charter
             </Link>
-            <span className="font-mono text-xs text-muted-foreground/60">
-              API: REST / v1
-            </span>
           </div>
         </div>
       </div>
