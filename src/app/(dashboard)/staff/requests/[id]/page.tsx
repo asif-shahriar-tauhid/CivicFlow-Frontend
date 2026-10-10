@@ -632,13 +632,15 @@ export default function StaffRequestDetailsPage() {
                 <Users className="size-3.5 text-primary" />
                 <span>Field Ownership</span>
               </h3>
-              <button
-                type="button"
-                onClick={() => setIsAssignModalOpen(true)}
-                className="text-xs text-primary font-semibold hover:underline cursor-pointer"
-              >
-                {hasAssignee ? "Reassign" : "Assign"}
-              </button>
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setIsAssignModalOpen(true)}
+                  className="text-xs text-primary font-semibold hover:underline cursor-pointer"
+                >
+                  {hasAssignee ? "Reassign" : "Assign"}
+                </button>
+              )}
             </div>
 
             {hasAssignee && ticket.assignedTo ? (

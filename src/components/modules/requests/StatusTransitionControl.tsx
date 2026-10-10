@@ -68,13 +68,13 @@ export function StatusTransitionControl({
   const hasAssignee = Boolean(ticket.assignedToId || ticket.assignedTo?.id);
   const isAdmin = role === "ADMIN";
 
-  // Department authorization check
-  const isAuthorizedStaff =
-    role === "ADMIN" ||
-    (role === "STAFF" &&
-      (!ticket.departmentId ||
-        !user?.departmentId ||
-        ticket.departmentId === user.departmentId));
+  // Status transition is strictly under the assigned staff's jurisdiction
+  const isAssignedStaff =
+    role === "STAFF" &&
+    Boolean(
+      user?.id &&
+        (ticket.assignedToId === user.id || ticket.assignedTo?.id === user.id),
+    );
 
   const openTransition = (status: RequestStatus) => {
     if (status === "RESOLVED") {
@@ -109,6 +109,11 @@ export function StatusTransitionControl({
   };
 
   const renderDropdown = () => {
+    // Only the assigned staff member has the jurisdiction to transition grievance status
+    if (!isAssignedStaff) {
+      return null;
+    }
+
     const hasNextSteps = allowedTransitions.length > 0 || canResolve;
 
     return (
@@ -117,13 +122,11 @@ export function StatusTransitionControl({
           type="button"
           variant="outline"
           size="sm"
-          disabled={!hasNextSteps || !isAuthorizedStaff}
+          disabled={!hasNextSteps}
           onClick={() => setIsDropdownOpen((prev) => !prev)}
           className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
           title={
-            !isAuthorizedStaff
-              ? "Staff from another department cannot transition this ticket"
-              : hasNextSteps
+            hasNextSteps
                 ? "Advance or update lifecycle status"
                 : "Terminal state or citizen confirmation pending"
           }
@@ -284,7 +287,47 @@ export function StatusTransitionControl({
           </div>
         </div>
 
-        {isTerminal ? (
+        {!isAssignedStaff ? (
+          <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex items-start gap-3 text-xs text-muted-foreground">
+            <HardHat className="size-4 shrink-0 text-primary mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-semibold text-foreground">
+                Field Operations Jurisdiction
+              </p>
+              <p className="text-[11px] leading-relaxed">
+                {hasAssignee ? (
+                  <>
+                    This grievance is assigned to{" "}
+                    <strong className="text-foreground">
+                      {ticket.assignedTo?.name || "designated officer"}
+                    </strong>
+                    . Transitioning grievance status is strictly under the assigned
+                    staff member&apos;s jurisdiction.
+                  </>
+                ) : (
+                  <>
+                    No technician is currently assigned. Administrative authority
+                    governs assigning and reassigning staff to grievances before field
+                    work begins.
+                  </>
+                )}
+              </p>
+              {isAdmin && (
+                <div className="pt-2">
+                  <Button
+                    size="xs"
+                    variant="outline"
+                    onClick={() => setIsAssignModalOpen(true)}
+                    className="rounded-full text-xs gap-1 border-primary/40 text-primary hover:bg-primary/10 cursor-pointer"
+                  >
+                    <UserCheck className="size-3" />
+                    <span>{hasAssignee ? "Reassign Officer" : "Assign Officer"}</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : isTerminal ? (
           <div className="rounded-xl border border-border/80 bg-muted/20 p-4 flex items-center gap-3 text-xs text-muted-foreground">
             <Lock className="size-4 shrink-0 text-muted-foreground" />
             <div>
