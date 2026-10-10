@@ -85,8 +85,8 @@ const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
   },
   assignedTo: {
     id: "staff-1",
-    name: "Field Officer Kamal",
-    email: "staff.drainage@civicflow.org",
+    name: "Engr. Tariqul Islam",
+    email: "staff.drainage.1@civicflow.org",
   },
   statusHistory: [
     {
