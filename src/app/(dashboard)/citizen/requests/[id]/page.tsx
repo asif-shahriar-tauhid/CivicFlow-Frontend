@@ -432,7 +432,7 @@ export default function RequestDossierPage() {
               <span className="rounded-4xl border border-blue-500/30 bg-blue-500/10 px-3 py-1 font-medium text-blue-700 dark:text-blue-300 inline-flex items-center gap-1.5">
                 <UserCheck className="size-3.5" />
                 <span>Assigned: {ticket.assignedTo.name}</span>
-                {(role === "STAFF" || role === "ADMIN") && (
+                {role === "ADMIN" && (
                   <button
                     type="button"
                     onClick={() => setIsAssignModalOpen(true)}
@@ -446,7 +446,7 @@ export default function RequestDossierPage() {
               <span className="rounded-4xl border border-amber-500/30 bg-amber-500/10 px-3 py-1 font-medium text-amber-700 dark:text-amber-400 inline-flex items-center gap-1.5">
                 <HardHat className="size-3.5" />
                 <span>Unassigned</span>
-                {(role === "STAFF" || role === "ADMIN") && (
+                {role === "ADMIN" && (
                   <button
                     type="button"
                     onClick={() => setIsAssignModalOpen(true)}
