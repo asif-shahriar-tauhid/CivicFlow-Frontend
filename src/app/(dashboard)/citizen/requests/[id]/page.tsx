@@ -2,17 +2,21 @@
 
 import {
   ArrowLeft,
+  Calendar,
   CheckCircle2,
   Clock,
   Edit3,
   ExternalLink,
+  Eye,
   FileText,
   HardHat,
   History,
   Info,
+  Lock,
   MapPin,
   RotateCcw,
   Route,
+  ShieldCheck,
   Star,
   Trash2,
   UserCheck,
@@ -21,7 +25,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { resolveCategoryImage } from "@/components/modules/home/RecentPublicIssuesSection";
 import { RequestFeePanel } from "@/components/modules/payments";
 import {
   AssignStaffModal,
@@ -31,117 +36,38 @@ import {
   ResolveTicketModal,
   StatusTransitionControl,
 } from "@/components/modules/requests";
-import { PriorityBadge, StatusBadge } from "@/components/ui/badge";
+import { Badge, PriorityBadge, StatusBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { useCurrentUser } from "@/hooks/auth.hooks";
+import { useGetRequestFeedback } from "@/hooks/feedback.hooks";
 import {
   useConfirmServiceRequest,
-  useGetServiceRequestById,
+  useGetPublicServiceRequestById,
+  useGetPublicServiceRequests,
   useReopenServiceRequest,
   useRouteServiceRequest,
   useSubmitFeedback,
 } from "@/hooks/request.hooks";
-import { useGetRequestFeedback } from "@/hooks/feedback.hooks";
-import type { ServiceRequest } from "@/types/request.types";
-
-const MOCK_FALLBACK_DOSSIER: ServiceRequest = {
-  id: "demo-1",
-  requestNumber: "CF-2026-0941",
-  title: "Severe rainwater drainage choke causing road flooding",
-  description:
-    "Water accumulated over 18 inches after evening rainfall. Pedestrians unable to cross and basement shop entrances at risk of flooding.",
-  status: "RESOLVED",
-  priority: "HIGH",
-  caseType: "COMPLAINT",
-  routingStatus: "ASSIGNED",
-  address: "Road 5, Block B, Dhanmondi, Dhaka",
-  ward: "Ward 15",
-  zone: "Zone South",
-  landmark: "Beside City Hospital Corner",
-  latitude: 23.7465,
-  longitude: 90.3762,
-  slaDueAt: new Date(Date.now() + 1000 * 60 * 60 * 14).toISOString(),
-  slaEscalationState: "NONE",
-  citizenId: "citizen-sarah",
-  createdById: "user-sarah",
-  createdAt: new Date(Date.now() - 1000 * 60 * 60 * 18).toISOString(),
-  updatedAt: new Date().toISOString(),
-  resolutionSummary:
-    "Drainage crew mobilized high-capacity suction pumps, cleared 150kg of plastic sediment from the main culvert mouth, and applied disinfectant.",
-  category: {
-    id: "cat-1",
-    name: "Waterlogging & Drainage Choke",
-    feeAmount: 0,
-    feeCurrency: "BDT",
-    slaMinutes: 1440,
-    isActive: true,
-  },
-  department: {
-    id: "dept-1",
-    name: "Drainage & Sewerage Department",
-    isActive: true,
-  },
-  assignedTo: {
-    id: "staff-1",
-    name: "Engr. Tariqul Islam",
-    email: "staff.drainage.1@civicflow.org",
-  },
-  statusHistory: [
-    {
-      id: "sh-1",
-      fromStatus: "SUBMITTED",
-      toStatus: "TRIAGED",
-      reason: "Automated routing rule applied based on category and ward.",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 17).toISOString(),
-      actor: { name: "System Dispatcher", role: "SYSTEM" },
-    },
-    {
-      id: "sh-2",
-      fromStatus: "TRIAGED",
-      toStatus: "IN_PROGRESS",
-      reason: "Crew dispatched to site with drainage maintenance gear.",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 10).toISOString(),
-      actor: { name: "Field Officer Kamal", role: "STAFF" },
-    },
-    {
-      id: "sh-3",
-      fromStatus: "IN_PROGRESS",
-      toStatus: "RESOLVED",
-      reason: "Culvert choke removed; water draining freely.",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-      actor: { name: "Field Officer Kamal", role: "STAFF" },
-    },
-  ],
-  investigationNotes: [
-    {
-      id: "note-1",
-      note: "Initial inspection shows blockage caused by discarded building material and polythene at culvert mouth.",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 9).toISOString(),
-      actor: { name: "Field Officer Kamal", role: "STAFF" },
-    },
-    {
-      id: "note-2",
-      note: "Heavy suction machine deployed. Flow restored to 90% normal speed.",
-      createdAt: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString(),
-      actor: { name: "Field Officer Kamal", role: "STAFF" },
-    },
-  ],
-};
 
 export default function RequestDossierPage() {
   const router = useRouter();
   const params = useParams();
   const requestId = (params?.id as string) || "";
 
+  const { user, role, isAuthenticated } = useCurrentUser();
+
   const {
     data: response,
     isLoading,
+    isError,
     refetch,
-  } = useGetServiceRequestById(requestId);
-  const ticket = response?.data || MOCK_FALLBACK_DOSSIER;
+  } = useGetPublicServiceRequestById(requestId);
+  const ticket = response?.data;
+
+  const { data: publicListResponse } = useGetPublicServiceRequests();
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -153,7 +79,22 @@ export default function RequestDossierPage() {
   const [comment, setComment] = useState("");
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const { role } = useCurrentUser();
+  // Strict authentication & authorization flags for CRUD operations
+  const isAdmin = Boolean(isAuthenticated && user && role === "ADMIN");
+  const isStaff = Boolean(isAuthenticated && user && role === "STAFF");
+  const isStaffOrAdmin = isAdmin || isStaff;
+  const isTicketOwner = Boolean(
+    isAuthenticated &&
+      user &&
+      role === "CITIZEN" &&
+      ticket &&
+      (user.id === ticket.citizenId ||
+        user.id === ticket.createdById ||
+        user.id === ticket.citizen?.id ||
+        (user.email &&
+          (user.email === ticket.citizen?.email ||
+            user.email === ticket.createdBy?.email))),
+  );
 
   const { mutate: confirmResolution, isPending: isConfirming } =
     useConfirmServiceRequest();
@@ -161,13 +102,44 @@ export default function RequestDossierPage() {
     useReopenServiceRequest();
   const { mutate: submitFeedback, isPending: isSubmittingFeedback } =
     useSubmitFeedback();
-  const { data: existingFeedbackResponse } = useGetRequestFeedback(ticket?.id);
+  const { data: existingFeedbackResponse } = useGetRequestFeedback(
+    isAuthenticated && isTicketOwner && ticket?.id ? ticket.id : "",
+  );
   const recordedFeedback = ticket?.feedback || existingFeedbackResponse?.data;
   const { mutateAsync: routeRequest, isPending: isRerouting } =
     useRouteServiceRequest();
 
+  const relatedItems = useMemo(() => {
+    const rawList = publicListResponse?.data;
+    if (!Array.isArray(rawList) || !ticket) return [];
+
+    // FIFO order (oldest first), prioritizing same category if available
+    return [...rawList]
+      .filter(
+        (candidate) =>
+          candidate.id !== ticket.id &&
+          candidate.requestNumber !== ticket.requestNumber,
+      )
+      .sort((a, b) => {
+        const aSameCat =
+          a.categoryId && a.categoryId === ticket.categoryId ? 0 : 1;
+        const bSameCat =
+          b.categoryId && b.categoryId === ticket.categoryId ? 0 : 1;
+        if (aSameCat !== bSameCat) return aSameCat - bSameCat;
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      })
+      .slice(0, 3);
+  }, [publicListResponse, ticket]);
+
   const handleReroute = async () => {
-    if (!ticket?.id) return;
+    if (!isAdmin || !ticket?.id) {
+      gooeyToast.error("Authorization Required", {
+        description: "Only authenticated administrators can re-route tickets.",
+      });
+      return;
+    }
     try {
       const res = await routeRequest(ticket.id);
       const updated = res?.data;
@@ -193,6 +165,13 @@ export default function RequestDossierPage() {
   };
 
   const handleConfirmResolution = () => {
+    if (!isTicketOwner || !ticket?.id) {
+      gooeyToast.error("Authorization Required", {
+        description:
+          "Only the authenticated reporting citizen can confirm resolution.",
+      });
+      return;
+    }
     confirmResolution(ticket.id, {
       onSuccess: () => {
         gooeyToast.success("Resolution Verified & Closed", {
@@ -210,6 +189,13 @@ export default function RequestDossierPage() {
 
   const handleReopenSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isTicketOwner || !ticket?.id) {
+      gooeyToast.error("Authorization Required", {
+        description:
+          "Only the authenticated reporting citizen can reopen this ticket.",
+      });
+      return;
+    }
     if (!reopenReason.trim() || reopenReason.trim().length < 5) {
       gooeyToast.error("Reason Required", {
         description: "Please specify why the grievance is not yet resolved.",
@@ -241,6 +227,13 @@ export default function RequestDossierPage() {
 
   const handleFeedbackSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isTicketOwner || !ticket?.id) {
+      gooeyToast.error("Authorization Required", {
+        description:
+          "Only the authenticated reporting citizen can rate this service request.",
+      });
+      return;
+    }
     submitFeedback(
       { requestId: ticket.id, rating, comment: comment.trim() },
       {
@@ -286,35 +279,80 @@ export default function RequestDossierPage() {
     );
   }
 
+  if (isError || !ticket) {
+    return (
+      <div className="mx-auto max-w-2xl py-20 text-center space-y-4">
+        <Badge variant="outline" className="font-mono text-xs">
+          404 • Grievance Record Not Found
+        </Badge>
+        <h1 className="text-2xl font-bold text-foreground">
+          Issue Dossier Unavailable
+        </h1>
+        <p className="text-xs text-muted-foreground">
+          We could not find a public grievance record matching{" "}
+          <span className="font-mono font-semibold text-foreground">
+            {requestId}
+          </span>
+          .
+        </p>
+        <div className="pt-2">
+          <Button
+            variant="default"
+            size="sm"
+            render={<Link href={isAuthenticated ? "/citizen" : "/"} />}
+            nativeButton={false}
+            className="gap-1.5"
+          >
+            <ArrowLeft className="size-4" />
+            <span>{isAuthenticated ? "Back to Dashboard" : "Back to Home"}</span>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   const isResolved = ticket.status === "RESOLVED";
   const isClosed = ticket.status === "CLOSED";
-  const _hasFee =
-    ticket.caseType === "SERVICE_REQUEST" &&
-    ticket.category &&
-    ticket.category.feeAmount > 0;
+  const feeAmount = Number(ticket.category?.feeAmount ?? 0);
+  const slaHours = ticket.category?.slaMinutes
+    ? Math.max(1, Math.round(Number(ticket.category.slaMinutes) / 60))
+    : 24;
+
+  const backHref = !isAuthenticated
+    ? "/#recent-issues"
+    : role === "ADMIN"
+      ? "/admin"
+      : role === "STAFF"
+        ? "/staff"
+        : "/citizen";
+
+  const backLabel = !isAuthenticated
+    ? "Back to Live Ward Ledger"
+    : role === "ADMIN"
+      ? "Back to Admin Desk"
+      : role === "STAFF"
+        ? "Back to Staff Queue"
+        : "Back to All Tickets";
 
   return (
-    <div className="mx-auto max-w-4xl pb-16 animate-in fade-in duration-200 flex flex-col gap-6">
+    <div className="mx-auto max-w-5xl pb-16 animate-in fade-in duration-200 flex flex-col gap-6">
       <div>
-        <Link
-          href={
-            role === "ADMIN"
-              ? "/admin"
-              : role === "STAFF"
-                ? "/staff"
-                : "/citizen"
-          }
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-3"
-        >
-          <ArrowLeft className="size-3.5" />
-          <span>
-            {role === "ADMIN"
-              ? "Back to Admin Desk"
-              : role === "STAFF"
-                ? "Back to Staff Queue"
-                : "Back to All Tickets"}
-          </span>
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <Link
+            href={backHref}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>{backLabel}</span>
+          </Link>
+
+          {!isTicketOwner && !isStaffOrAdmin && (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/40 px-3 py-1 text-[11px] font-medium text-muted-foreground">
+              <Lock className="size-3 text-primary" />
+              <span>Public Read-Only View • Auth Required for Actions</span>
+            </span>
+          )}
+        </div>
 
         <div className="rounded-xl border border-border bg-card p-6 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-4 mb-4">
@@ -344,8 +382,9 @@ export default function RequestDossierPage() {
                 )}
               </div>
 
+              {/* CRUD Action Toolbar — strictly requires authentication & role/ownership authorization */}
               <div className="flex items-center gap-2">
-                {role === "ADMIN" && (
+                {isAdmin && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -364,7 +403,7 @@ export default function RequestDossierPage() {
                   </Button>
                 )}
 
-                {role === "ADMIN" && ticket.status === "IN_PROGRESS" && (
+                {isAdmin && ticket.status === "IN_PROGRESS" && (
                   <Button
                     size="sm"
                     onClick={() => setIsResolveModalOpen(true)}
@@ -376,7 +415,7 @@ export default function RequestDossierPage() {
                   </Button>
                 )}
 
-                {(role === "STAFF" || role === "ADMIN") && (
+                {isStaffOrAdmin && (
                   <StatusTransitionControl
                     ticket={ticket}
                     mode="dropdown"
@@ -384,7 +423,7 @@ export default function RequestDossierPage() {
                   />
                 )}
 
-                {role === "ADMIN" && (
+                {isAdmin && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -407,29 +446,28 @@ export default function RequestDossierPage() {
                   </Button>
                 )}
 
-                {ticket.status === "SUBMITTED" &&
-                  (role === "CITIZEN" || !role) && (
-                    <>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsEditModalOpen(true)}
-                        className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-                      >
-                        <Edit3 className="size-3.5" />
-                        <span>Edit</span>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setIsDeleteModalOpen(true)}
-                        className="gap-1.5 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 shadow-xs text-xs font-semibold h-8 px-3.5"
-                      >
-                        <Trash2 className="size-3.5" />
-                        <span>Cancel Ticket</span>
-                      </Button>
-                    </>
-                  )}
+                {ticket.status === "SUBMITTED" && isTicketOwner && (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="gap-1.5 rounded-full border-primary/30 text-primary hover:bg-primary/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    >
+                      <Edit3 className="size-3.5" />
+                      <span>Edit</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="gap-1.5 rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 shadow-xs text-xs font-semibold h-8 px-3.5"
+                    >
+                      <Trash2 className="size-3.5" />
+                      <span>Cancel Ticket</span>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -442,15 +480,20 @@ export default function RequestDossierPage() {
             )}
             {ticket.category && (
               <span className="rounded-4xl border border-border bg-muted/30 px-3 py-1 font-medium text-foreground">
-                Category: {ticket.category.name} (
-                {ticket.category.slaMinutes / 60}h SLA)
+                Category: {ticket.category.name} ({slaHours}h SLA)
               </span>
             )}
+            <span className="rounded-4xl border border-border bg-muted/30 px-3 py-1 font-medium text-foreground">
+              Tariff:{" "}
+              {feeAmount > 0
+                ? `${feeAmount} ${ticket.category?.feeCurrency || "BDT"}`
+                : "Free Intake"}
+            </span>
             {ticket.assignedTo ? (
               <span className="rounded-4xl border border-blue-500/30 bg-blue-500/10 px-3 py-1 font-medium text-blue-700 dark:text-blue-300 inline-flex items-center gap-1.5">
                 <UserCheck className="size-3.5" />
                 <span>Assigned: {ticket.assignedTo.name}</span>
-                {role === "ADMIN" && (
+                {isAdmin && (
                   <button
                     type="button"
                     onClick={() => setIsAssignModalOpen(true)}
@@ -464,7 +507,7 @@ export default function RequestDossierPage() {
               <span className="rounded-4xl border border-amber-500/30 bg-amber-500/10 px-3 py-1 font-medium text-amber-700 dark:text-amber-400 inline-flex items-center gap-1.5">
                 <HardHat className="size-3.5" />
                 <span>Unassigned</span>
-                {role === "ADMIN" && (
+                {isAdmin && (
                   <button
                     type="button"
                     onClick={() => setIsAssignModalOpen(true)}
@@ -482,7 +525,8 @@ export default function RequestDossierPage() {
         </div>
       </div>
 
-      {(role === "STAFF" || role === "ADMIN") && (
+      {/* Staff/Admin State Machine Control Panel (Authenticated & Authorized Only) */}
+      {isStaffOrAdmin && (
         <StatusTransitionControl
           ticket={ticket}
           mode="panel"
@@ -490,7 +534,8 @@ export default function RequestDossierPage() {
         />
       )}
 
-      {ticket.status === "SUBMITTED" && (role === "CITIZEN" || !role) && (
+      {/* Citizen Editable Triage Banner (Authenticated & Ticket Owner Only) */}
+      {ticket.status === "SUBMITTED" && isTicketOwner && (
         <div className="rounded-xl border border-sky-500/30 bg-sky-500/10 p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
             <div className="flex size-9 items-center justify-center rounded-full bg-sky-600 text-white shrink-0 mt-0.5">
@@ -530,6 +575,7 @@ export default function RequestDossierPage() {
         </div>
       )}
 
+      {/* Resolution Details & Citizen Verification Actions */}
       {isResolved && (
         <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-5 sm:p-6 shadow-sm">
           <div className="flex items-start gap-3.5 mb-4">
@@ -538,14 +584,14 @@ export default function RequestDossierPage() {
             </div>
             <div>
               <h2 className="text-base font-bold text-foreground">
-                Citizen Verification Required: Municipal Work Completed
+                {isTicketOwner
+                  ? "Citizen Verification Required: Municipal Work Completed"
+                  : "Municipal Field Work Completed"}
               </h2>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                The municipal field crew has resolved this grievance and
-                provided completion notes. Please verify the ground reality. If
-                the issue is resolved to your satisfaction, confirm closure. If
-                defects persist, you have the legal guarantee to reopen the case
-                within 7 days.
+                {isTicketOwner
+                  ? "The municipal field crew has resolved this grievance and provided completion notes. Please verify the ground reality. If the issue is resolved to your satisfaction, confirm closure. If defects persist, you have the legal guarantee to reopen the case within 7 days."
+                  : "The designated municipal field crew has marked this grievance as resolved and awaiting final citizen confirmation."}
               </p>
             </div>
           </div>
@@ -561,40 +607,46 @@ export default function RequestDossierPage() {
             </div>
           )}
 
-          <div className="flex flex-col sm:flex-row items-center gap-3">
-            <Button
-              variant="default"
-              size="default"
-              onClick={handleConfirmResolution}
-              disabled={isConfirming}
-              className="w-full sm:w-auto gap-2 rounded-4xl bg-emerald-600 hover:bg-emerald-700 text-white"
-            >
-              {isConfirming ? (
-                <Spinner>Closing Ticket...</Spinner>
-              ) : (
-                <>
-                  <CheckCircle2 className="size-4" />
-                  <span>Verify & Confirm Resolution</span>
-                </>
-              )}
-            </Button>
+          {isTicketOwner && (
+            <div className="flex flex-col sm:flex-row items-center gap-3">
+              <Button
+                variant="default"
+                size="default"
+                onClick={handleConfirmResolution}
+                disabled={isConfirming}
+                className="w-full sm:w-auto gap-2 rounded-4xl bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                {isConfirming ? (
+                  <Spinner>Closing Ticket...</Spinner>
+                ) : (
+                  <>
+                    <CheckCircle2 className="size-4" />
+                    <span>Verify &amp; Confirm Resolution</span>
+                  </>
+                )}
+              </Button>
 
-            <Button
-              variant="outline"
-              size="default"
-              onClick={() => setIsReopenModalOpen(true)}
-              className="w-full sm:w-auto gap-2 rounded-4xl border-destructive/30 text-destructive hover:bg-destructive/10"
-            >
-              <RotateCcw className="size-4" />
-              <span>Issue Not Fixed? Reopen Case (7d)</span>
-            </Button>
-          </div>
+              <Button
+                variant="outline"
+                size="default"
+                onClick={() => setIsReopenModalOpen(true)}
+                className="w-full sm:w-auto gap-2 rounded-4xl border-destructive/30 text-destructive hover:bg-destructive/10"
+              >
+                <RotateCcw className="size-4" />
+                <span>Issue Not Fixed? Reopen Case (7d)</span>
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
-      <RequestFeePanel ticket={ticket} onPaymentUpdated={() => refetch()} />
+      {/* Payment Checkout Panel — Authenticated & Authorized Owner/Admin/Staff Only */}
+      {isAuthenticated && (isTicketOwner || isStaffOrAdmin) && (
+        <RequestFeePanel ticket={ticket} onPaymentUpdated={() => refetch()} />
+      )}
 
-      {isClosed && (
+      {/* Municipal Quality Review — Read-Only for Public, Writable Only for Ticket Owner */}
+      {isClosed && (recordedFeedback || feedbackSubmitted || isTicketOwner) && (
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-3">
             <Star className="size-4 text-amber-500 fill-amber-500" />
@@ -629,10 +681,10 @@ export default function RequestDossierPage() {
                 </p>
               )}
               <p className="mt-2 text-[11px] text-muted-foreground">
-                Thank you for helping maintain city standards.
+                Verified citizen satisfaction audit on the public ledger.
               </p>
             </div>
-          ) : (
+          ) : isTicketOwner ? (
             <form
               onSubmit={handleFeedbackSubmit}
               className="flex flex-col gap-3"
@@ -686,7 +738,7 @@ export default function RequestDossierPage() {
                 )}
               </Button>
             </form>
-          )}
+          ) : null}
         </div>
       )}
 
@@ -706,7 +758,9 @@ export default function RequestDossierPage() {
                 <MapPin className="size-3.5 text-primary" />
                 <span>Location Metadata</span>
               </span>
-              <p className="text-xs text-muted-foreground">{ticket.address}</p>
+              <p className="text-xs text-muted-foreground">
+                {ticket.address || ticket.location || "Dhaka Municipal Zone"}
+              </p>
 
               <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground mt-1">
                 {ticket.ward && <span>Ward: {ticket.ward}</span>}
@@ -714,14 +768,17 @@ export default function RequestDossierPage() {
                 {ticket.landmark && <span>Landmark: {ticket.landmark}</span>}
               </div>
 
-              {ticket.latitude !== null && ticket.longitude !== null && (
-                <div className="mt-2 rounded-lg bg-muted/40 p-2 font-mono text-[11px] text-foreground flex items-center gap-2">
-                  <span className="size-2 rounded-full bg-emerald-500" />
-                  <span>
-                    GPS: {ticket.latitude}° N, {ticket.longitude}° E
-                  </span>
-                </div>
-              )}
+              {ticket.latitude !== null &&
+                ticket.latitude !== undefined &&
+                ticket.longitude !== null &&
+                ticket.longitude !== undefined && (
+                  <div className="mt-2 rounded-lg bg-muted/40 p-2 font-mono text-[11px] text-foreground flex items-center gap-2">
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                    <span>
+                      GPS: {ticket.latitude}° N, {ticket.longitude}° E
+                    </span>
+                  </div>
+                )}
             </div>
           </div>
 
@@ -794,7 +851,7 @@ export default function RequestDossierPage() {
 
             <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-border">
               {ticket.statusHistory && ticket.statusHistory.length > 0 ? (
-                ticket.statusHistory.map((item, _idx) => (
+                ticket.statusHistory.map((item) => (
                   <div key={item.id} className="relative">
                     <div className="absolute -left-6 top-0.5 size-3 rounded-full border-2 border-background bg-primary ring-2 ring-primary/20" />
                     <div className="flex flex-col">
@@ -833,13 +890,165 @@ export default function RequestDossierPage() {
               <p className="font-semibold text-foreground">
                 {ticket.assignedTo.name}
               </p>
-              <p className="text-muted-foreground">{ticket.assignedTo.email}</p>
+              {isStaffOrAdmin && (
+                <p className="text-muted-foreground">
+                  {ticket.assignedTo.email}
+                </p>
+              )}
+            </div>
+          )}
+
+          {!isAuthenticated && (
+            <div className="rounded-xl border border-primary/25 bg-primary/5 p-4 text-xs space-y-2.5">
+              <div className="flex items-center gap-2 font-semibold text-foreground">
+                <Lock className="size-3.5 text-primary" />
+                <span>Citizen &amp; Staff Actions</span>
+              </div>
+              <p className="text-muted-foreground leading-relaxed">
+                Issue details are publicly accessible. Sign in to edit your own
+                submitted tickets, verify resolutions, or perform staff actions.
+              </p>
+              <Button
+                variant="default"
+                size="sm"
+                render={
+                  <Link
+                    href={`/login?redirect=/citizen/requests/${encodeURIComponent(ticket.id)}`}
+                  />
+                }
+                nativeButton={false}
+                className="w-full text-xs font-semibold"
+              >
+                Sign In for Authorized Actions
+              </Button>
             </div>
           )}
         </div>
       </div>
 
-      {isReopenModalOpen && (
+      {/* Related Public Grievances Section */}
+      {relatedItems.length > 0 && (
+        <section
+          aria-labelledby="related-grievances-heading"
+          className="pt-6 border-t border-border space-y-4"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
+            <div>
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                Connected Public Ledger
+              </span>
+              <h2
+                id="related-grievances-heading"
+                className="text-lg font-bold tracking-tight text-foreground"
+              >
+                Related Public Grievances
+              </h2>
+            </div>
+            <Link
+              href="/#recent-issues"
+              className="text-xs font-semibold text-primary hover:underline"
+            >
+              View Live Ward Ledger
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3 items-stretch">
+            {relatedItems.map((rel) => {
+              const relSlaHours = rel.category?.slaMinutes
+                ? Math.max(1, Math.round(Number(rel.category.slaMinutes) / 60))
+                : 24;
+              const relImage =
+                rel.attachments?.[0]?.url ||
+                rel.attachments?.[0]?.fileUrl ||
+                resolveCategoryImage(rel.category?.name);
+              const relWard = rel.ward
+                ? rel.ward.toLowerCase().startsWith("ward")
+                  ? rel.ward
+                  : `Ward ${rel.ward}`
+                : "Ward 04";
+
+              return (
+                <div
+                  key={rel.id}
+                  className="group flex h-full w-full flex-col justify-between rounded-xl border border-border bg-card p-5 shadow-xs hover:border-primary/40 hover:shadow-md transition-all"
+                >
+                  <div className="flex flex-col flex-1">
+                    <div className="relative mb-3.5 h-36 w-full shrink-0 overflow-hidden rounded-lg bg-muted">
+                      <Image
+                        src={relImage}
+                        alt={rel.title}
+                        fill
+                        unoptimized
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+                      <div className="absolute top-2 left-2">
+                        <StatusBadge status={rel.status} />
+                      </div>
+                      <div className="absolute top-2 right-2">
+                        <PriorityBadge priority={rel.priority || "NORMAL"} />
+                      </div>
+                      <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[10px] font-mono">
+                        <span className="rounded bg-background/90 px-2 py-0.5 font-bold text-primary backdrop-blur-md">
+                          {rel.requestNumber}
+                        </span>
+                        <span className="inline-flex items-center gap-1 rounded bg-background/90 px-2 py-0.5 font-medium text-foreground backdrop-blur-md">
+                          <ShieldCheck className="size-3 text-emerald-500" />
+                          {relSlaHours}h SLA
+                        </span>
+                      </div>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                      {rel.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      {rel.description}
+                    </p>
+
+                    <div className="mt-3 pt-2.5 border-t border-border/60 flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span className="inline-flex items-center gap-1 truncate">
+                        <MapPin className="size-3 text-primary shrink-0" />
+                        <span className="truncate">
+                          {relWard} • {rel.address || rel.location || "Dhaka"}
+                        </span>
+                      </span>
+                      <span className="inline-flex items-center gap-1 shrink-0 font-mono text-[10px]">
+                        <Calendar className="size-3" />
+                        {new Date(rel.createdAt).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-border/60 shrink-0">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      render={
+                        <Link
+                          href={`/citizen/requests/${encodeURIComponent(rel.id)}`}
+                        />
+                      }
+                      nativeButton={false}
+                      className="w-full gap-1.5 text-xs font-semibold"
+                    >
+                      <Eye className="size-3.5" />
+                      <span>View Details</span>
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {/* Modals — Rendered only for authenticated & authorized roles */}
+      {isTicketOwner && isReopenModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
           <div className="relative w-full max-w-lg rounded-2xl border border-border bg-card p-6 shadow-xl animate-in zoom-in-95 duration-150">
             <button
@@ -921,35 +1130,43 @@ export default function RequestDossierPage() {
         </div>
       )}
 
-      <ResolveTicketModal
-        ticket={ticket}
-        isOpen={isResolveModalOpen}
-        onClose={() => setIsResolveModalOpen(false)}
-        onSuccess={() => refetch()}
-      />
+      {isStaffOrAdmin && (
+        <ResolveTicketModal
+          ticket={ticket}
+          isOpen={isResolveModalOpen}
+          onClose={() => setIsResolveModalOpen(false)}
+          onSuccess={() => refetch()}
+        />
+      )}
 
-      <AssignStaffModal
-        ticket={ticket}
-        isOpen={isAssignModalOpen}
-        onClose={() => setIsAssignModalOpen(false)}
-        onSuccess={() => refetch()}
-      />
+      {isAdmin && (
+        <AssignStaffModal
+          ticket={ticket}
+          isOpen={isAssignModalOpen}
+          onClose={() => setIsAssignModalOpen(false)}
+          onSuccess={() => refetch()}
+        />
+      )}
 
-      <EditTicketModal
-        ticket={ticket}
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSuccess={() => refetch()}
-      />
+      {isTicketOwner && (
+        <>
+          <EditTicketModal
+            ticket={ticket}
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            onSuccess={() => refetch()}
+          />
 
-      <DeleteTicketModal
-        ticket={ticket}
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onSuccess={() => {
-          router.push("/citizen");
-        }}
-      />
+          <DeleteTicketModal
+            ticket={ticket}
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onSuccess={() => {
+              router.push("/citizen");
+            }}
+          />
+        </>
+      )}
     </div>
   );
 }

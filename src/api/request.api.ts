@@ -26,6 +26,37 @@ export const getServiceRequests = async (
   });
 };
 
+export const getPublicServiceRequests = async (
+  params?: RequestFilterParams,
+): Promise<ApiResponse<ServiceRequest[]>> => {
+  const query = new URLSearchParams();
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      if (v !== undefined && v !== null && v !== "") {
+        query.set(k, String(v));
+      }
+    }
+  }
+  const qs = query.toString();
+  const res = await fetch(`/api/public/requests${qs ? `?${qs}` : ""}`);
+  if (!res.ok) {
+    throw new Error("Failed to fetch public service requests");
+  }
+  return res.json();
+};
+
+export const getPublicServiceRequestById = async (
+  requestId: string,
+): Promise<ApiResponse<ServiceRequest>> => {
+  const res = await fetch(
+    `/api/public/requests/${encodeURIComponent(requestId)}`,
+  );
+  if (!res.ok) {
+    throw new Error("Failed to fetch public service request details");
+  }
+  return res.json();
+};
+
 export const getMyQueue = async (
   params?: RequestFilterParams,
 ): Promise<ApiResponse<ServiceRequest[]>> => {

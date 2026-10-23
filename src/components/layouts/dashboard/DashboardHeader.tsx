@@ -20,6 +20,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { UserAvatar } from "@/components/common/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -258,6 +259,8 @@ export function DashboardHeader({
 
         <div className="flex items-center gap-2.5 sm:gap-3">
           {topBarActions}
+
+          <ThemeToggle />
 
           <div className="relative" ref={notificationPanelRef}>
             <Button

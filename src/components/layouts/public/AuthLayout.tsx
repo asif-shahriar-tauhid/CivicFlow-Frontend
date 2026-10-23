@@ -11,6 +11,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import Logo from "@/asset/svg/Logo";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 
 interface AuthLayoutProps {
   children: ReactNode;
@@ -44,13 +45,16 @@ export default function AuthLayout({
             </div>
           </Link>
 
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="size-3.5" />
-            <span>Back to City Portal</span>
-          </Link>
+          <div className="flex items-center gap-2.5">
+            <ThemeToggle />
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="size-3.5" />
+              <span>Back to City Portal</span>
+            </Link>
+          </div>
         </div>
 
         <div className="mx-auto my-auto w-full max-w-md py-8">

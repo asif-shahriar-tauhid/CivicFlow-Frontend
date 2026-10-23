@@ -12,6 +12,7 @@ import {
   Layers,
   MapPin,
   Send,
+  Sparkles,
   Upload,
   X,
 } from "lucide-react";
@@ -30,11 +31,13 @@ import { gooeyToast } from "@/components/ui/goey-toaster";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
+import { useAiTriageDraft } from "@/hooks/ai.hooks";
 import { useCreateServiceRequest } from "@/hooks/request.hooks";
 import {
   type CategoryDefinition,
   MUNICIPAL_CATEGORIES,
 } from "@/lib/constants/categories";
+import type { AiTriageDraftResponse } from "@/types/ai.types";
 import { createServiceRequestClientSchema } from "@/validation/request.validation";
 
 function ReportIssueFormInner() {
@@ -59,9 +62,77 @@ function ReportIssueFormInner() {
     longitude: number | null;
     accuracy?: number;
   }>({ latitude: null, longitude: null });
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiTriageResult, setAiTriageResult] =
+    useState<AiTriageDraftResponse | null>(null);
 
   const { mutate: createRequest, isPending: isSubmitting } =
     useCreateServiceRequest();
+  const { mutate: runAiTriage, isPending: isAiDrafting } = useAiTriageDraft();
+
+  const handleAiAutofill = (customPrompt?: string) => {
+    const promptText = (customPrompt ?? aiPrompt).trim();
+    if (promptText.length < 3) {
+      gooeyToast.warning("Describe the Hazard First", {
+        description:
+          "Type a brief 1-sentence note so AI can classify and autofill the form.",
+      });
+      return;
+    }
+    if (customPrompt) setAiPrompt(customPrompt);
+
+    runAiTriage(
+      { prompt: promptText },
+      {
+        onSuccess: (res) => {
+          const draft = res?.data;
+          if (!draft) return;
+
+          setAiTriageResult(draft);
+
+          // Match category in frontend list by ID or name fragment
+          const matchedCat =
+            MUNICIPAL_CATEGORIES.find(
+              (c) =>
+                c.id === draft.categoryId ||
+                c.name
+                  .toLowerCase()
+                  .includes(draft.categoryName.toLowerCase().split(" ")[0]),
+            ) || MUNICIPAL_CATEGORIES[0];
+
+          setSelectedCategory(matchedCat);
+          form.setFieldValue("categoryId", draft.categoryId || matchedCat.id);
+          form.setFieldValue("title", draft.title);
+          form.setFieldValue("description", draft.description);
+          form.setFieldValue("priority", draft.priority);
+          form.setFieldValue("caseType", draft.caseType);
+
+          if (draft.extractedLocation?.address) {
+            form.setFieldValue("address", draft.extractedLocation.address);
+          }
+          if (draft.extractedLocation?.ward) {
+            form.setFieldValue("ward", draft.extractedLocation.ward);
+          }
+          if (draft.extractedLocation?.zone) {
+            form.setFieldValue("zone", draft.extractedLocation.zone);
+          }
+          if (draft.extractedLocation?.landmark) {
+            form.setFieldValue("landmark", draft.extractedLocation.landmark);
+          }
+
+          gooeyToast.success("AI Smart Autofill Applied", {
+            description: `Classified as ${draft.categoryName} (${draft.priority}) with ${Math.round(draft.confidence * 100)}% confidence.`,
+          });
+        },
+        onError: () => {
+          gooeyToast.error("AI Triage Unavailable", {
+            description:
+              "Could not reach the AI triage endpoint. Please fill the fields manually.",
+          });
+        },
+      },
+    );
+  };
 
   const handleGpsDetect = () => {
     if (!navigator.geolocation) {
@@ -239,6 +310,103 @@ function ReportIssueFormInner() {
         }}
         className="flex flex-col gap-8"
       >
+        {/* AI Smart Triage & Form Autofill Card */}
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 sm:p-6 shadow-xs space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-center gap-2.5">
+              <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-2xs">
+                <Sparkles className="size-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-bold text-foreground">
+                    AI Smart Triage &amp; Form Autofill
+                  </h2>
+                  <span className="rounded-full bg-primary/15 px-2 py-0.5 font-mono text-[10px] font-semibold text-primary">
+                    Backend AI Engine
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Describe the issue in one sentence — AI will automatically
+                  classify the department, urgency, location fields, and formal
+                  technician briefing.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-2.5">
+            <Input
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              placeholder="e.g. Knee-deep rainwater flooding on Road 5 Dhanmondi Ward 15 near City Hospital..."
+              className="flex-1 bg-card text-xs sm:text-sm h-10"
+              disabled={isAiDrafting}
+            />
+            <Button
+              type="button"
+              variant="default"
+              size="default"
+              onClick={() => handleAiAutofill()}
+              disabled={isAiDrafting}
+              className="gap-1.5 font-semibold shrink-0 h-10"
+            >
+              {isAiDrafting ? (
+                <>
+                  <Spinner className="size-3.5" />
+                  <span>Analyzing...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="size-3.5" />
+                  <span>AI Auto-Classify &amp; Fill</span>
+                </>
+              )}
+            </Button>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+            <span className="font-semibold text-muted-foreground">
+              Try AI examples:
+            </span>
+            {[
+              "Severe rainwater flooding on Road 5 Dhanmondi Ward 15 near City Hospital",
+              "Sparking streetlight pole dark corridor on Avenue 3 Sector 7 Uttara Ward 4",
+              "Deep pothole and construction debris blocking Road 12 Mirpur Ward 10",
+            ].map((sample) => (
+              <button
+                key={sample}
+                type="button"
+                onClick={() => handleAiAutofill(sample)}
+                disabled={isAiDrafting}
+                className="rounded-full border border-border bg-card px-2.5 py-0.5 text-[11px] text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors cursor-pointer truncate max-w-xs"
+              >
+                ✨ {sample}
+              </button>
+            ))}
+          </div>
+
+          {aiTriageResult && (
+            <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-3 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-start gap-2">
+                <CheckCircle2 className="size-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-foreground">
+                    AI Triage Matched: {aiTriageResult.categoryName} (
+                    {aiTriageResult.priority} • {aiTriageResult.slaHours}h SLA)
+                  </span>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    {aiTriageResult.reasoning}
+                  </p>
+                </div>
+              </div>
+              <span className="font-mono text-[11px] font-bold text-emerald-700 dark:text-emerald-300 shrink-0">
+                {Math.round(aiTriageResult.confidence * 100)}% Confidence
+              </span>
+            </div>
+          )}
+        </div>
+
         <div className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs">
           <div className="flex items-center gap-2 mb-4">
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">

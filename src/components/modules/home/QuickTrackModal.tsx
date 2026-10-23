@@ -132,6 +132,20 @@ export default function QuickTrackModal({
                 Close
               </Button>
               <Button
+                variant="outline"
+                size="sm"
+                render={
+                  <Link
+                    href={`/explore/issues/${encodeURIComponent(ticketId.trim())}`}
+                  />
+                }
+                nativeButton={false}
+                onClick={onClose}
+                className="w-full sm:w-auto gap-1.5 transition-transform active:scale-95"
+              >
+                <span>View Public Dossier</span>
+              </Button>
+              <Button
                 variant="default"
                 size="sm"
                 render={<Link href="/login?redirect=/citizen" />}

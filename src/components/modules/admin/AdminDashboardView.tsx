@@ -6,19 +6,26 @@ import {
   ArrowRight,
   Building2,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   CircleDollarSign,
   Clock,
   Layers,
   RefreshCw,
   Route,
+  Search,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { AdminAnalyticsBreakdown } from "@/components/modules/admin";
+import {
+  AdminAnalyticsBreakdown,
+  AdminOperationalCharts,
+} from "@/components/modules/admin";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
+import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { useGetPublicStats } from "@/hooks/dashboard.hooks";
 import {
@@ -28,6 +35,10 @@ import {
 
 export default function AdminDashboardView() {
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [filterPriority, setFilterPriority] = useState<string>("ALL");
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const pageSize = 5;
   const [selectedDeptId, setSelectedDeptId] = useState<string | undefined>(
     undefined,
   );
@@ -60,13 +71,32 @@ export default function AdminDashboardView() {
     } else if (filterStatus !== "ALL" && r.status !== filterStatus) {
       return false;
     }
+    if (
+      filterPriority !== "ALL" &&
+      (r.priority || "NORMAL") !== filterPriority
+    ) {
+      return false;
+    }
     if (selectedDeptId !== undefined) {
       if (selectedDeptId === "" && r.departmentId) return false;
       if (selectedDeptId !== "" && r.departmentId !== selectedDeptId)
         return false;
     }
+    if (searchQuery.trim().length > 0) {
+      const q = searchQuery.trim().toLowerCase();
+      const hay =
+        `${r.requestNumber} ${r.title} ${r.address || ""} ${r.ward || ""} ${r.department?.name || ""}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
     return true;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredRequests.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginatedRequests = filteredRequests.slice(
+    (safeCurrentPage - 1) * pageSize,
+    safeCurrentPage * pageSize,
+  );
 
   const handleRefresh = () => {
     refetchStats();
@@ -148,7 +178,7 @@ export default function AdminDashboardView() {
         <div>
           <div className="flex items-center gap-2">
             <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-              Civic Operations & Governance
+              Civic Operations &amp; Governance
             </h1>
             <Badge variant="outline" className="border-primary/30 text-primary">
               Live Control
@@ -195,6 +225,7 @@ export default function AdminDashboardView() {
         </div>
       </div>
 
+      {/* KPI Overview Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-2xl border border-border bg-card p-5 shadow-xs">
           <div className="flex items-center justify-between">
@@ -285,22 +316,40 @@ export default function AdminDashboardView() {
         </div>
       </div>
 
-      <AdminAnalyticsBreakdown
-        selectedDepartmentId={selectedDeptId}
-        onDepartmentFilterChange={(deptId) => setSelectedDeptId(deptId)}
+      {/* Interactive Operational Graphs (Bar Chart, Velocity Line/Area Chart, Severity Donut & Ward Hotspots) */}
+      <AdminOperationalCharts
+        requests={requests}
+        activeStatusFilter={filterStatus}
+        onSelectStatusFilter={(status) => {
+          setFilterStatus(status);
+          setCurrentPage(1);
+        }}
       />
 
+      {/* Department, SLA Gauge, Category, & Revenue Breakdown */}
+      <AdminAnalyticsBreakdown
+        selectedDepartmentId={selectedDeptId}
+        onDepartmentFilterChange={(deptId) => {
+          setSelectedDeptId(deptId);
+          setCurrentPage(1);
+        }}
+      />
+
+      {/* Triage Queue Section with Search, Filters, and Pagination */}
       <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-foreground">
-                Municipal Service Influx
+                Municipal Service Influx &amp; Triage Queue
               </h2>
               {selectedDeptId !== undefined && (
                 <button
                   type="button"
-                  onClick={() => setSelectedDeptId(undefined)}
+                  onClick={() => {
+                    setSelectedDeptId(undefined);
+                    setCurrentPage(1);
+                  }}
                   className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold hover:bg-primary/20 transition-colors"
                 >
                   <span>Dept Filter Active</span>
@@ -310,39 +359,50 @@ export default function AdminDashboardView() {
             </div>
             <p className="text-xs text-muted-foreground">
               Complete cross-departmental incident queue with role-scoped
-              privileges.
+              privileges, search, and pagination.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5">
-            {[
-              "ALL",
-              "UNROUTED",
-              "SUBMITTED",
-              "IN_PROGRESS",
-              "RESOLVED",
-              "CLOSED",
-            ].map((status) => (
-              <button
-                type="button"
-                key={status}
-                onClick={() => setFilterStatus(status)}
-                className={`px-3 py-1 rounded-4xl text-xs font-medium transition-colors ${
-                  filterStatus === status
-                    ? "bg-primary text-primary-foreground font-semibold"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
-                }`}
-              >
-                {status === "UNROUTED" ? `UNROUTED (${unroutedCount})` : status}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Search input */}
+            <div className="relative w-full sm:w-56">
+              <Search className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
+              <Input
+                type="search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
+                placeholder="Search ID, title, ward..."
+                className="h-8 pl-8 text-xs bg-card"
+              />
+            </div>
+
+            {/* Priority filter dropdown */}
+            <select
+              value={filterPriority}
+              onChange={(e) => {
+                setFilterPriority(e.target.value);
+                setCurrentPage(1);
+              }}
+              aria-label="Filter by priority"
+              className="h-8 rounded-lg border border-border bg-card px-2.5 text-xs font-medium text-foreground focus:outline-none"
+            >
+              <option value="ALL">All Priorities</option>
+              <option value="URGENT">URGENT</option>
+              <option value="HIGH">HIGH</option>
+              <option value="NORMAL">NORMAL</option>
+              <option value="LOW">LOW</option>
+            </select>
+
             {unroutedCount > 0 && (
               <Button
                 variant="outline"
                 size="xs"
                 onClick={handleRerouteAllUnrouted}
                 disabled={isBatchRouting}
-                className="gap-1.5 rounded-4xl border-primary/30 text-primary hover:bg-primary/10 text-xs font-medium h-7 px-3 ml-1"
+                className="gap-1.5 rounded-4xl border-primary/30 text-primary hover:bg-primary/10 text-xs font-medium h-8 px-3"
               >
                 {isBatchRouting ? (
                   <Spinner className="size-3" />
@@ -353,6 +413,36 @@ export default function AdminDashboardView() {
               </Button>
             )}
           </div>
+        </div>
+
+        {/* Status Filter Pills */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {[
+            "ALL",
+            "UNROUTED",
+            "SUBMITTED",
+            "TRIAGED",
+            "IN_PROGRESS",
+            "RESOLVED",
+            "CLOSED",
+            "REOPENED",
+          ].map((status) => (
+            <button
+              type="button"
+              key={status}
+              onClick={() => {
+                setFilterStatus(status);
+                setCurrentPage(1);
+              }}
+              className={`px-3 py-1 rounded-4xl text-xs font-medium transition-colors cursor-pointer ${
+                filterStatus === status
+                  ? "bg-primary text-primary-foreground font-semibold"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              {status === "UNROUTED" ? `UNROUTED (${unroutedCount})` : status}
+            </button>
+          ))}
         </div>
 
         {requestsLoading ? (
@@ -378,9 +468,9 @@ export default function AdminDashboardView() {
                 <thead className="border-b border-border bg-muted/40 text-muted-foreground">
                   <tr>
                     <th className="px-4 py-3 font-medium">Tracking ID</th>
-                    <th className="px-4 py-3 font-medium">Title & Location</th>
+                    <th className="px-4 py-3 font-medium">Title &amp; Location</th>
                     <th className="px-4 py-3 font-medium">
-                      Department & Routing
+                      Department &amp; Routing
                     </th>
                     <th className="px-4 py-3 font-medium">Status</th>
                     <th className="px-4 py-3 font-medium">Priority</th>
@@ -391,7 +481,7 @@ export default function AdminDashboardView() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {filteredRequests.map((request) => (
+                  {paginatedRequests.map((request) => (
                     <tr
                       key={request.id}
                       className="transition-colors hover:bg-muted/30"
@@ -515,6 +605,53 @@ export default function AdminDashboardView() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Table Pagination Footer */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border bg-muted/20 px-4 py-3 text-xs text-muted-foreground">
+              <span>
+                Showing{" "}
+                <strong className="font-mono text-foreground">
+                  {(safeCurrentPage - 1) * pageSize + 1}–
+                  {Math.min(
+                    safeCurrentPage * pageSize,
+                    filteredRequests.length,
+                  )}
+                </strong>{" "}
+                of{" "}
+                <strong className="font-mono text-foreground">
+                  {filteredRequests.length}
+                </strong>{" "}
+                filtered incidents
+              </span>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="xs"
+                  disabled={safeCurrentPage <= 1}
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  className="gap-1 h-7 px-2.5 text-xs"
+                >
+                  <ChevronLeft className="size-3" />
+                  <span>Prev</span>
+                </Button>
+                <span className="font-mono text-xs px-2 text-foreground font-semibold">
+                  {safeCurrentPage} / {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  disabled={safeCurrentPage >= totalPages}
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  className="gap-1 h-7 px-2.5 text-xs"
+                >
+                  <span>Next</span>
+                  <ChevronRight className="size-3" />
+                </Button>
+              </div>
             </div>
           </div>
         )}

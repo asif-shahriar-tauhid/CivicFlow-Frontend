@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import Logo from "@/asset/svg/Logo";
+import { ThemeToggle } from "@/components/common/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { gooeyToast } from "@/components/ui/goey-toaster";
 import { useGetME, useLogout } from "@/hooks";
@@ -13,6 +14,7 @@ import { useGetME, useLogout } from "@/hooks";
 import { getRoleDashboardUrl } from "@/lib/authUtils";
 
 const NAV_LINKS = [
+  { name: "Explore", href: "/explore" },
   { name: "Services", href: "/#services" },
   { name: "How It Works", href: "/#how-it-works" },
   { name: "Telemetry", href: "/#telemetry" },
@@ -35,6 +37,9 @@ const Header = () => {
     if (!activePath) return false;
     if (href === "/about-us") {
       return activePath.startsWith("/about-us");
+    }
+    if (href === "/explore") {
+      return activePath.startsWith("/explore");
     }
     return href === activePath;
   };
@@ -116,6 +121,7 @@ const Header = () => {
         </nav>
 
         <div className="hidden sm:flex items-center gap-2.5">
+          <ThemeToggle />
           {isLoading ? (
             <div className="h-9 w-24 animate-pulse rounded-full bg-muted" />
           ) : user ? (
@@ -171,18 +177,21 @@ const Header = () => {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="flex p-2 text-muted-foreground hover:text-foreground md:hidden transition-transform active:scale-95"
-          aria-label="Toggle menu"
-        >
-          {mobileMenuOpen ? (
-            <X className="size-6" />
-          ) : (
-            <Menu className="size-6" />
-          )}
-        </button>
+        <div className="flex items-center gap-1.5 md:hidden">
+          <ThemeToggle className="sm:hidden" />
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="flex p-2 text-muted-foreground hover:text-foreground transition-transform active:scale-95"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <X className="size-6" />
+            ) : (
+              <Menu className="size-6" />
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Real-time telemetry conduit scroll indicator */}

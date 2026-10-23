@@ -39,16 +39,21 @@ export function proxy(request: NextRequest) {
 
   // 2. Citizen routes protection (/citizen and /citizen/*)
   if (pathname.startsWith("/citizen")) {
-    if (!isAuthenticated) {
-      const redirectTarget = `${pathname}${search}`;
-      const loginUrl = new URL("/login", request.url);
-      loginUrl.searchParams.set("redirect", redirectTarget);
-      return NextResponse.redirect(loginUrl);
-    }
+    // Allow public read-only access to individual issue details: /citizen/requests/[id]
+    const isPublicRequestDetail = /^\/citizen\/requests\/[^/]+$/.test(pathname);
 
-    if (validRole !== "CITIZEN") {
-      const properUrl = getRoleDashboardUrl(validRole);
-      return NextResponse.redirect(new URL(properUrl, request.url));
+    if (!isPublicRequestDetail) {
+      if (!isAuthenticated) {
+        const redirectTarget = `${pathname}${search}`;
+        const loginUrl = new URL("/login", request.url);
+        loginUrl.searchParams.set("redirect", redirectTarget);
+        return NextResponse.redirect(loginUrl);
+      }
+
+      if (validRole !== "CITIZEN") {
+        const properUrl = getRoleDashboardUrl(validRole);
+        return NextResponse.redirect(new URL(properUrl, request.url));
+      }
     }
   }
 

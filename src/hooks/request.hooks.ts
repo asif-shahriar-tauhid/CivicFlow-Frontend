@@ -9,6 +9,8 @@ import {
   deleteServiceRequest,
   getDepartmentQueue,
   getMyQueue,
+  getPublicServiceRequestById,
+  getPublicServiceRequests,
   getServiceRequestById,
   getServiceRequests,
   reassignServiceRequest,
@@ -37,6 +39,23 @@ export const useGetServiceRequests = (params?: RequestFilterParams) => {
     queryKey: ["service-requests", params],
     queryFn: () => getServiceRequests(params),
     staleTime: 30 * 1000,
+  });
+};
+
+export const useGetPublicServiceRequests = (params?: RequestFilterParams) => {
+  return useQuery({
+    queryKey: ["public-service-requests", params],
+    queryFn: () => getPublicServiceRequests(params),
+    staleTime: 30 * 1000,
+  });
+};
+
+export const useGetPublicServiceRequestById = (requestId: string) => {
+  return useQuery({
+    queryKey: ["public-service-request", requestId],
+    queryFn: () => getPublicServiceRequestById(requestId),
+    enabled: Boolean(requestId),
+    staleTime: 15 * 1000,
   });
 };
 
@@ -73,7 +92,11 @@ export const useConfirmServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
     },
   });
 };
@@ -92,7 +115,11 @@ export const useReopenServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
     },
   });
 };
@@ -113,7 +140,11 @@ export const useSubmitFeedback = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
     },
   });
 };
@@ -132,7 +163,11 @@ export const useUpdateServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
     },
   });
 };
@@ -143,7 +178,11 @@ export const useDeleteServiceRequest = () => {
     mutationFn: (requestId: string) => deleteServiceRequest(requestId),
     onSuccess: (_, requestId) => {
       queryClient.removeQueries({ queryKey: ["service-request", requestId] });
+      queryClient.removeQueries({
+        queryKey: ["public-service-request", requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
     },
   });
 };
@@ -156,7 +195,11 @@ export const useRouteServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["public-stats"] });
     },
@@ -177,7 +220,11 @@ export const useTransitionServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["public-stats"] });
     },
@@ -198,7 +245,11 @@ export const useResolveServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["public-stats"] });
     },
@@ -213,6 +264,9 @@ export const useAddInvestigationNote = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
       });
     },
   });
@@ -232,7 +286,11 @@ export const useAssignServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
     },
   });
@@ -252,7 +310,11 @@ export const useReassignServiceRequest = () => {
       queryClient.invalidateQueries({
         queryKey: ["service-request", variables.requestId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["public-service-request", variables.requestId],
+      });
       queryClient.invalidateQueries({ queryKey: ["service-requests"] });
+      queryClient.invalidateQueries({ queryKey: ["public-service-requests"] });
       queryClient.invalidateQueries({ queryKey: ["admin-analytics"] });
     },
   });

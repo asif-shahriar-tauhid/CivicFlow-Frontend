@@ -41,13 +41,15 @@ export function InvestigationNotesCard({
   onNoteAdded,
   className = "",
 }: InvestigationNotesCardProps) {
-  const { role, user } = useCurrentUser();
+  const { role, user, isAuthenticated } = useCurrentUser();
   const [note, setNote] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
   const { mutate: addNote, isPending } = useAddInvestigationNote();
 
-  const isStaffOrAdmin = role === "STAFF" || role === "ADMIN";
+  const isStaffOrAdmin = Boolean(
+    isAuthenticated && user && (role === "STAFF" || role === "ADMIN"),
+  );
   const notes: RequestInvestigationNote[] = ticket.investigationNotes || [];
 
   // Check department authorization if staff

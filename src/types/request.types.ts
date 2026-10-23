@@ -144,6 +144,7 @@ export interface ServiceRequest {
   department?: Department | null;
   assignedTo?: { id: string; name: string; email: string } | null;
   createdBy?: { id: string; name: string; email: string } | null;
+  citizen?: { id: string; name: string; email: string } | null;
   attachments?: RequestAttachment[];
   statusHistory?: RequestStatusHistory[];
   investigationNotes?: RequestInvestigationNote[];
